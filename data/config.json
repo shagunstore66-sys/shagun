@@ -1,0 +1,20 @@
+{
+  "name": "SHAGUN STORE",
+  "nameHindi": "शगुन स्टोर",
+  "tagline": "Scan • Order • Express Pickup",
+  "taglineHindi": "स्कैन करें • सामान चुनें • काउंटर से प्राप्त करें",
+  "address": "Shop No. 1, Main Market, Near Central Chowk",
+  "phone": "+91 98765 43210",
+  "currency": "₹",
+  "taxPercent": 0,
+  "expressPackingFee": 0,
+  "pickupLocations": [
+    "Main Entrance Stand (Express)",
+    "Aisle 1 - Grains & Staples",
+    "Aisle 2 - Oils, Ghee & Masalas",
+    "Aisle 3 - Dairy & Beverages",
+    "Aisle 4 - Household & Cleaning",
+    "Billing Counter 1",
+    "Billing Counter 2"
+  ]
+}
