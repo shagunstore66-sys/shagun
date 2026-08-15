@@ -444,6 +444,19 @@ class ShagunStoreApp {
     this.broadcast('NEW_ORDER', newOrder);
     sounds.playTapSound();
 
+    // Automatic Direct Launch to PhonePe / Google Pay / Paytm with Exact Bill Amount
+    if (this.selectedPaymentMethod === 'upi') {
+      const upiId = this.config.upiId || '7795565216-1@okbizaxis';
+      const storeName = this.config.name || 'SHAGUN STORE';
+      const upiUri = `upi://pay?pa=${encodeURIComponent(upiId)}&pn=${encodeURIComponent(storeName)}&am=${totals.finalTotal}&cu=INR&tn=${encodeURIComponent('Order ' + tokenNum + ' ' + storeName)}`;
+      
+      setTimeout(() => {
+        try {
+          window.location.href = upiUri;
+        } catch (e) {}
+      }, 400);
+    }
+
     this.render();
   }
 
@@ -1976,8 +1989,8 @@ class ShagunStoreApp {
             </div>
           </div>
 
-          <button class="btn-place-order" id="btnSubmitOrder">
-            ⚡ Place Order & Get Token (${this.config.currency}${finalTotal}) ➔
+          <button class="btn-place-order" id="btnSubmitOrder" style="display: flex; align-items: center; justify-content: center; gap: 8px; font-size: 1rem; padding: 14px;">
+            ${this.selectedPaymentMethod === 'upi' ? `📱 Pay ${this.config.currency}${finalTotal} via PhonePe / GPay & Book Bag ➔` : this.selectedPaymentMethod === 'counter' ? `💵 Book Bag & Pay Cash at Counter (${this.config.currency}${finalTotal}) ➔` : `💳 Book Bag (${this.config.currency}${finalTotal}) ➔`}
           </button>
         </div>
       </div>
@@ -2647,6 +2660,18 @@ class ShagunStoreApp {
         this.selectedPaymentMethod = e.target.value;
         modalDiv.querySelectorAll('.payment-option-card').forEach(card => card.classList.remove('selected'));
         radio.closest('.payment-option-card').classList.add('selected');
+        
+        const btnSub = modalDiv.querySelector('#btnSubmitOrder');
+        const totals = this.getCartTotals();
+        if (btnSub) {
+          if (this.selectedPaymentMethod === 'upi') {
+            btnSub.innerHTML = `📱 Pay ${this.config.currency}${totals.finalTotal} via PhonePe / GPay & Book Bag ➔`;
+          } else if (this.selectedPaymentMethod === 'counter') {
+            btnSub.innerHTML = `💵 Book Bag & Pay Cash at Counter (${this.config.currency}${totals.finalTotal}) ➔`;
+          } else {
+            btnSub.innerHTML = `💳 Book Bag (${this.config.currency}${totals.finalTotal}) ➔`;
+          }
+        }
       });
     });
 
