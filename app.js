@@ -21,7 +21,8 @@ import {
 } from './firebase-config.js';
 import { 
   sendRealCustomerSmsOtp, 
-  verifyCustomerSmsCode 
+  verifyCustomerSmsCode,
+  getCustomerWhatsAppOtpLink
 } from './smsAuthEngine.js';
 
 class ShagunStoreApp {
@@ -418,12 +419,22 @@ class ShagunStoreApp {
           <input type="text" maxlength="1" class="otp-box-digit" id="otp_6" style="width: 44px; height: 50px; text-align: center; font-size: 1.3rem; font-weight: 800; border: 2px solid var(--border); border-radius: 8px;">
         </div>
 
-        <div style="font-size: 0.75rem; color: var(--text-muted); margin-bottom: 1.25rem;">
-          Didn't receive SMS on phone? <a href="#" id="btnResendOtp" style="color: var(--primary); font-weight: 800;">Resend SMS</a>
+        <div style="display: flex; flex-direction: column; gap: 8px; margin-bottom: 1.25rem;">
+          <div style="font-size: 0.75rem; color: var(--text-muted); text-align: center;">
+            Didn't receive carrier SMS? 
+          </div>
+          <div style="display: flex; justify-content: center; gap: 10px;">
+            <a href="${getCustomerWhatsAppOtpLink(phone)}" target="_blank" id="btnWhatsAppOtp" style="display: inline-flex; align-items: center; gap: 6px; background: #25D366; color: white; padding: 7px 14px; border-radius: 999px; font-size: 0.75rem; font-weight: 800; text-decoration: none;">
+              💬 Get OTP on WhatsApp
+            </a>
+            <button type="button" id="btnResendOtp" style="border: 1px solid var(--border); background: var(--bg-surface); padding: 7px 14px; border-radius: 999px; font-size: 0.75rem; font-weight: 800; cursor: pointer; color: var(--primary);">
+              🔄 Resend SMS
+            </button>
+          </div>
         </div>
 
         <button class="btn-place-order" id="btnVerifyOtpSubmit" style="width: 100%;">
-          Verify SMS & Place Order ➔
+          Verify Code & Place Order ➔
         </button>
 
         <button class="btn-admin-action" id="btnCancelOtp" style="margin-top: 10px; width: 100%; justify-content: center;">
