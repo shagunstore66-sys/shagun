@@ -842,6 +842,39 @@ class ShagunStoreApp {
           </div>
         </div>
 
+        <!-- Official UPI Payment Gateway Box (7795565216-1@okbizaxis) -->
+        <div class="upi-pay-card" style="margin-top: 1rem; background: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%); border: 1.5px solid #86efac; border-radius: var(--radius-md); padding: 1.25rem; text-align: center;">
+          <div style="display: flex; align-items: center; justify-content: center; gap: 8px; margin-bottom: 6px;">
+            <span style="font-size: 1.4rem;">📱</span>
+            <h4 style="font-size: 1.05rem; font-weight: 900; color: #166534; font-family: var(--font-display); margin: 0;">
+              Instant UPI Payment (${this.config.currency}${order.totalAmount})
+            </h4>
+          </div>
+          <p style="font-size: 0.78rem; color: #15803d; margin: 0 0 12px 0;">
+            Payee: <strong>SHAGUN STORE</strong> • UPI ID: <strong style="color: #047857; font-family: var(--font-mono);">${this.config.upiId || '7795565216-1@okbizaxis'}</strong>
+          </p>
+
+          <!-- 1-Tap UPI Intent Launch Buttons -->
+          <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; margin-bottom: 10px;">
+            <a href="upi://pay?pa=${this.config.upiId || '7795565216-1@okbizaxis'}&pn=SHAGUN%20STORE&am=${order.totalAmount}&cu=INR&tn=Token%20${order.token}%20SHAGUN%20STORE" class="btn-upi-app" style="background: white; border: 1.5px solid #2563eb; color: #1d4ed8; font-weight: 800; padding: 10px; border-radius: 8px; font-size: 0.8rem; text-decoration: none; display: flex; align-items: center; justify-content: center; gap: 6px; box-shadow: var(--shadow-sm);">
+              🔵 Google Pay
+            </a>
+            <a href="upi://pay?pa=${this.config.upiId || '7795565216-1@okbizaxis'}&pn=SHAGUN%20STORE&am=${order.totalAmount}&cu=INR&tn=Token%20${order.token}%20SHAGUN%20STORE" class="btn-upi-app" style="background: white; border: 1.5px solid #7c3aed; color: #6d28d9; font-weight: 800; padding: 10px; border-radius: 8px; font-size: 0.8rem; text-decoration: none; display: flex; align-items: center; justify-content: center; gap: 6px; box-shadow: var(--shadow-sm);">
+              🟣 PhonePe
+            </a>
+            <a href="upi://pay?pa=${this.config.upiId || '7795565216-1@okbizaxis'}&pn=SHAGUN%20STORE&am=${order.totalAmount}&cu=INR&tn=Token%20${order.token}%20SHAGUN%20STORE" class="btn-upi-app" style="background: white; border: 1.5px solid #0284c7; color: #0369a1; font-weight: 800; padding: 10px; border-radius: 8px; font-size: 0.8rem; text-decoration: none; display: flex; align-items: center; justify-content: center; gap: 6px; box-shadow: var(--shadow-sm);">
+              🔷 Paytm
+            </a>
+            <a href="upi://pay?pa=${this.config.upiId || '7795565216-1@okbizaxis'}&pn=SHAGUN%20STORE&am=${order.totalAmount}&cu=INR&tn=Token%20${order.token}%20SHAGUN%20STORE" class="btn-upi-app" style="background: white; border: 1.5px solid #ea580c; color: #c2410c; font-weight: 800; padding: 10px; border-radius: 8px; font-size: 0.8rem; text-decoration: none; display: flex; align-items: center; justify-content: center; gap: 6px; box-shadow: var(--shadow-sm);">
+              🟡 BHIM / FamPay / CRED
+            </a>
+          </div>
+
+          <div style="font-size: 0.72rem; color: #166534; font-weight: 700;">
+            ✨ Tap any app above to pay ₹${order.totalAmount} directly from your phone.
+          </div>
+        </div>
+
         <button class="btn-ticket-action btn-ticket-print" id="btnPlaceAnotherOrder" style="margin-top: 1.25rem; width: 100%;">
           🛒 Place Another Order / New Bag
         </button>
@@ -1781,8 +1814,8 @@ class ShagunStoreApp {
             </div>
 
             <div class="form-group">
-              <label>Merchant UPI ID (For PhonePe / GPay QR)</label>
-              <input type="text" id="cfgUpiId" placeholder="e.g. shagunstore@okhdfcbank" value="shagunstore@okhdfcbank">
+              <label>Merchant UPI ID (Google Pay / PhonePe / Paytm / BHIM / Axis Bank)</label>
+              <input type="text" id="cfgUpiId" placeholder="e.g. 7795565216-1@okbizaxis" value="${this.config.upiId || '7795565216-1@okbizaxis'}">
             </div>
 
             <div class="form-group" style="grid-column: 1 / -1;">
@@ -1902,8 +1935,8 @@ class ShagunStoreApp {
               <input type="radio" name="payMethod" value="upi" ${this.selectedPaymentMethod === 'upi' ? 'checked' : ''} style="display: none;">
               <span class="payment-icon">📱</span>
               <div class="payment-info">
-                <h5>Instant UPI / GPay / PhonePe / Paytm</h5>
-                <p>Scan UPI QR and pay directly from phone</p>
+                <h5>Instant UPI (GPay / PhonePe / Paytm / BHIM / FamPay / CRED)</h5>
+                <p>Pay to <strong>SHAGUN STORE (${this.config.upiId || '7795565216-1@okbizaxis'})</strong></p>
               </div>
             </label>
 
@@ -1912,7 +1945,7 @@ class ShagunStoreApp {
               <span class="payment-icon">💵</span>
               <div class="payment-info">
                 <h5>Pay Cash at Collection Counter</h5>
-                <p>Pay cash when collecting your packed bag</p>
+                <p>Pay cash when picking up your packed grocery bag</p>
               </div>
             </label>
 
@@ -1920,8 +1953,8 @@ class ShagunStoreApp {
               <input type="radio" name="payMethod" value="card" ${this.selectedPaymentMethod === 'card' ? 'checked' : ''} style="display: none;">
               <span class="payment-icon">💳</span>
               <div class="payment-info">
-                <h5>Debit / Credit Card / NetBanking</h5>
-                <p>Instant secure card payment</p>
+                <h5>Debit / Credit Card / Counter POS</h5>
+                <p>Pay via Visa / Mastercard / RuPay</p>
               </div>
             </label>
           </div>
@@ -2420,12 +2453,16 @@ class ShagunStoreApp {
         this.config.phone = document.getElementById('cfgPhone').value;
         this.config.address = document.getElementById('cfgAddress').value;
         this.config.currency = document.getElementById('cfgCurrency').value;
+        const upiInput = document.getElementById('cfgUpiId');
+        if (upiInput) {
+          this.config.upiId = upiInput.value.trim() || '7795565216-1@okbizaxis';
+        }
         const smsKey = document.getElementById('cfgSmsKey');
         if (smsKey) {
           localStorage.setItem('shagun_sms_gateway_key', smsKey.value.trim());
         }
         this.saveConfig();
-        alert("SHAGUN STORE settings & SMS Gateway updated successfully!");
+        alert("SHAGUN STORE settings & UPI Configuration updated successfully!");
         this.render();
       });
     }
