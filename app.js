@@ -385,11 +385,94 @@ class ShagunStoreApp {
     const cartModal = document.getElementById('cartModal');
     if (cartModal) cartModal.remove();
 
-    // Instant Direct Order Placement (Zero OTP Blockers)
-    this.finalizeVerifiedOrder();
+    // If UPI is selected, complete Payment BEFORE sending order to Shop Admin
+    if (this.selectedPaymentMethod === 'upi') {
+      this.openUpiPrePaymentModal();
+    } else {
+      // Cash at Counter (Direct Order Placement)
+      this.finalizeVerifiedOrder('Pay at Counter');
+    }
   }
 
-  async finalizeVerifiedOrder() {
+  // Pre-Payment UPI Verification Modal (Payment Done BEFORE Admin Order Dispatch)
+  openUpiPrePaymentModal() {
+    const totals = this.getCartTotals();
+    const upiId = this.config.upiId || '7795565216-1@okbizaxis';
+    const storeName = this.config.name || 'SHAGUN STORE';
+    const tempToken = `SG-${100 + (this.orders.length + 1) % 900}`;
+    const upiUri = `upi://pay?pa=${encodeURIComponent(upiId)}&pn=${encodeURIComponent(storeName)}&am=${totals.finalTotal}&cu=INR&tn=${encodeURIComponent('Order ' + tempToken + ' ' + storeName)}`;
+
+    const modalDiv = document.createElement('div');
+    modalDiv.id = 'upiPrePaymentModal';
+    modalDiv.className = 'admin-modal-overlay';
+    modalDiv.style.zIndex = '99999';
+
+    modalDiv.innerHTML = `
+      <div class="admin-modal-box" style="max-width: 440px; text-align: center; border-radius: 18px; overflow: hidden; padding: 0; box-shadow: 0 20px 40px rgba(0,0,0,0.3);">
+        <div style="background: linear-gradient(135deg, #047857 0%, #064e3b 100%); color: white; padding: 20px; position: relative;">
+          <button class="btn-close-modal" id="btnCloseUpiModal" style="position: absolute; right: 14px; top: 14px; color: white; background: rgba(255,255,255,0.2); border: none; width: 32px; height: 32px; border-radius: 50%; cursor: pointer; font-size: 16px;">✕</button>
+          <div style="font-size: 2rem; margin-bottom: 4px;">📱</div>
+          <h3 style="font-size: 1.25rem; font-weight: 900; margin: 0;">Complete UPI Payment</h3>
+          <p style="font-size: 0.82rem; opacity: 0.9; margin: 4px 0 0 0;">Pay exact bill amount to confirm your grocery order</p>
+        </div>
+
+        <div style="padding: 20px; background: white;">
+          <div style="background: #f8fafc; border: 1.5px dashed #cbd5e1; border-radius: 14px; padding: 14px; margin-bottom: 16px;">
+            <div style="font-size: 0.8rem; color: #64748b; font-weight: 600; text-transform: uppercase;">Total Bill Amount</div>
+            <div style="font-size: 2.2rem; font-weight: 900; color: #047857; font-family: var(--font-display); line-height: 1.1; margin: 4px 0;">
+              ${this.config.currency}${totals.finalTotal}
+            </div>
+            <div style="font-size: 0.78rem; color: #475569; font-weight: 600;">
+              Payee: <strong>SHAGUN STORE</strong> • UPI ID: <strong style="color: #047857; font-family: var(--font-mono);">${upiId}</strong>
+            </div>
+          </div>
+
+          <!-- Direct 1-Tap Trigger Button -->
+          <a href="${upiUri}" id="btnTriggerUpiApp" style="display: flex; align-items: center; justify-content: center; gap: 10px; width: 100%; padding: 15px; background: linear-gradient(135deg, #047857 0%, #065f46 100%); color: white; border-radius: 12px; font-size: 1.05rem; font-weight: 900; text-decoration: none; box-shadow: 0 4px 14px rgba(4,120,87,0.35); margin-bottom: 14px;">
+            <span>🚀</span> Open UPI App to Pay ${this.config.currency}${totals.finalTotal} ➔
+          </a>
+
+          <div style="border-top: 1px solid #e2e8f0; margin: 16px 0 14px 0; position: relative;">
+            <span style="position: absolute; top: -10px; left: 50%; transform: translateX(-50%); background: white; padding: 0 10px; font-size: 0.72rem; color: #94a3b8; font-weight: 700;">STEP 2: CONFIRM AFTER PAYING</span>
+          </div>
+
+          <button id="btnConfirmUpiPaymentDone" style="width: 100%; padding: 14px; background: #0f172a; color: white; border: none; border-radius: 12px; font-size: 0.95rem; font-weight: 800; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; box-shadow: var(--shadow-md);">
+            <span>✓</span> I Have Paid ${this.config.currency}${totals.finalTotal} (Confirm Order)
+          </button>
+          
+          <div style="font-size: 0.72rem; color: #64748b; margin-top: 10px; font-weight: 600;">
+            🔒 Your order is sent to the packing staff immediately after payment is done.
+          </div>
+        </div>
+      </div>
+    `;
+
+    document.body.appendChild(modalDiv);
+
+    // Auto-launch UPI App on phone
+    setTimeout(() => {
+      try {
+        window.location.href = upiUri;
+      } catch (e) {}
+    }, 300);
+
+    // Close Handler
+    const btnClose = modalDiv.querySelector('#btnCloseUpiModal');
+    if (btnClose) {
+      btnClose.onclick = () => modalDiv.remove();
+    }
+
+    // Confirm Payment Handler (Dispatches Order to Shop Admin)
+    const btnConfirm = modalDiv.querySelector('#btnConfirmUpiPaymentDone');
+    if (btnConfirm) {
+      btnConfirm.onclick = () => {
+        modalDiv.remove();
+        this.finalizeVerifiedOrder(`Paid Online (UPI - ${upiId})`);
+      };
+    }
+  }
+
+  async finalizeVerifiedOrder(paymentStatusText = 'Paid Online (UPI)') {
     const totals = this.getCartTotals();
     const tokenNum = `SG-${100 + (this.orders.length + 1) % 900}`;
     
@@ -412,13 +495,13 @@ class ShagunStoreApp {
       })),
       packingNote: this.pendingOrderData.packingNote,
       paymentMethod: this.selectedPaymentMethod,
-      paymentStatus: this.selectedPaymentMethod === 'counter' ? 'Pay at Counter' : 'Paid Online (UPI)',
+      paymentStatus: paymentStatusText || (this.selectedPaymentMethod === 'counter' ? 'Pay at Counter' : 'Paid Online (UPI)'),
       subtotal: totals.subtotal,
       tax: totals.tax,
       totalAmount: totals.finalTotal,
       status: 'NEW',
       history: [
-        { status: 'NEW', time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }), text: 'Order placed & mobile verified' }
+        { status: 'NEW', time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }), text: 'Order placed & payment confirmed' }
       ]
     };
 
@@ -443,19 +526,6 @@ class ShagunStoreApp {
 
     this.broadcast('NEW_ORDER', newOrder);
     sounds.playTapSound();
-
-    // Automatic Direct Launch to PhonePe / Google Pay / Paytm with Exact Bill Amount
-    if (this.selectedPaymentMethod === 'upi') {
-      const upiId = this.config.upiId || '7795565216-1@okbizaxis';
-      const storeName = this.config.name || 'SHAGUN STORE';
-      const upiUri = `upi://pay?pa=${encodeURIComponent(upiId)}&pn=${encodeURIComponent(storeName)}&am=${totals.finalTotal}&cu=INR&tn=${encodeURIComponent('Order ' + tokenNum + ' ' + storeName)}`;
-      
-      setTimeout(() => {
-        try {
-          window.location.href = upiUri;
-        } catch (e) {}
-      }, 400);
-    }
 
     this.render();
   }
@@ -782,31 +852,35 @@ class ShagunStoreApp {
     const isReady = order.status === 'READY';
     const isPacking = order.status === 'PACKING';
     const isCompleted = order.status === 'COMPLETED';
+    const isPaid = order.paymentStatus && order.paymentStatus.toLowerCase().includes('paid');
 
     return `
-      <div class="order-tracker-card">
-        <div class="tracker-token-box">
+      <div class="order-tracker-card" style="padding-bottom: 2rem;">
+        <!-- Token & Location Header -->
+        <div class="tracker-token-box" style="margin-bottom: 1rem;">
           <div class="token-label">SHAGUN STORE PICKUP TOKEN</div>
           <div class="token-number">#${order.token}</div>
           <div class="location-badge">📍 Collection Spot: ${order.location}</div>
         </div>
 
         ${isReady ? `
-          <div class="ready-alert-box">
-            <h3>🎉 Your Grocery is Packed & Ready!</h3>
-            <p>Please walk to the counter and show Token <strong>#${order.token}</strong> to pick up your bag.</p>
+          <div class="ready-alert-box" style="animation: pulse 1.5s infinite; margin-bottom: 1rem;">
+            <h3 style="font-size: 1.15rem; margin: 0 0 6px 0;">🎉 Your Grocery Bag is Packed & Ready!</h3>
+            <p style="font-size: 0.85rem; margin: 0;">Please walk to Counter <strong>${order.location}</strong> and show Token <strong>#${order.token}</strong> to pick up your bag.</p>
           </div>
         ` : `
-          <div style="margin-bottom: 0.75rem; font-weight: 800; color: var(--text-main); font-size: 1.05rem;">
-            ${isPacking ? '👨‍🍳 Staff is currently packing your items at shelves...' : '⏳ Order received. Store staff notified for packing...'}
+          <div style="margin-bottom: 1rem; font-weight: 800; color: #047857; font-size: 0.95rem; background: #ecfdf5; padding: 12px 14px; border-radius: 12px; border: 1px solid #a7f3d0; display: flex; align-items: center; gap: 8px;">
+            <span style="font-size: 1.2rem;">${isPacking ? '👨‍🍳' : '⏳'}</span>
+            <div>${isPacking ? 'Staff is currently packing your items at shelves...' : 'Order confirmed & paid! Packing staff notified at counter.'}</div>
           </div>
         `}
 
-        <div class="status-stepper">
+        <!-- 4-Step Order Progression Tracker -->
+        <div class="status-stepper" style="margin-bottom: 1.25rem;">
           <div class="step-item done">
             <div class="step-icon">✓</div>
             <div class="step-content">
-              <h4>1. Order Placed & Mobile Verified</h4>
+              <h4>1. Order Placed & Payment Done</h4>
               <p>${order.phone} • ${order.paymentStatus}</p>
             </div>
           </div>
@@ -814,8 +888,8 @@ class ShagunStoreApp {
           <div class="step-item ${isPacking || isReady || isCompleted ? (isPacking ? 'current' : 'done') : ''}">
             <div class="step-icon">${isReady || isCompleted ? '✓' : '📦'}</div>
             <div class="step-content">
-              <h4>2. Staff Packing Grains & Groceries</h4>
-              <p>${isPacking ? 'Packing in progress by SHAGUN STORE staff...' : (isReady || isCompleted ? 'Items packed in carry bag' : 'Queued on staff packing terminal')}</p>
+              <h4>2. Staff Packing in Carry Bag</h4>
+              <p>${isPacking ? 'Packing in progress by SHAGUN STORE staff...' : (isReady || isCompleted ? 'Items packed & sealed in bag' : 'Queued on staff packing terminal')}</p>
             </div>
           </div>
 
@@ -823,7 +897,7 @@ class ShagunStoreApp {
             <div class="step-icon">${isCompleted ? '✓' : '🛍️'}</div>
             <div class="step-content">
               <h4>3. Ready for Collection</h4>
-              <p>${isReady ? 'Ready for collection at counter now!' : 'Phone will chime when ready'}</p>
+              <p>${isReady ? 'Ready for collection at counter now!' : 'Staff will finish in ~2 minutes'}</p>
             </div>
           </div>
 
@@ -836,49 +910,84 @@ class ShagunStoreApp {
           </div>
         </div>
 
-        <div class="pickup-qr-container">
+        <!-- QR Code for Staff Scanner -->
+        <div class="pickup-qr-container" style="margin-bottom: 1.25rem;">
           <div id="pickupQRCodeContainer"></div>
           <span>Show this QR / Token #${order.token} to SHAGUN STORE Staff</span>
         </div>
 
-        <div style="width: 100%; text-align: left; background: var(--bg-surface); padding: 1rem; border-radius: var(--radius-md); margin-top: 1rem;">
-          <h4 style="font-size: 0.85rem; font-weight: 800; margin-bottom: 6px;">Items in this Order (${order.items.length})</h4>
-          ${order.items.map(item => `
-            <div style="display: flex; justify-content: space-between; font-size: 0.8rem; padding: 3px 0;">
-              <span>${item.qty}x ${item.name} (${item.variantName})</span>
-              <strong>${this.config.currency}${item.price * item.qty}</strong>
+        <!-- 🛍️ BLINKIT STYLE ORDERED ITEMS BREAKDOWN -->
+        <div class="blinkit-items-card" style="width: 100%; text-align: left; background: #ffffff; border: 1.5px solid #e2e8f0; border-radius: 16px; overflow: hidden; box-shadow: 0 4px 12px rgba(0,0,0,0.04); margin-bottom: 1.25rem;">
+          <div style="background: #f8fafc; padding: 12px 16px; border-bottom: 1px solid #e2e8f0; display: flex; justify-content: space-between; align-items: center;">
+            <div style="display: flex; align-items: center; gap: 8px;">
+              <span style="font-size: 1.1rem;">🛍️</span>
+              <h4 style="font-size: 0.95rem; font-weight: 800; margin: 0; color: #0f172a;">Items in this Order (${order.items.length})</h4>
             </div>
-          `).join('')}
-          <div style="border-top: 1px solid var(--border); margin-top: 6px; padding-top: 6px; display: flex; justify-content: space-between; font-size: 0.95rem; font-weight: 900;">
-            <span>Total Payable:</span>
-            <span style="color: var(--primary);">${this.config.currency}${order.totalAmount}</span>
+            <span style="font-size: 0.72rem; background: #dcfce7; color: #166534; font-weight: 800; padding: 3px 8px; border-radius: 20px;">CONFIRMED</span>
+          </div>
+
+          <div style="padding: 8px 16px;">
+            ${order.items.map((item, idx) => `
+              <div style="display: flex; justify-content: space-between; align-items: center; padding: 10px 0; ${idx !== order.items.length - 1 ? 'border-bottom: 1px dashed #f1f5f9;' : ''}">
+                <div style="display: flex; align-items: center; gap: 12px; flex: 1;">
+                  <div style="width: 38px; height: 38px; background: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 1.1rem; flex-shrink: 0;">
+                    🛒
+                  </div>
+                  <div>
+                    <div style="font-size: 0.88rem; font-weight: 700; color: #1e293b; line-height: 1.2;">${item.name}</div>
+                    <div style="font-size: 0.75rem; color: #64748b; margin-top: 2px;">Pack: <strong>${item.variantName || 'Standard'}</strong> • ${this.config.currency}${item.price} each</div>
+                  </div>
+                </div>
+                <div style="text-align: right; margin-left: 12px;">
+                  <div style="font-size: 0.8rem; font-weight: 800; background: #f1f5f9; padding: 2px 8px; border-radius: 6px; display: inline-block; color: #334155; margin-bottom: 2px;">
+                    ${item.qty}x
+                  </div>
+                  <div style="font-size: 0.95rem; font-weight: 900; color: #047857; font-family: var(--font-display);">
+                    ${this.config.currency}${item.price * item.qty}
+                  </div>
+                </div>
+              </div>
+            `).join('')}
           </div>
         </div>
 
-        <!-- Clean UPI Payment Box (7795565216-1@okbizaxis) -->
-        <div class="upi-pay-card" style="margin-top: 1rem; background: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%); border: 1.5px solid #86efac; border-radius: var(--radius-md); padding: 1.25rem; text-align: center;">
-          <div style="display: flex; align-items: center; justify-content: center; gap: 8px; margin-bottom: 6px;">
-            <span style="font-size: 1.4rem;">📱</span>
-            <h4 style="font-size: 1.1rem; font-weight: 900; color: #166534; font-family: var(--font-display); margin: 0;">
-              UPI Payment (${this.config.currency}${order.totalAmount})
-            </h4>
+        <!-- 🧾 DETAILED BILL RECEIPT (BLINKIT STYLE) -->
+        <div class="bill-receipt-card" style="width: 100%; text-align: left; background: #ffffff; border: 1.5px solid #e2e8f0; border-radius: 16px; padding: 16px; box-shadow: 0 4px 12px rgba(0,0,0,0.04); margin-bottom: 1.25rem;">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; padding-bottom: 8px; border-bottom: 1px solid #f1f5f9;">
+            <div style="font-size: 0.9rem; font-weight: 800; color: #0f172a;">🧾 Bill Summary</div>
+            <div style="font-size: 0.75rem; color: #64748b; font-family: var(--font-mono);">${new Date(order.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</div>
           </div>
-          <p style="font-size: 0.82rem; color: #15803d; margin: 0 0 14px 0;">
-            Payee: <strong>SHAGUN STORE</strong> • UPI ID: <strong style="color: #047857; font-family: var(--font-mono);">${this.config.upiId || '7795565216-1@okbizaxis'}</strong>
-          </p>
 
-          <!-- Direct Universal UPI Button -->
-          <a href="upi://pay?pa=${encodeURIComponent(this.config.upiId || '7795565216-1@okbizaxis')}&pn=${encodeURIComponent(this.config.name || 'SHAGUN STORE')}&am=${order.totalAmount}&cu=INR&tn=${encodeURIComponent('Order ' + order.token + ' ' + (this.config.name || 'SHAGUN STORE'))}" class="btn-upi-app" style="background: #047857; color: white; font-weight: 900; padding: 14px 20px; border-radius: 10px; font-size: 1.05rem; text-decoration: none; display: flex; align-items: center; justify-content: center; gap: 8px; box-shadow: 0 4px 14px rgba(4,120,87,0.35); margin-bottom: 12px;">
-            📱 Pay ${this.config.currency}${order.totalAmount} via UPI ➔
-          </a>
+          <div style="display: flex; justify-content: space-between; font-size: 0.82rem; color: #475569; padding: 3px 0;">
+            <span>Items Subtotal</span>
+            <span>${this.config.currency}${order.subtotal}</span>
+          </div>
 
-          <div style="font-size: 0.78rem; color: #166534; font-weight: 700;">
-            ✓ Tap above to open your phone's UPI app with exact amount ${this.config.currency}${order.totalAmount}
+          <div style="display: flex; justify-content: space-between; font-size: 0.82rem; color: #475569; padding: 3px 0;">
+            <span>Express Carry Bag Packing</span>
+            <span style="color: #166534; font-weight: 700;">FREE</span>
+          </div>
+
+          <div style="display: flex; justify-content: space-between; font-size: 0.82rem; color: #475569; padding: 3px 0;">
+            <span>Taxes & GST</span>
+            <span>${this.config.currency}${order.tax || 0}</span>
+          </div>
+
+          <div style="border-top: 1.5px dashed #cbd5e1; margin-top: 8px; padding-top: 8px; display: flex; justify-content: space-between; font-size: 1.1rem; font-weight: 900;">
+            <span style="color: #0f172a;">Grand Total</span>
+            <span style="color: #047857; font-family: var(--font-display);">${this.config.currency}${order.totalAmount}</span>
+          </div>
+
+          <div style="margin-top: 12px; padding: 10px; border-radius: 8px; background: ${isPaid ? '#f0fdf4' : '#fefce8'}; border: 1px solid ${isPaid ? '#86efac' : '#fef08a'}; display: flex; align-items: center; justify-content: space-between;">
+            <span style="font-size: 0.78rem; font-weight: 700; color: ${isPaid ? '#166534' : '#854d0e'};">
+              ${isPaid ? '🟢 PAID ONLINE (UPI)' : '💵 Pay Cash at Counter'}
+            </span>
+            <span style="font-size: 0.75rem; color: #64748b; font-family: var(--font-mono);">${order.phone}</span>
           </div>
         </div>
 
-        <button class="btn-ticket-action btn-ticket-print" id="btnPlaceAnotherOrder" style="margin-top: 1.25rem; width: 100%;">
-          🛒 Place Another Order / New Bag
+        <button class="btn-ticket-action btn-ticket-print" id="btnPlaceAnotherOrder" style="width: 100%; padding: 14px; background: #047857; color: white; border: none; border-radius: 12px; font-weight: 800; font-size: 0.95rem; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; box-shadow: 0 4px 12px rgba(4,120,87,0.3);">
+          🛒 Order More Items / New Bag
         </button>
       </div>
     `;
