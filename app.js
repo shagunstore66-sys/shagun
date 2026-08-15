@@ -541,7 +541,7 @@ class ShagunStoreApp {
   addToCart(product, variantIdx = 0) {
     sounds.playTapSound();
     const vIdx = Math.max(0, parseInt(variantIdx, 10) || 0);
-    const variant = (product.variants && product.variants[vIdx]) ? product.variants[vIdx] : { name: product.unit, price: product.price };
+    const variant = (product.variants && product.variants[vIdx]) ? product.variants[vIdx] : { name: product.unit || '1 kg', price: product.price };
     const cartItemId = `${product.id}_${variant.name}`;
 
     const existing = this.cart.find(item => item.cartItemId === cartItemId);
@@ -559,6 +559,7 @@ class ShagunStoreApp {
       });
     }
     this.saveCart();
+    this.showToastNotification(`🛍️ Added ${product.name} (${variant.name}) to Bag!`);
     this.render();
   }
 
@@ -1724,10 +1725,17 @@ class ShagunStoreApp {
           </div>
         </div>
 
-        <!-- Action to Start New Order -->
-        <button id="btnCustomerNewOrder" style="width: 100%; padding: 12px; background: #ffffff; border: 1px solid var(--border); color: var(--deep-charcoal); border-radius: var(--radius-full); font-weight: 700; font-size: 0.85rem; cursor: pointer; margin-top: 10px;">
-          ${this.t('orderMoreItems')}
-        </button>
+        <!-- Tracker Action Buttons -->
+        <div style="display: flex; flex-direction: column; gap: 8px; margin-top: 12px;">
+          ${order.status === 'NEW' ? `
+            <button class="btn-addon-to-active-order" data-order-id="${order.id}" style="width: 100%; padding: 12px; background: #1e3a8a; color: white; border: none; border-radius: var(--radius-full); font-weight: 800; font-size: 0.85rem; cursor: pointer; box-shadow: var(--shadow-sm);">
+              ➕ Add More Items to Token #${order.token}
+            </button>
+          ` : ''}
+          <button id="btnCustomerNewOrder" style="width: 100%; padding: 12px; background: #ffffff; border: 1.5px solid var(--border); color: #0f172a; border-radius: var(--radius-full); font-weight: 800; font-size: 0.85rem; cursor: pointer;">
+            🛍️ Start Fresh New Order / Browse Store
+          </button>
+        </div>
       </div>
     `;
   }
