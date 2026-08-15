@@ -1,24 +1,20 @@
 /**
- * SHAGUN STORE (शगुन स्टोर) - Master Grocery Database & Catalog Engine
- * Scaled for 2,000+ Supermarket Items across all aisles:
- * - 🌾 Staples, Atta & Rice (अनाज, आटा, चावल)
- * - 🍬 Sugar, Jaggery & Sweeteners (चीनी, गुड़)
- * - 🛢️ Edible Oils & Pure Desi Ghee (सरसों तेल, रिफाइंड, घी)
- * - 🥣 Dals, Pulses & Legumes (दालें और दलहन)
- * - 🌶️ Spices, Masalas & Seasonings (मसाले और खड़े मसाले)
- * - 🥛 Dairy, Bread & Breakfast (दूध, दही, पनीर, ब्रेड)
- * - ☕ Tea, Coffee & Cold Drinks (चाय, कॉफ़ी, जूस)
- * - 🍪 Biscuits, Namkeen & Snacks (नमकीन, भुजिया, बिस्कुट)
- * - 🧼 Detergents, Cleaners & Personal Care (साबुन, शैम्पू, पोछा)
- * - 🪔 Puja Needs, Dry Fruits & Essentials (पूजा सामग्री, मेवे)
+ * SHAGUN STORE (शगुन स्टोर / ಶಗುನ್ ಸ್ಟೋರ್) - Master Trilingual Grocery Database & Catalog Engine
+ * Supports:
+ * - 🇬🇧 English | 🇮🇳 Hindi (हिंदी) | 🟡🔴 Kannada (ಕನ್ನಡ)
+ * - Scaled for 2,000+ Supermarket Items
+ * - Full Granular Weight Variations: 250GM, 500GM, 1KG, 2KG, 3KG, 4KG, 5KG, 10KG (Grains, Dals, Sugar, Rava, Maida)
+ * - Full Volume Variations: 500ML, 1 Litre, 2 Litre, 5 Litre Can, 15 Litre Tin (Cooking Oils, Ghee)
  */
 
 export const INITIAL_STORE_CONFIG = {
   name: "SHAGUN STORE",
   nameHindi: "शगुन स्टोर",
-  tagline: "Scan • Order • Express Pickup",
+  nameKannada: "ಶಗುನ್ ಸ್ಟೋರ್",
+  tagline: "Scan in Aisle • Order • Collect at Counter",
   taglineHindi: "स्कैन करें • सामान चुनें • काउंटर से प्राप्त करें",
-  address: "Shop No. 1, Main Market, Near Central Chowk",
+  taglineKannada: "ಸ್ಕ್ಯಾನ್ ಮಾಡಿ • ಸಾಮಗ್ರಿ ಆರಿಸಿ • ಕೌಂಟರ್‌ನಲ್ಲಿ ಪಡೆಯಿರಿ",
+  address: "Shop No. 1, Main Market, Bengaluru, Karnataka",
   phone: "+91 98765 43210",
   upiId: "7795565216-1@okbizaxis",
   currency: "₹",
@@ -26,779 +22,636 @@ export const INITIAL_STORE_CONFIG = {
   expressPackingFee: 0,
   pickupLocations: [
     "Main Entrance Stand (Express)",
-    "Aisle 1 - Grains & Staples",
-    "Aisle 2 - Oils, Ghee & Masalas",
-    "Aisle 3 - Dairy & Beverages",
-    "Aisle 4 - Household & Cleaning",
+    "Aisle 1 - Grains & Staples (ಧಾನ್ಯಗಳು)",
+    "Aisle 2 - Oils, Ghee & Masalas (ಎಣ್ಣೆ, ತುಪ್ಪ)",
+    "Aisle 3 - Dairy & Beverages (ಹಾಲು, ಪಾನೀಯಗಳು)",
+    "Aisle 4 - Household & Cleaning (ಸ್ವಚ್ಛತೆ)",
     "Billing Counter 1",
     "Billing Counter 2"
   ]
 };
 
+// Trilingual Category Taxonomy
 export const CATEGORIES = [
-  { id: "all", name: "All Items", nameHindi: "सभी सामान", icon: "🛒" },
-  { id: "staples", name: "Atta, Rice & Grains", nameHindi: "आटा, चावल व अनाज", icon: "🌾" },
-  { id: "sugar-sweeteners", name: "Sugar & Jaggery", nameHindi: "चीनी, गुड़ व बूरा", icon: "🍬" },
-  { id: "oils-ghee", name: "Cooking Oils & Ghee", nameHindi: "तेल और शुद्ध घी", icon: "🛢️" },
-  { id: "dals-pulses", name: "Dals & Pulses", nameHindi: "दालें और दलहन", icon: "🥣" },
-  { id: "spices-masala", name: "Spices & Masalas", nameHindi: "मसाले और खड़े मसाले", icon: "🌶️" },
-  { id: "dairy-bread", name: "Dairy & Bakery", nameHindi: "दूध, दही व ब्रेड", icon: "🥛" },
-  { id: "tea-beverages", name: "Tea, Coffee & Drinks", nameHindi: "चाय, कॉफ़ी व पेय", icon: "☕" },
-  { id: "snacks-namkeen", name: "Snacks & Biscuits", nameHindi: "बिस्कुट व नमकीन", icon: "🍪" },
-  { id: "household-clean", name: "Cleaning & Care", nameHindi: "सफाई व घरेलू सामान", icon: "🧼" },
-  { id: "puja-dryfruits", name: "Puja & Dry Fruits", nameHindi: "पूजा सामग्री व मेवे", icon: "🪔" }
+  { id: "all", name: "All Items", nameHindi: "सभी सामान", nameKannada: "ಎಲ್ಲಾ ಸಾಮಗ್ರಿಗಳು", icon: "🛒" },
+  { id: "staples", name: "Atta, Rice & Grains", nameHindi: "आटा, चावल व अनाज", nameKannada: "ಹಿಟ್ಟು, ಅಕ್ಕಿ ಮತ್ತು ಧಾನ್ಯಗಳು", icon: "🌾" },
+  { id: "sugar-sweeteners", name: "Sugar, Rava & Jaggery", nameHindi: "चीनी, रवा व गुड़", nameKannada: "ಸಕ್ಕರೆ, ರವೆ ಮತ್ತು ಬೆಲ್ಲ", icon: "🍬" },
+  { id: "oils-ghee", name: "Cooking Oils & Ghee", nameHindi: "तेल और शुद्ध घी", nameKannada: "ಅಡುಗೆ ಎಣ್ಣೆ ಮತ್ತು ತುಪ್ಪ", icon: "🛢️" },
+  { id: "dals-pulses", name: "Dals & Pulses", nameHindi: "दालें और दलहन", nameKannada: "ಬೇಳೆಕಾಳುಗಳು", icon: "🥣" },
+  { id: "spices-masala", name: "Spices & Masalas", nameHindi: "मसाले और खड़े मसाले", nameKannada: "ಮಸಾಲೆ ಪದಾರ್ಥಗಳು", icon: "🌶️" },
+  { id: "dairy-bread", name: "Dairy & Bakery", nameHindi: "दूध, दही व ब्रेड", nameKannada: "ಹಾಲು ಮತ್ತು ಬೇಕರಿ", icon: "🥛" },
+  { id: "tea-beverages", name: "Tea, Coffee & Drinks", nameHindi: "चाय, कॉफ़ी व पेय", nameKannada: "ಟೀ, ಕಾಫಿ ಮತ್ತು ಪಾನೀಯಗಳು", icon: "☕" },
+  { id: "snacks-namkeen", name: "Snacks & Biscuits", nameHindi: "बिस्कुट व नमकीन", nameKannada: "ತಿಂಡಿ ಮತ್ತು ಬಿಸ್ಕತ್ತು", icon: "🍪" },
+  { id: "household-clean", name: "Cleaning & Care", nameHindi: "सफाई व घरेलू सामान", nameKannada: "ಸ್ವಚ್ಛತೆ ಮತ್ತು ಗೃಹೋಪಯೋಗಿ", icon: "🧼" },
+  { id: "puja-dryfruits", name: "Puja & Dry Fruits", nameHindi: "पूजा सामग्री व मेवे", nameKannada: "ಪೂಜಾ ಸಾಮಗ್ರಿ ಮತ್ತು ಒಣಹಣ್ಣುಗಳು", icon: "🪔" }
 ];
 
-// Core 50 hand-crafted staple grocery products
+// Comprehensive Multi-language Dictionary
+export const I18N = {
+  en: {
+    langName: "English",
+    storeTagline: "Scan in Aisle • Order • Collect at Counter",
+    searchPlaceholder: "Search 2,000+ Groceries (Sugar, Dals, Rice, Oils...)",
+    cartTitle: "Your Shopping Cart",
+    cartEmpty: "Your cart is empty. Add grocery items to begin!",
+    itemsSubtotal: "Items Subtotal",
+    bagPacking: "Express Bag Packing",
+    free: "FREE",
+    taxes: "Taxes & GST",
+    totalPayable: "Total Payable",
+    selectPaymentMode: "Select Payment Mode:",
+    upiPayment: "UPI Payment",
+    upiSub: "Pay directly via PhonePe, GPay, Paytm or Any UPI app",
+    cashCounter: "Pay Cash at Counter",
+    cashSub: "Pay cash when picking up your packed bag",
+    cardPayment: "Card Payment / POS",
+    cardSub: "Debit / Credit card at collection counter",
+    custName: "Your Full Name",
+    custPhone: "10-Digit Mobile Number (For Pickup Identification)",
+    enterMobile: "Enter 10-digit mobile number",
+    packingNote: "Special Packing Note (Optional)",
+    payAndBook: "Pay via UPI & Book Bag",
+    placeOrder: "Place Order & Get Token",
+    pickupToken: "SHAGUN STORE PICKUP TOKEN",
+    collectionSpot: "Collection Spot:",
+    orderStatus1: "1. Order Placed & Confirmed",
+    orderStatus2: "2. Staff Packing in Carry Bag",
+    orderStatus3: "3. Ready for Collection",
+    orderStatus4: "4. Handed Over to Customer",
+    staffPacking: "Staff is currently packing your items at shelves...",
+    orderAwaitingVerify: "Order Submitted • Awaiting Shop UPI Verification",
+    orderAwaitingVerifyDesc: "Store owner is verifying payment receipt on UPI ID. Packing begins upon confirmation.",
+    reopenUpi: "Re-open UPI App",
+    verifiedUpi: "🟢 UPI Payment Verified by Store Owner",
+    verifiedUpiDesc: "Bank receipt confirmed. Staff is packing your groceries!",
+    bagReadyTitle: "🎉 Your Grocery Bag is Packed & Ready!",
+    bagReadyDesc: "Please walk to the counter and show your Token to collect your bag.",
+    itemsInOrder: "Items in this Order",
+    billSummary: "Bill Summary",
+    grandTotal: "Grand Total",
+    addMoreItems: "➕ Add More Items to Active Order",
+    orderMoreItems: "🛒 Order More Items / New Bag",
+    showTokenStaff: "Show this QR / Token to SHAGUN STORE Staff",
+    staffDashboardTitle: "👨‍🍳 Staff Packing Terminal",
+    staffDashboardSub: "Live orders queue • Check off items as you pack into carry bags",
+    newOrders: "🔴 New Orders",
+    packingOrders: "🔵 Currently Packing",
+    readyOrders: "🟢 Ready for Collection",
+    completedOrders: "✓ Fulfilled Orders",
+    checkAll: "✓ Check All",
+    startPacking: "📦 Start Packing",
+    markReady: "🔔 Mark Ready & Alert Customer",
+    handOver: "✓ Handed to Customer",
+    undoStatus: "↩ Undo Status",
+    confirmBankReceived: "🟢 Confirm Bank Payment Received",
+    awaitingBankReceipt: "⚠️ UPI Payment (Check Soundbox / Bank SMS)",
+    loadMore: "Load More Items (+36)",
+    outOfStock: "Out of Stock",
+    addBtn: "+ Add"
+  },
+  hi: {
+    langName: "हिंदी",
+    storeTagline: "स्कैन करें • सामान चुनें • काउंटर से प्राप्त करें",
+    searchPlaceholder: "2,000+ सामान खोजें (चीनी, दाल, चावल, तेल...)",
+    cartTitle: "आपकी शॉपिंग कार्ट",
+    cartEmpty: "आपकी कार्ट खाली है। खरीदारी शुरू करने के लिए सामान जोड़ें!",
+    itemsSubtotal: "सामान का कुल मूल्य",
+    bagPacking: "एक्सप्रेस बैग पैकिंग",
+    free: "मुफ़्त",
+    taxes: "टैक्स व जीएसटी",
+    totalPayable: "कुल देय राशि",
+    selectPaymentMode: "भुगतान का तरीका चुनें:",
+    upiPayment: "UPI पेमेंट",
+    upiSub: "PhonePe, GPay, Paytm या किसी भी UPI ऐप से सीधे भुगतान करें",
+    cashCounter: "काउंटर पर नकद (Cash) दें",
+    cashSub: "सामान का बैग लेते समय काउंटर पर नकद भुगतान करें",
+    cardPayment: "कार्ड पेमेंट / POS",
+    cardSub: "काउंटर पर डेबिट/क्रेडिट कार्ड से भुगतान करें",
+    custName: "आपका नाम",
+    custPhone: "10 अंकों का मोबाइल नंबर (टोकन पहचान के लिए)",
+    enterMobile: "10 अंकों का मोबाइल नंबर दर्ज करें",
+    packingNote: "पैकिंग निर्देश (वैकल्पिक)",
+    payAndBook: "UPI से भुगतान करें व बैग बुक करें",
+    placeOrder: "ऑर्डर बुक करें व टोकन प्राप्त करें",
+    pickupToken: "शगुन स्टोर पिकअप टोकन",
+    collectionSpot: "प्राप्ति काउंटर:",
+    orderStatus1: "1. ऑर्डर दर्ज व पुष्ट हुआ",
+    orderStatus2: "2. बैग में सामान पैक हो रहा है",
+    orderStatus3: "3. काउंटर पर लेने हेतु तैयार",
+    orderStatus4: "4. ग्राहक को सौंप दिया गया",
+    staffPacking: "दुकान कर्मचारी अलमारियों से आपका सामान पैक कर रहे हैं...",
+    orderAwaitingVerify: "ऑर्डर दर्ज • दुकानदार सत्यापन की प्रतीक्षा",
+    orderAwaitingVerifyDesc: "दुकानदार UPI ID पर भुगतान की पुष्टि कर रहे हैं। पुष्टि होते ही पैकिंग शुरू हो जाएगी।",
+    reopenUpi: "UPI ऐप दोबारा खोलें",
+    verifiedUpi: "🟢 दुकानदार द्वारा UPI भुगतान सत्यापित",
+    verifiedUpiDesc: "बैंक में राशि प्राप्त हो चुकी है। कर्मचारी आपका सामान पैक कर रहे हैं!",
+    bagReadyTitle: "🎉 आपका किराना बैग पैक होकर तैयार है!",
+    bagReadyDesc: "कृपया काउंटर पर जाएं और अपना टोकन दिखाकर बैग प्राप्त करें।",
+    itemsInOrder: "इस ऑर्डर में सामान",
+    billSummary: "बिल का विवरण",
+    grandTotal: "कुल राशि",
+    addMoreItems: "➕ इसी चालू ऑर्डर में और सामान जोड़ें",
+    orderMoreItems: "🛒 और सामान खरीदें / नया बैग",
+    showTokenStaff: "यह QR / टोकन शगुन स्टोर स्टाफ को दिखाएं",
+    staffDashboardTitle: "👨‍🍳 स्टाफ पैकिंग टर्मिनल",
+    staffDashboardSub: "लाइव ऑर्डर्स • सामान पैक करते हुए टिक करें",
+    newOrders: "🔴 नए ऑर्डर्स",
+    packingOrders: "🔵 पैकिंग जारी",
+    readyOrders: "🟢 काउंटर पर तैयार",
+    completedOrders: "✓ पूर्ण हुए ऑर्डर्स",
+    checkAll: "✓ सभी चुनें",
+    startPacking: "📦 पैकिंग शुरू करें",
+    markReady: "🔔 तैयार मार्क करें व फोन अलर्ट दें",
+    handOver: "✓ ग्राहक को बैग दे दिया",
+    undoStatus: "↩ स्थिति वापस बदलें",
+    confirmBankReceived: "🟢 बैंक/साउंडबॉक्स में राशि प्राप्त हुई (पुष्टि करें)",
+    awaitingBankReceipt: "⚠️ UPI पेमेंट (साउंडबॉक्स/बैंक SMS जांचें)",
+    loadMore: "और सामान देखें (+36)",
+    outOfStock: "स्टॉक समाप्त",
+    addBtn: "+ जोड़ें"
+  },
+  kn: {
+    langName: "ಕನ್ನಡ",
+    storeTagline: "ಸ್ಕ್ಯಾನ್ ಮಾಡಿ • ಸಾಮಗ್ರಿ ಆರಿಸಿ • ಕೌಂಟರ್‌ನಲ್ಲಿ ಪಡೆಯಿರಿ",
+    searchPlaceholder: "2,000+ ದಿನಸಿ ಸಾಮಗ್ರಿ ಹುಡುಕಿ (ಸಕ್ಕರೆ, ಬೇಳೆ, ಅಕ್ಕಿ, ಎಣ್ಣೆ...)",
+    cartTitle: "ನಿಮ್ಮ ಶಾಪಿಂಗ್ ಕಾರ್ಟ್",
+    cartEmpty: "ನಿಮ್ಮ ಕಾರ್ಟ್ ಖಾಲಿಯಾಗಿದೆ. ಸಾಮಗ್ರಿಗಳನ್ನು ಸೇರಿಸಿ!",
+    itemsSubtotal: "ಒಟ್ಟು ಸಾಮಗ್ರಿಗಳ ಮೊತ್ತ",
+    bagPacking: "ಎಕ್ಸ್‌ಪ್ರೆಸ್ ಬ್ಯಾಗ್ ಪ್ಯಾಕಿಂಗ್",
+    free: "ಉಚಿತ",
+    taxes: "ತೆರಿಗೆ ಮತ್ತು ಜಿಎಸ್‌ಟಿ",
+    totalPayable: "ಪಾವತಿಸಬೇಕಾದ ಒಟ್ಟು ಮೊತ್ತ",
+    selectPaymentMode: "ಪಾವತಿ ವಿಧಾನವನ್ನು ಆಯ್ಕೆಮಾಡಿ:",
+    upiPayment: "ಯುಪಿಐ (UPI) ಪಾವತಿ",
+    upiSub: "ಫೋನ್‌ಪೇ, ಜಿಪೇ, ಪೇಟಿಎಂ ಅಥವಾ ಯಾವುದೇ ಯುಪಿಐ ಆಪ್ ಮೂಲಕ ನೇರ ಪಾವತಿ",
+    cashCounter: "ಕೌಂಟರ್‌ನಲ್ಲಿ ನಗದು ಪಾವತಿ (Cash)",
+    cashSub: "ಪ್ಯಾಕ್ ಮಾಡಿದ ಬ್ಯಾಗ್ ಪಡೆಯುವಾಗ ನಗದು ಹಣ ನೀಡಿ",
+    cardPayment: "ಕಾರ್ಡ್ ಪಾವತಿ / ಪಿಒಎಸ್ (POS)",
+    cardSub: "ಕೌಂಟರ್‌ನಲ್ಲಿ ಡೆಬಿಟ್/ಕ್ರೆಡಿಟ್ ಕಾರ್ಡ್ ಬಳಸಿ ಪಾವತಿಸಿ",
+    custName: "ನಿಮ್ಮ ಹೆಸರು",
+    custPhone: "10 ಅಂಕಿಯ ಮೊಬೈಲ್ ಸಂಖ್ಯೆ (ಟೋಕನ್ ಗುರುತಿಗೆ)",
+    enterMobile: "10 ಅಂಕಿಯ ಮೊಬೈಲ್ ಸಂಖ್ಯೆ ನಮೂದಿಸಿ",
+    packingNote: "ವಿಶೇಷ ಸೂಚನೆ (ಐಚ್ಛಿಕ)",
+    payAndBook: "ಯುಪಿಐ ಪಾವತಿಸಿ ಬ್ಯಾಗ್ ಬುಕ್ ಮಾಡಿ",
+    placeOrder: "ಆರ್ಡರ್ ಮಾಡಿ ಟೋಕನ್ ಪಡೆಯಿರಿ",
+    pickupToken: "ಶಗುನ್ ಸ್ಟೋರ್ ಪಿಕಪ್ ಟೋಕನ್",
+    collectionSpot: "ಪಡೆಯುವ ಸ್ಥಳ:",
+    orderStatus1: "1. ಆರ್ಡರ್ ಸ್ವೀಕರಿಸಲಾಗಿದೆ ಮತ್ತು ದೃಢೀಕರಿಸಲಾಗಿದೆ",
+    orderStatus2: "2. ಸಾಮಗ್ರಿಗಳನ್ನು ಬ್ಯಾಗ್‌ನಲ್ಲಿ ಪ್ಯಾಕ್ ಮಾಡಲಾಗುತ್ತಿದೆ",
+    orderStatus3: "3. ಕೌಂಟರ್‌ನಲ್ಲಿ ಪಡೆಯಲು ಸಿದ್ಧವಾಗಿದೆ",
+    orderStatus4: "4. ಗ್ರಾಹಕರಿಗೆ ಹಸ್ತಾಂತರಿಸಲಾಗಿದೆ",
+    staffPacking: "ಸಿಬ್ಬಂದಿ ನಿಮ್ಮ ಸಾಮಗ್ರಿಗಳನ್ನು ಪ್ಯಾಕ್ ಮಾಡುತ್ತಿದ್ದಾರೆ...",
+    orderAwaitingVerify: "ಆರ್ಡರ್ ಸಲ್ಲಿಸಲಾಗಿದೆ • ಅಂಗಡಿ ಮಾಲೀಕರ ದೃಢೀಕರಣದ ನಿರೀಕ್ಷೆ",
+    orderAwaitingVerifyDesc: "ಅಂಗಡಿ ಮಾಲೀಕರು ಯುಪಿಐ ಪಾವತಿ ಪರಿಶೀಲಿಸುತ್ತಿದ್ದಾರೆ. ದೃಢಪಟ್ಟ ತಕ್ಷಣ ಪ್ಯಾಕಿಂಗ್ ಆರಂಭವಾಗುತ್ತದೆ.",
+    reopenUpi: "ಯುಪಿಐ ಆಪ್ ಮತ್ತೆ ತೆರೆಯಿರಿ",
+    verifiedUpi: "🟢 ಅಂಗಡಿ ಮಾಲೀಕರಿಂದ ಯುಪಿಐ ಪಾವತಿ ದೃಢಪಟ್ಟಿದೆ",
+    verifiedUpiDesc: "ಬ್ಯಾಂಕ್‌ಗೆ ಹಣ ಸಂದಾಯವಾಗಿದೆ. ಸಿಬ್ಬಂದಿ ನಿಮ್ಮ ಸಾಮಗ್ರಿಗಳನ್ನು ಪ್ಯಾಕ್ ಮಾಡುತ್ತಿದ್ದಾರೆ!",
+    bagReadyTitle: "🎉 ನಿಮ್ಮ ದಿನಸಿ ಬ್ಯಾಗ್ ಸಿದ್ಧವಾಗಿದೆ!",
+    bagReadyDesc: "ದಯವಿಟ್ಟು ಕೌಂಟರ್‌ಗೆ ಹೋಗಿ ನಿಮ್ಮ ಟೋಕನ್ ತೋರಿಸಿ ಬ್ಯಾಗ್ ಪಡೆದುಕೊಳ್ಳಿ.",
+    itemsInOrder: "ಈ ಆರ್ಡರ್‌ನಲ್ಲಿರುವ ಸಾಮಗ್ರಿಗಳು",
+    billSummary: "ಬಿಲ್ ವಿವರ",
+    grandTotal: "ಒಟ್ಟು ಮೊತ್ತ",
+    addMoreItems: "➕ ಈ ಆರ್ಡರ್‌ಗೆ ಇನ್ನಷ್ಟು ಸಾಮಗ್ರಿ ಸೇರಿಸಿ",
+    orderMoreItems: "🛒 ಇನ್ನಷ್ಟು ಸಾಮಗ್ರಿ ಖರೀದಿಸಿ / ಹೊಸ ಬ್ಯಾಗ್",
+    showTokenStaff: "ಈ ಕ್ಯೂಆರ್ / ಟೋಕನ್ ಅನ್ನು ಅಂಗಡಿ ಸಿಬ್ಬಂದಿಗೆ ತೋರಿಸಿ",
+    staffDashboardTitle: "👨‍🍳 ಸಿಬ್ಬಂದಿ ಪ್ಯಾಕಿಂಗ್ ಟರ್ಮಿನಲ್",
+    staffDashboardSub: "ಲೈವ್ ಆರ್ಡರ್ ಲಿಸ್ಟ್ • ಪ್ಯಾಕ್ ಮಾಡಿದಂತೆ ಟಿಕ್ ಮಾಡಿ",
+    newOrders: "🔴 ಹೊಸ ಆರ್ಡರ್‌ಗಳು",
+    packingOrders: "🔵 ಪ್ಯಾಕಿಂಗ್ ಪ್ರಗತಿಯಲ್ಲಿದೆ",
+    readyOrders: "🟢 ಕೌಂಟರ್‌ನಲ್ಲಿ ಸಿದ್ಧವಾಗಿದೆ",
+    completedOrders: "✓ ಪೂರ್ಣಗೊಂಡ ಆರ್ಡರ್‌ಗಳು",
+    checkAll: "✓ ಎಲ್ಲವನ್ನೂ ಆಯ್ಕೆಮಾಡಿ",
+    startPacking: "📦 ಪ್ಯಾಕಿಂಗ್ ಪ್ರಾರಂಭಿಸಿ",
+    markReady: "🔔 ಸಿದ್ಧವಾಗಿದೆ ಎಂದು ಗುರುತಿಸಿ",
+    handOver: "✓ ಗ್ರಾಹಕರಿಗೆ ನೀಡಲಾಗಿದೆ",
+    undoStatus: "↩ ಸ್ಥಿತಿ ಹಿಂತಿರುಗಿಸಿ",
+    confirmBankReceived: "🟢 ಬ್ಯಾಂಕ್‌ನಲ್ಲಿ ಹಣ ಜಮೆಯಾಗಿದೆ (ದೃಢೀಕರಿಸಿ)",
+    awaitingBankReceipt: "⚠️ ಯುಪಿಐ ಪಾವತಿ (ಸೌಂಡ್‌ಬಾಕ್ಸ್ / SMS ಪರಿಶೀಲಿಸಿ)",
+    loadMore: "ಇನ್ನಷ್ಟು ಸಾಮಗ್ರಿ ವೀಕ್ಷಿಸಿ (+36)",
+    outOfStock: "ಖಾಲಿಯಾಗಿದೆ",
+    addBtn: "+ ಸೇರಿಸಿ"
+  }
+};
+
+// Core Staple Grocery Products with Granular Multi-Variants (250g, 500g, 1kg, 2kg, 3kg, 5kg, 10kg & 500ml, 1L, 2L, 5L, 15L)
 const CORE_GROCERY_ITEMS = [
   // 1. Sugar & Sweeteners
   {
     id: "sug-01",
-    name: "Refined White Crystal Sugar (सफेद चीनी)",
+    name: "Refined Crystal Sugar (सफेद चीनी / ಸಕ್ಕರೆ)",
     category: "sugar-sweeteners",
     price: 44,
     unit: "1 kg",
     variants: [
+      { name: "250g Pack", price: 12 },
+      { name: "500g Pack", price: 23 },
       { name: "1 kg Pack", price: 44 },
-      { name: "5 kg Bulk Pack", price: 215 },
-      { name: "10 kg Family Pack", price: 420 },
-      { name: "50 kg Sack (Bori)", price: 2050 }
+      { name: "2 kg Pack", price: 88 },
+      { name: "3 kg Pack", price: 130 },
+      { name: "5 kg Family Pack", price: 215 },
+      { name: "10 kg Bulk Sack", price: 420 }
     ],
     inStock: true,
     badge: "Bestseller",
-    description: "Sparkling sulphur-free crystal white sugar, clean and high-purity for daily tea, milk, and sweets.",
+    description: "Sparkling clean crystal white sugar for daily tea, coffee, sweets, and cooking.",
     image: "https://images.unsplash.com/photo-1581441363689-1f3c3c414635?w=500&auto=format&fit=crop&q=80"
   },
   {
     id: "sug-02",
-    name: "Pure Desi Kolhapuri Jaggery / Gur (गुड़)",
+    name: "Pure Desi Kolhapuri Jaggery / Gur (गुड़ / ಬೆಲ್ಲ)",
     category: "sugar-sweeteners",
     price: 65,
     unit: "1 kg",
     variants: [
+      { name: "250g Tub", price: 20 },
       { name: "500g Tub", price: 35 },
       { name: "1 kg Block", price: 65 },
-      { name: "5 kg Bucket", price: 310 }
+      { name: "2 kg Pack", price: 125 },
+      { name: "5 kg Bucket", price: 300 }
     ],
     inStock: true,
-    badge: "Organic",
-    description: "Traditional chemical-free sugarcane gur block rich in iron, calcium, and natural minerals.",
-    image: "https://images.unsplash.com/photo-1615485290382-441e4d049cb5?w=500&auto=format&fit=crop&q=80"
+    badge: "Pure Organic",
+    description: "Natural unrefined traditional jaggery rich in natural minerals and iron.",
+    image: "https://images.unsplash.com/photo-1608686207856-001b95cf60ca?w=500&auto=format&fit=crop&q=80"
   },
   {
     id: "sug-03",
-    name: "Dhampure Pure Bura / Khandsari Sugar (देसी खांड / बूरा)",
+    name: "Fine Rava / Bombay Sooji (सूजी / ರವೆ)",
     category: "sugar-sweeteners",
-    price: 75,
+    price: 52,
     unit: "1 kg",
     variants: [
-      { name: "1 kg Pack", price: 75 },
-      { name: "5 kg Pack", price: 360 }
+      { name: "250g Pack", price: 15 },
+      { name: "500g Pack", price: 27 },
+      { name: "1 kg Pack", price: 52 },
+      { name: "2 kg Pack", price: 100 },
+      { name: "5 kg Pack", price: 245 },
+      { name: "10 kg Bag", price: 480 }
     ],
     inStock: true,
-    badge: "Unprocessed",
-    description: "Naturally crystallized unrefined desi khand for sweets, laddoos, and cooling drinks.",
-    image: "https://images.unsplash.com/photo-1581441363689-1f3c3c414635?w=500&auto=format&fit=crop&q=80"
-  },
-
-  // 2. Staples, Atta & Rice
-  {
-    id: "rice-01",
-    name: "Daawat Rozana Basmati Rice (बासमती चावल)",
-    category: "staples",
-    price: 110,
-    unit: "1 kg",
-    variants: [
-      { name: "1 kg Bag", price: 110 },
-      { name: "5 kg Bag", price: 520 },
-      { name: "10 kg Family Pack", price: 999 }
-    ],
-    inStock: true,
-    badge: "Super Aromatic",
-    description: "Aromatic long-grain basmati rice aged to perfection, non-sticky texture for daily pulao & meals.",
+    badge: "Fresh Ground",
+    description: "Crispy granulated wheat sooji ideal for Upma, Rava Idli, Halwa, and Kesari Bath.",
     image: "https://images.unsplash.com/photo-1586201375761-83865001e31c?w=500&auto=format&fit=crop&q=80"
   },
   {
-    id: "rice-02",
-    name: "India Gate Classic Super Basmati Rice (इंडिया गेट बासमती)",
-    category: "staples",
-    price: 195,
+    id: "sug-04",
+    name: "Premium Fine Maida / All Purpose Flour (मैदा / ಮೈದಾ)",
+    category: "sugar-sweeteners",
+    price: 48,
     unit: "1 kg",
     variants: [
-      { name: "1 kg Pack", price: 195 },
-      { name: "5 kg Bag", price: 920 },
-      { name: "10 kg Bag", price: 1790 }
+      { name: "250g Pack", price: 14 },
+      { name: "500g Pack", price: 25 },
+      { name: "1 kg Pack", price: 48 },
+      { name: "2 kg Pack", price: 94 },
+      { name: "5 kg Pack", price: 225 },
+      { name: "10 kg Sack", price: 440 }
     ],
     inStock: true,
-    badge: "Premium Extra Long",
-    description: "2-year aged royal basmati rice with exotic aroma and pearly extra-long slender grains.",
-    image: "https://images.unsplash.com/photo-1536304993881-ff6e9eefa2a6?w=500&auto=format&fit=crop&q=80"
+    badge: "Super Fine",
+    description: "Pure refined wheat flour for Puris, Parottas, Naan, Cakes, and festive snacks.",
+    image: "https://images.unsplash.com/photo-1627485937980-221c88ac04f9?w=500&auto=format&fit=crop&q=80"
   },
+
+  // 2. Dals, Pulses & Legumes
   {
-    id: "rice-03",
-    name: "Premium Sona Masoori Rice (सोना मसूरी चावल)",
-    category: "staples",
-    price: 68,
+    id: "dal-01",
+    name: "Premium Unpolished Toor Dal (अरहर दाल / ತೊಗರಿ ಬೇಳೆ)",
+    category: "dals-pulses",
+    price: 155,
     unit: "1 kg",
     variants: [
-      { name: "1 kg Pack", price: 68 },
-      { name: "5 kg Bag", price: 330 },
-      { name: "25 kg Sack", price: 1550 }
+      { name: "250g Pack", price: 40 },
+      { name: "500g Pack", price: 80 },
+      { name: "1 kg Pack", price: 155 },
+      { name: "2 kg Pack", price: 305 },
+      { name: "3 kg Pack", price: 450 },
+      { name: "5 kg Bulk Pack", price: 740 },
+      { name: "10 kg Family Sack", price: 1450 }
     ],
     inStock: true,
-    badge: "Daily Essential",
-    description: "Lightweight, easy-to-digest medium grain rice double polished for daily lunch and dinner.",
-    image: "https://images.unsplash.com/photo-1536304993881-ff6e9eefa2a6?w=500&auto=format&fit=crop&q=80"
+    badge: "High Protein",
+    description: "Farm-fresh unpolished Toor dal, quick cooking and aromatic for Sambhar, Rasam, and Tadka.",
+    image: "https://images.unsplash.com/photo-1596797038530-2c107229654b?w=500&auto=format&fit=crop&q=80"
   },
   {
-    id: "atta-01",
-    name: "Aashirvaad Shudh Chakki Whole Wheat Atta (आशीर्वाद आटा)",
+    id: "dal-02",
+    name: "Yellow Moong Dal Split (धुली मूंग दाल / ಹೆಸರು ಬೇಳೆ)",
+    category: "dals-pulses",
+    price: 130,
+    unit: "1 kg",
+    variants: [
+      { name: "250g Pack", price: 35 },
+      { name: "500g Pack", price: 68 },
+      { name: "1 kg Pack", price: 130 },
+      { name: "2 kg Pack", price: 255 },
+      { name: "5 kg Pack", price: 620 },
+      { name: "10 kg Sack", price: 1210 }
+    ],
+    inStock: true,
+    badge: "Easy Digest",
+    description: "Light, healthy, and nutritious yellow moong dal for Pongal, Khichdi, and Soups.",
+    image: "https://images.unsplash.com/photo-1585994192701-f1a505c8574a?w=500&auto=format&fit=crop&q=80"
+  },
+  {
+    id: "dal-03",
+    name: "White Urad Dal Whole / Gota (उड़द गोटा / ಉದ್ದಿನ ಬೇಳೆ)",
+    category: "dals-pulses",
+    price: 140,
+    unit: "1 kg",
+    variants: [
+      { name: "250g Pack", price: 38 },
+      { name: "500g Pack", price: 72 },
+      { name: "1 kg Pack", price: 140 },
+      { name: "2 kg Pack", price: 275 },
+      { name: "5 kg Pack", price: 670 },
+      { name: "10 kg Sack", price: 1320 }
+    ],
+    inStock: true,
+    badge: "Idli Special",
+    description: "High batter yield whole urad gota for fluffy soft Idlis, crispy Dosas, and Vadas.",
+    image: "https://images.unsplash.com/photo-1515543237350-b3eea1ec8082?w=500&auto=format&fit=crop&q=80"
+  },
+  {
+    id: "dal-04",
+    name: "Chana Dal Bengal Gram (चना दाल / ಕಡಲೆ ಬೇಳೆ)",
+    category: "dals-pulses",
+    price: 95,
+    unit: "1 kg",
+    variants: [
+      { name: "250g Pack", price: 26 },
+      { name: "500g Pack", price: 50 },
+      { name: "1 kg Pack", price: 95 },
+      { name: "2 kg Pack", price: 185 },
+      { name: "5 kg Pack", price: 455 },
+      { name: "10 kg Sack", price: 890 }
+    ],
+    inStock: true,
+    badge: "Crispy Tadka",
+    description: "Golden polished chana dal for Vada, Dal Fry, Chutneys, and Puran Poli.",
+    image: "https://images.unsplash.com/photo-1546833999-b9f581a1996d?w=500&auto=format&fit=crop&q=80"
+  },
+
+  // 3. Atta, Rice & Grains
+  {
+    id: "sta-01",
+    name: "Aashirvaad Superior MP Sharbati Whole Wheat Atta (गेहूं आटा / ಗೋಧಿ ಹಿಟ್ಟು)",
     category: "staples",
     price: 245,
     unit: "5 kg",
     variants: [
+      { name: "1 kg Trial Pack", price: 52 },
+      { name: "2 kg Pack", price: 102 },
       { name: "5 kg Bag", price: 245 },
-      { name: "10 kg Bag", price: 470 },
-      { name: "25 kg Bulk Sack", price: 1120 }
+      { name: "10 kg Saver Pack", price: 470 },
+      { name: "20 kg Bulk Sack", price: 920 }
     ],
     inStock: true,
-    badge: "100% MP Sehore Wheat",
-    description: "Heavy grain stone-ground chakki fresh whole wheat atta. Yields ultra-soft, fluffy rotis all day.",
+    badge: "100% Sharbati",
+    description: "100% whole grain wheat flour stone ground for super soft rotis and fluffy chapattis.",
     image: "https://images.unsplash.com/photo-1509440159596-0249088772ff?w=500&auto=format&fit=crop&q=80"
   },
   {
-    id: "atta-02",
-    name: "Fortune Chakki Fresh Multigrain Atta (मल्टीग्रेन आटा)",
+    id: "sta-02",
+    name: "Royal Sona Masoori Raw Rice (सोना मसूरी चावल / ಸೋನಾ ಮಸೂರಿ ಅಕ್ಕಿ)",
     category: "staples",
-    price: 295,
-    unit: "5 kg",
+    price: 62,
+    unit: "1 kg",
     variants: [
+      { name: "1 kg Pack", price: 62 },
+      { name: "2 kg Pack", price: 122 },
       { name: "5 kg Bag", price: 295 },
-      { name: "10 kg Bag", price: 570 }
+      { name: "10 kg Bag", price: 580 },
+      { name: "25 kg Big Sack", price: 1420 }
     ],
     inStock: true,
-    badge: "High Fibre & Protein",
-    description: "Blend of 6 nutritious grains (Wheat, Soya, Chana, Oats, Maize, Psyllium Husk) for digestive health.",
-    image: "https://images.unsplash.com/photo-1509440159596-0249088772ff?w=500&auto=format&fit=crop&q=80"
+    badge: "Aged 1 Year",
+    description: "Lightweight, aromatic everyday Karnataka Sona Masoori rice, soft and non-sticky.",
+    image: "https://images.unsplash.com/photo-1586201375761-83865001e31c?w=500&auto=format&fit=crop&q=80"
   },
   {
-    id: "staple-04",
-    name: "Rajdhani Fine Sooji / Rawa (सूजी / रवा)",
+    id: "sta-03",
+    name: "India Gate Classic Basmati Rice (बासमती चावल / ಬಾಸುಮತಿ ಅಕ್ಕಿ)",
     category: "staples",
-    price: 36,
-    unit: "500g",
+    price: 185,
+    unit: "1 kg",
     variants: [
-      { name: "500g Pack", price: 36 },
-      { name: "1 kg Pack", price: 68 }
+      { name: "1 kg Pack", price: 185 },
+      { name: "2 kg Pack", price: 360 },
+      { name: "5 kg Royal Box", price: 875 },
+      { name: "10 kg Bag", price: 1720 }
     ],
     inStock: true,
-    badge: "Granulated",
-    description: "Coarse semolina ground from selected hard wheat grains for crispy halwa, upma, and dosas.",
-    image: "https://images.unsplash.com/photo-1509440159596-0249088772ff?w=500&auto=format&fit=crop&q=80"
-  },
-  {
-    id: "staple-05",
-    name: "Rajdhani Refined Maida (मैदा)",
-    category: "staples",
-    price: 38,
-    unit: "500g",
-    variants: [
-      { name: "500g Pack", price: 38 },
-      { name: "1 kg Pack", price: 72 }
-    ],
-    inStock: true,
-    badge: "Baking & Bhature",
-    description: "Finely milled white flour ideal for soft bhature, samosas, cakes, pastries, and puri.",
-    image: "https://images.unsplash.com/photo-1509440159596-0249088772ff?w=500&auto=format&fit=crop&q=80"
-  },
-  {
-    id: "staple-06",
-    name: "Rajdhani Fine Besan (चना बेसन)",
-    category: "staples",
-    price: 60,
-    unit: "500g",
-    variants: [
-      { name: "500g Pack", price: 60 },
-      { name: "1 kg Pack", price: 115 }
-    ],
-    inStock: true,
-    badge: "100% Chana Dal",
-    description: "Pure stone-ground chana dal flour for pakodas, kadhi, dhokla, and traditional sweets.",
-    image: "https://images.unsplash.com/photo-1509440159596-0249088772ff?w=500&auto=format&fit=crop&q=80"
+    badge: "Extra Long Grain",
+    description: "Royal aged extra long grain Basmati rice for Biryani, Pulao, and Ghee Rice.",
+    image: "https://images.unsplash.com/photo-1536304993881-ff6e9eefa2a6?w=500&auto=format&fit=crop&q=80"
   },
 
-  // 3. Cooking Oils & Desi Ghee
+  // 4. Cooking Oils & Desi Ghee
   {
     id: "oil-01",
-    name: "Fortune Sunlite Refined Sunflower Oil (सनफ्लावर तेल)",
+    name: "Fortune Sunlite Refined Sunflower Oil (सनफ्लावर तेल / ಸೂರ್ಯಕಾಂತಿ ಎಣ್ಣೆ)",
     category: "oils-ghee",
-    price: 135,
-    unit: "1 Litre Pouch",
+    price: 138,
+    unit: "1 Litre",
     variants: [
-      { name: "1 Litre Pouch", price: 135 },
-      { name: "5 Litre Jar / Can", price: 660 },
-      { name: "15 Litre Bulk Tin", price: 1950 }
+      { name: "500 ml Pouch", price: 72 },
+      { name: "1 Litre Pouch", price: 138 },
+      { name: "2 Litre Bottle", price: 270 },
+      { name: "5 Litre Can", price: 660 },
+      { name: "15 Litre Tin", price: 1950 }
     ],
     inStock: true,
     badge: "Heart Healthy",
-    description: "Light, low-absorb sunflower oil enriched with Vitamins A & D for healthy everyday cooking.",
+    description: "Light, transparent refined sunflower oil enriched with Vitamins A & D.",
     image: "https://images.unsplash.com/photo-1474979266404-7eaacbcd87c5?w=500&auto=format&fit=crop&q=80"
   },
   {
     id: "oil-02",
-    name: "Engine Kacchi Ghani Pure Mustard Oil (कच्ची घानी सरसों तेल)",
+    name: "Amul Pure Cow Ghee / Desi Ghee (शुद्ध गाय का घी / ಹಸುವಿನ ತುಪ್ಪ)",
+    category: "oils-ghee",
+    price: 610,
+    unit: "1 Litre",
+    variants: [
+      { name: "200 ml Jar", price: 135 },
+      { name: "500 ml Pouch", price: 315 },
+      { name: "1 Litre Tin/Jar", price: 610 },
+      { name: "2 Litre Jar", price: 1200 },
+      { name: "5 Litre Bucket", price: 2950 }
+    ],
+    inStock: true,
+    badge: "100% Pure Desi",
+    description: "Golden granular pure cow ghee with rich traditional aroma for sweets, dals, and rotis.",
+    image: "https://images.unsplash.com/photo-1631452180519-c014fe946bc7?w=500&auto=format&fit=crop&q=80"
+  },
+  {
+    id: "oil-03",
+    name: "Engine Cold Pressed Mustard Oil / Kachi Ghani (सरसों तेल / ಸಾಸಿವೆ ಎಣ್ಣೆ)",
     category: "oils-ghee",
     price: 155,
-    unit: "1 Litre Bottle",
+    unit: "1 Litre",
     variants: [
+      { name: "500 ml Bottle", price: 82 },
       { name: "1 Litre Bottle", price: 155 },
       { name: "2 Litre Bottle", price: 305 },
       { name: "5 Litre Can", price: 740 },
       { name: "15 Litre Tin", price: 2180 }
     ],
     inStock: true,
-    badge: "Pure Cold Pressed",
-    description: "First-press pungent mustard oil with natural antioxidants for authentic curries and pickling.",
-    image: "https://images.unsplash.com/photo-1620706857370-e1b9770e8bb1?w=500&auto=format&fit=crop&q=80"
+    badge: "100% Pungent",
+    description: "Traditional cold pressed Kachi Ghani mustard oil with natural pungency and antioxidants.",
+    image: "https://images.unsplash.com/photo-1608797178974-15b35a61dd75?w=500&auto=format&fit=crop&q=80"
   },
   {
-    id: "oil-03",
-    name: "Saffola Gold Pro Healthy Blended Cooking Oil (सफोला गोल्ड)",
+    id: "oil-04",
+    name: "Pure Cold Pressed Groundnut / Peanut Oil (मूंगफली तेल / ಕಡಲೆಕಾಯಿ ಎಣ್ಣೆ)",
     category: "oils-ghee",
     price: 175,
-    unit: "1 Litre Pouch",
+    unit: "1 Litre",
     variants: [
-      { name: "1 Litre Pouch", price: 175 },
-      { name: "5 Litre Jar", price: 840 }
+      { name: "500 ml Bottle", price: 92 },
+      { name: "1 Litre Bottle", price: 175 },
+      { name: "2 Litre Bottle", price: 345 },
+      { name: "5 Litre Can", price: 840 },
+      { name: "15 Litre Tin", price: 2450 }
     ],
     inStock: true,
-    badge: "Cholesterol Care",
-    description: "Triple anti-oxidant dual seed blend (Rice Bran & Sunflower) with LOSORB technology.",
+    badge: "Traditional Cold Pressed",
+    description: "Natural aroma cold pressed groundnut oil for healthy deep frying and traditional curries.",
     image: "https://images.unsplash.com/photo-1474979266404-7eaacbcd87c5?w=500&auto=format&fit=crop&q=80"
   },
-  {
-    id: "ghee-01",
-    name: "Amul Pure Cow Desi Ghee (अमूल गाय का शुद्ध घी)",
-    category: "oils-ghee",
-    price: 330,
-    unit: "500 ml",
-    variants: [
-      { name: "500 ml Refill Pouch", price: 330 },
-      { name: "1 Litre Tin", price: 640 },
-      { name: "5 Litre Jar", price: 3100 }
-    ],
-    inStock: true,
-    badge: "Granulated Aroma",
-    description: "Pure golden cow milk fat ghee with authentic homemade aroma, rich in vitamins A, D, E & K.",
-    image: "https://images.unsplash.com/photo-1631451095765-2c91616fc9e6?w=500&auto=format&fit=crop&q=80"
-  },
-  {
-    id: "ghee-02",
-    name: "Mother Dairy Pure Buffalo Desi Ghee (भैंस का दानेदार घी)",
-    category: "oils-ghee",
-    price: 320,
-    unit: "500 ml",
-    variants: [
-      { name: "500 ml Pouch", price: 320 },
-      { name: "1 Litre Tin", price: 620 }
-    ],
-    inStock: true,
-    badge: "Danedaar",
-    description: "Traditional danedaar white ghee from fresh buffalo cream for parathas, sweets, and dal tadka.",
-    image: "https://images.unsplash.com/photo-1631451095765-2c91616fc9e6?w=500&auto=format&fit=crop&q=80"
-  },
 
-  // 4. Dals & Pulses
-  {
-    id: "dal-01",
-    name: "Tata Sampann Unpolished Toor / Arhar Dal (अरहर दाल)",
-    category: "dals-pulses",
-    price: 175,
-    unit: "1 kg",
-    variants: [
-      { name: "500g Pack", price: 90 },
-      { name: "1 kg Pack", price: 175 },
-      { name: "5 kg Bag", price: 840 }
-    ],
-    inStock: true,
-    badge: "Unpolished High Protein",
-    description: "Naturally wholesome unpolished yellow toor dal, cooks faster with rich authentic flavor.",
-    image: "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=500&auto=format&fit=crop&q=80"
-  },
-  {
-    id: "dal-02",
-    name: "Tata Sampann Moong Dal Dhuli (धुली मूंग दाल)",
-    category: "dals-pulses",
-    price: 130,
-    unit: "1 kg",
-    variants: [
-      { name: "500g Pack", price: 68 },
-      { name: "1 kg Pack", price: 130 }
-    ],
-    inStock: true,
-    badge: "Easy to Digest",
-    description: "Yellow skinless split green gram, gentle on stomach, perfect for khichdi and halwa.",
-    image: "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=500&auto=format&fit=crop&q=80"
-  },
-  {
-    id: "dal-03",
-    name: "Tata Sampann Chana Dal (चना दाल)",
-    category: "dals-pulses",
-    price: 95,
-    unit: "1 kg",
-    variants: [
-      { name: "500g Pack", price: 50 },
-      { name: "1 kg Pack", price: 95 }
-    ],
-    inStock: true,
-    badge: "Crisp & Nutty",
-    description: "Split Bengal gram with rich nutty flavor for dal, chutneys, and sweet puran poli.",
-    image: "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=500&auto=format&fit=crop&q=80"
-  },
-  {
-    id: "dal-04",
-    name: "Premium Kashmiri Rajma / Red Kidney Beans (कश्मीरी राजमा)",
-    category: "dals-pulses",
-    price: 160,
-    unit: "1 kg",
-    variants: [
-      { name: "500g Pack", price: 85 },
-      { name: "1 kg Pack", price: 160 }
-    ],
-    inStock: true,
-    badge: "Rich & Creamy",
-    description: "Small red kidney beans that cook into a rich, melt-in-mouth creamy gravy.",
-    image: "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=500&auto=format&fit=crop&q=80"
-  },
-  {
-    id: "dal-05",
-    name: "Premium Amritsari White Kabuli Chana (काबुली चना / छोले)",
-    category: "dals-pulses",
-    price: 155,
-    unit: "1 kg",
-    variants: [
-      { name: "500g Pack", price: 80 },
-      { name: "1 kg Pack", price: 155 }
-    ],
-    inStock: true,
-    badge: "Jumbo Size",
-    description: "Big size white chickpeas for Punjabi chole bhature, salads, and hummus.",
-    image: "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=500&auto=format&fit=crop&q=80"
-  },
-
-  // 5. Spices & Masalas
+  // 5. Spices, Masalas & Seasonings
   {
     id: "spc-01",
-    name: "Tata Sampann Turmeric Powder (हल्दी पाउडर)",
+    name: "Everest Turmeric Powder / Haldi (हल्दी पाउडर / ಅರಿಶಿನ ಪುಡಿ)",
     category: "spices-masala",
-    price: 62,
-    unit: "200g",
+    price: 36,
+    unit: "100g",
     variants: [
-      { name: "200g Pack", price: 62 },
-      { name: "500g Pack", price: 145 },
-      { name: "1 kg Pack", price: 280 }
+      { name: "50g Pack", price: 20 },
+      { name: "100g Pack", price: 36 },
+      { name: "250g Pack", price: 85 },
+      { name: "500g Pack", price: 165 },
+      { name: "1 kg Saver Pack", price: 310 }
     ],
     inStock: true,
-    badge: "3% Active Curcumin",
-    description: "Naturally golden turmeric powder with high curcumin content for color, immunity, and flavor.",
+    badge: "High Curcumin",
+    description: "Golden yellow pure Salem turmeric powder ground from selected roots.",
     image: "https://images.unsplash.com/photo-1615485290382-441e4d049cb5?w=500&auto=format&fit=crop&q=80"
   },
   {
     id: "spc-02",
-    name: "MDH Deggi Mirch Red Chilli Powder (देगी मिर्च)",
-    category: "spices-masala",
-    price: 98,
-    unit: "100g",
-    variants: [
-      { name: "100g Box", price: 98 },
-      { name: "500g Box", price: 440 }
-    ],
-    inStock: true,
-    badge: "Natural Red Color",
-    description: "Special blend of Kashmiri and red capsicum chillies for vibrant natural red curry color.",
-    image: "https://images.unsplash.com/photo-1615485290382-441e4d049cb5?w=500&auto=format&fit=crop&q=80"
-  },
-  {
-    id: "spc-03",
-    name: "Catch Coriander / Dhaniya Powder (धनिया पाउडर)",
-    category: "spices-masala",
-    price: 65,
-    unit: "200g",
-    variants: [
-      { name: "200g Pack", price: 65 },
-      { name: "500g Pack", price: 155 }
-    ],
-    inStock: true,
-    badge: "Aromatic Aroma",
-    description: "Low-temperature ground whole coriander seeds ensuring long lasting aroma and taste.",
-    image: "https://images.unsplash.com/photo-1615485290382-441e4d049cb5?w=500&auto=format&fit=crop&q=80"
-  },
-  {
-    id: "spc-04",
-    name: "MDH Garam Masala (एमडीएच गरम मसाला)",
-    category: "spices-masala",
-    price: 92,
-    unit: "100g",
-    variants: [
-      { name: "100g Box", price: 92 },
-      { name: "500g Box", price: 420 }
-    ],
-    inStock: true,
-    badge: "Master Blend",
-    description: "Royal blend of 15 authentic spices including cardamom, clove, cinnamon, and nutmeg.",
-    image: "https://images.unsplash.com/photo-1615485290382-441e4d049cb5?w=500&auto=format&fit=crop&q=80"
-  },
-  {
-    id: "spc-05",
-    name: "Tata Salt Vacuum Evaporated (टाटा नमक)",
+    name: "Tata Salt Vacuum Evaporated Iodized Salt (नमक / ಉಪ್ಪು)",
     category: "spices-masala",
     price: 28,
     unit: "1 kg",
     variants: [
-      { name: "1 kg Packet", price: 28 },
-      { name: "Pack of 5 (5 x 1kg)", price: 135 }
+      { name: "1 kg Pack", price: 28 },
+      { name: "2 kg Twin Pack", price: 54 },
+      { name: "5 kg Bulk Pack", price: 130 }
     ],
     inStock: true,
     badge: "Desh Ka Namak",
-    description: "India's trusted vacuum evaporated iodized table salt ensuring mental and physical health.",
-    image: "https://images.unsplash.com/photo-1581441363689-1f3c3c414635?w=500&auto=format&fit=crop&q=80"
-  },
-
-  // 6. Dairy & Breakfast
-  {
-    id: "dry-01",
-    name: "Amul Taaza Homogenised Toned Milk (अमूल ताज़ा दूध)",
-    category: "dairy-bread",
-    price: 54,
-    unit: "1 Litre Tetra Pack",
-    variants: [
-      { name: "1 Litre Tetra Pack", price: 54 },
-      { name: "Case of 12 (12 x 1L)", price: 630 }
-    ],
-    inStock: true,
-    badge: "No Boiling Required",
-    description: "UHT treated fresh toned milk, bacteria-free and stays fresh without boiling.",
-    image: "https://images.unsplash.com/photo-1563636619-e9143da7973b?w=500&auto=format&fit=crop&q=80"
+    description: "India's most trusted vacuum evaporated iodized salt for everyday purity.",
+    image: "https://images.unsplash.com/photo-1518110925495-5fe2fda0442c?w=500&auto=format&fit=crop&q=80"
   },
   {
-    id: "dry-02",
-    name: "Amul Pasteurised Butter (अमूल मक्खन)",
-    category: "dairy-bread",
-    price: 56,
+    id: "spc-03",
+    name: "MDH Kashmiri Mirch Powder (कश्मीरी लाल मिर्च / ಕಾಶ್ಮೀರಿ ಖಾರದ ಪುಡಿ)",
+    category: "spices-masala",
+    price: 95,
     unit: "100g",
     variants: [
-      { name: "100g Pack", price: 56 },
-      { name: "500g Block", price: 275 }
+      { name: "50g Pack", price: 50 },
+      { name: "100g Pack", price: 95 },
+      { name: "250g Pack", price: 220 },
+      { name: "500g Pack", price: 420 },
+      { name: "1 kg Pack", price: 810 }
     ],
     inStock: true,
-    badge: "Utterly Butterly",
-    description: "Delicious salted butter made from pure fresh cream for toast, parathas, and baking.",
-    image: "https://images.unsplash.com/photo-1589985270826-4b7bb135bc9d?w=500&auto=format&fit=crop&q=80"
-  },
-  {
-    id: "dry-03",
-    name: "Harvest Gold 100% Whole Wheat Brown Bread (ब्राउन ब्रेड)",
-    category: "dairy-bread",
-    price: 50,
-    unit: "400g Loaf",
-    variants: [
-      { name: "400g Loaf", price: 50 }
-    ],
-    inStock: true,
-    badge: "Fresh Baked Daily",
-    description: "Zero maida, high-fiber whole wheat sandwich bread baked fresh every morning.",
-    image: "https://images.unsplash.com/photo-1509440159596-0249088772ff?w=500&auto=format&fit=crop&q=80"
-  },
-  {
-    id: "dry-04",
-    name: "Amul Malai Paneer Block (अमूल फ्रेश पनीर)",
-    category: "dairy-bread",
-    price: 90,
-    unit: "200g Pack",
-    variants: [
-      { name: "200g Pack", price: 90 },
-      { name: "1 kg Pack", price: 420 }
-    ],
-    inStock: true,
-    badge: "Soft & Juicy",
-    description: "Real pasteurised cottage cheese with rich milky taste and smooth succulent texture.",
-    image: "https://images.unsplash.com/photo-1589985270826-4b7bb135bc9d?w=500&auto=format&fit=crop&q=80"
+    badge: "Rich Red Color",
+    description: "Mild spicy Kashmiri chili powder that gives vibrant deep red colour to curries and gravies.",
+    image: "https://images.unsplash.com/photo-1596040033229-a9821ebd058d?w=500&auto=format&fit=crop&q=80"
   },
 
-  // 7. Tea, Coffee & Beverages
+  // 6. Tea & Beverages
   {
     id: "bev-01",
-    name: "Tata Tea Gold Royal Assam & Darjeeling Tea (टाटा टी गोल्ड)",
+    name: "Tata Tea Gold Premium CTC Leaf & Long Leaves (टाटा टी गोल्ड / ಟಾಟಾ ಟೀ)",
     category: "tea-beverages",
     price: 155,
     unit: "250g",
     variants: [
-      { name: "250g Pouch", price: 155 },
-      { name: "500g Pouch", price: 295 },
-      { name: "1 kg Pack", price: 560 }
+      { name: "100g Trial Pack", price: 65 },
+      { name: "250g Pack", price: 155 },
+      { name: "500g Value Pack", price: 295 },
+      { name: "1 kg Family Pack", price: 560 }
     ],
     inStock: true,
-    badge: "Rich Darjeeling Leaves",
-    description: "Exquisite balance of strong Assam CTC tea with 15% gently rolled Darjeeling long leaves.",
-    image: "https://images.unsplash.com/photo-1544787219-7f47ccb76574?w=500&auto=format&fit=crop&q=80"
+    badge: "Rich Taste & Aroma",
+    description: "Exquisite blend of strong CTC tea with 15% gently rolled long leaves for rich aroma.",
+    image: "https://images.unsplash.com/photo-1576092768241-dec231879fc3?w=500&auto=format&fit=crop&q=80"
   },
   {
     id: "bev-02",
-    name: "Red Label Strong CTC Tea (रेड लेबल चाय)",
+    name: "Nescafé Classic Instant Pure Coffee (नेस्कैफे कॉफ़ी / ಕಾಫಿ ಪುಡಿ)",
     category: "tea-beverages",
-    price: 135,
-    unit: "250g",
+    price: 185,
+    unit: "50g Glass Jar",
     variants: [
-      { name: "250g Pack", price: 135 },
-      { name: "500g Pack", price: 260 },
-      { name: "1 kg Pack", price: 495 }
-    ],
-    inStock: true,
-    badge: "Swad Apnepan Ka",
-    description: "Strong tea blend enriched with flavonoids for taste, strength, and immunity.",
-    image: "https://images.unsplash.com/photo-1544787219-7f47ccb76574?w=500&auto=format&fit=crop&q=80"
-  },
-  {
-    id: "bev-03",
-    name: "Nescafe Classic Instant Coffee Jar (नेस्कैफे कॉफ़ी)",
-    category: "tea-beverages",
-    price: 190,
-    unit: "50g Jar",
-    variants: [
-      { name: "50g Glass Jar", price: 190 },
-      { name: "100g Glass Jar", price: 360 }
+      { name: "25g Pouch", price: 85 },
+      { name: "50g Glass Jar", price: 185 },
+      { name: "100g Glass Jar", price: 340 },
+      { name: "200g Saver Jar", price: 620 }
     ],
     inStock: true,
     badge: "100% Pure Coffee",
-    description: "Roasted robusta beans delivering intense coffee aroma and bold signature taste.",
-    image: "https://images.unsplash.com/photo-1514432324607-a09d9b4aefdd?w=500&auto=format&fit=crop&q=80"
-  },
-
-  // 8. Biscuits, Snacks & Namkeen
-  {
-    id: "snk-01",
-    name: "Haldiram's Nagpur Aloo Bhujia (आलू भुजिया)",
-    category: "snacks-namkeen",
-    price: 52,
-    unit: "200g",
-    variants: [
-      { name: "200g Pack", price: 52 },
-      { name: "400g Value Pack", price: 98 },
-      { name: "1 kg Family Pack", price: 230 }
-    ],
-    inStock: true,
-    badge: "Crispy & Spicy",
-    description: "Crispy spiced potato and chickpea noodles seasoned with authentic Indian spices.",
-    image: "https://images.unsplash.com/photo-1599490659213-e2b9527bd087?w=500&auto=format&fit=crop&q=80"
-  },
-  {
-    id: "snk-02",
-    name: "Parle-G Gold Glucose Biscuits (पारले-जी बिस्कुट)",
-    category: "snacks-namkeen",
-    price: 30,
-    unit: "250g Pack",
-    variants: [
-      { name: "250g Pack", price: 30 },
-      { name: "1 kg Super Pack", price: 110 }
-    ],
-    inStock: true,
-    badge: "All-Time Favorite",
-    description: "Crisp golden baked wheat and milk glucose biscuits, the classic tea companion.",
-    image: "https://images.unsplash.com/photo-1558961363-fa8fdf82db35?w=500&auto=format&fit=crop&q=80"
-  },
-
-  // 9. Cleaning, Detergents & Household
-  {
-    id: "cln-01",
-    name: "Surf Excel Easy Wash Detergent Powder (सर्फ एक्सेल)",
-    category: "household-clean",
-    price: 140,
-    unit: "1 kg",
-    variants: [
-      { name: "1 kg Pack", price: 140 },
-      { name: "3 kg Saver Pack", price: 390 },
-      { name: "5 kg Bucket Pack", price: 620 }
-    ],
-    inStock: true,
-    badge: "Tough Stain Removal",
-    description: "Engineered with super fine powder that removes tough stains like oil, tea, curry, and mud in 1 wash.",
-    image: "https://images.unsplash.com/photo-1583947215259-38e31be8751f?w=500&auto=format&fit=crop&q=80"
-  },
-  {
-    id: "cln-02",
-    name: "Vim Dishwash Gel Lemon (विम जेल)",
-    category: "household-clean",
-    price: 115,
-    unit: "500 ml Bottle",
-    variants: [
-      { name: "500 ml Bottle", price: 115 },
-      { name: "1 Litre Refill Pouch", price: 210 }
-    ],
-    inStock: true,
-    badge: "1 Spoon Power",
-    description: "Concentrated gel with the power of 100 lemons, cuts stubborn grease without scratches.",
-    image: "https://images.unsplash.com/photo-1583947215259-38e31be8751f?w=500&auto=format&fit=crop&q=80"
-  },
-  {
-    id: "cln-03",
-    name: "Dettol Original Antiseptic Liquid Soap (डेटॉल साबुन)",
-    category: "household-clean",
-    price: 145,
-    unit: "Pack of 4 (4 x 75g)",
-    variants: [
-      { name: "Pack of 4 (4 x 75g)", price: 145 },
-      { name: "Pack of 5 (5 x 125g)", price: 290 }
-    ],
-    inStock: true,
-    badge: "100% Germ Protection",
-    description: "Trusted germ protection soap with pine fragrance for complete family hygiene.",
-    image: "https://images.unsplash.com/photo-1583947215259-38e31be8751f?w=500&auto=format&fit=crop&q=80"
-  },
-
-  // 10. Puja Needs & Dry Fruits
-  {
-    id: "puj-01",
-    name: "Cycle Pure Agarbathies (साइकिल अगरबत्ती)",
-    category: "puja-dryfruits",
-    price: 45,
-    unit: "Pack of 2",
-    variants: [
-      { name: "Pack of 2 (100 sticks)", price: 45 },
-      { name: "Jumbo Pack (250 sticks)", price: 105 }
-    ],
-    inStock: true,
-    badge: "Long Lasting Fragrance",
-    description: "Traditional aromatic floral incense sticks for daily morning and evening prayer.",
-    image: "https://images.unsplash.com/photo-1608571423902-eed4a5ad8108?w=500&auto=format&fit=crop&q=80"
-  },
-  {
-    id: "puj-02",
-    name: "Mangalam Pure Camphor / Kapur (शुद्ध कपूर)",
-    category: "puja-dryfruits",
-    price: 70,
-    unit: "100g Jar",
-    variants: [
-      { name: "100g Jar", price: 70 },
-      { name: "250g Pack", price: 165 }
-    ],
-    inStock: true,
-    badge: "100% Pure Bhimseni",
-    description: "Pure white camphor tablets, burns completely without leaving residue or black smoke.",
-    image: "https://images.unsplash.com/photo-1608571423902-eed4a5ad8108?w=500&auto=format&fit=crop&q=80"
-  },
-  {
-    id: "dryf-01",
-    name: "Premium California Almonds / Badam (कैलिफोर्निया बादाम)",
-    category: "puja-dryfruits",
-    price: 210,
-    unit: "250g",
-    variants: [
-      { name: "250g Pouch", price: 210 },
-      { name: "500g Pouch", price: 410 },
-      { name: "1 kg Family Pack", price: 790 }
-    ],
-    inStock: true,
-    badge: "Crunchy & Sweet",
-    description: "Whole natural California almonds rich in Vitamin E, magnesium, and healthy dietary fats.",
-    image: "https://images.unsplash.com/photo-1508061253366-f7da158b6d46?w=500&auto=format&fit=crop&q=80"
-  },
-  {
-    id: "dryf-02",
-    name: "Premium W240 Whole Cashews / Kaju (काजू)",
-    category: "puja-dryfruits",
-    price: 240,
-    unit: "250g",
-    variants: [
-      { name: "250g Pouch", price: 240 },
-      { name: "500g Pouch", price: 470 },
-      { name: "1 kg Pack", price: 920 }
-    ],
-    inStock: true,
-    badge: "Jumbo Whole W240",
-    description: "King size unblemished white cashew nuts, crisp and rich in buttery flavor.",
-    image: "https://images.unsplash.com/photo-1508061253366-f7da158b6d46?w=500&auto=format&fit=crop&q=80"
+    description: "Rich roasted aroma and signature bold taste coffee made from fine Robusta coffee beans.",
+    image: "https://images.unsplash.com/photo-1559056199-641a0ac8b55e?w=500&auto=format&fit=crop&q=80"
   }
 ];
 
-/**
- * Procedural Supermarket Catalog Scaler
- * Generates an authentic 2,000+ item grocery inventory across all aisles
- * for SHAGUN STORE with distinct SKUs, pack variations, and Hindi/English search metadata.
- */
-export function generateFullStoreInventory(targetCount = 2000) {
+// Scale to 2,050 full supermarket items with realistic multi-variants
+function generateFullStoreInventory(targetCount = 2050) {
   const inventory = [...CORE_GROCERY_ITEMS];
   
   const brandsByCategory = {
-    "staples": ["Aashirvaad", "Fortune", "India Gate", "Daawat", "Rajdhani", "Patanjali", "Ganesh", "Nature Fresh"],
-    "sugar-sweeteners": ["Dhampure", "Trust", "Mawana", "Madhur", "Patanjali", "Organic Tattva"],
-    "oils-ghee": ["Fortune", "Engine", "Dhara", "Saffola", "Emami Healthy", "Amul", "Mother Dairy", "Patanjali"],
-    "dals-pulses": ["Tata Sampann", "Rajdhani", "Organic Tattva", "Fortune", "Patanjali", "Nature Fresh"],
-    "spices-masala": ["MDH", "Everest", "Catch", "Tata Sampann", "Badshah", "Goldiee", "Ramdev"],
-    "dairy-bread": ["Amul", "Mother Dairy", "Harvest Gold", "English Oven", "Britannia", "Gowardhan"],
-    "tea-beverages": ["Tata Tea", "Red Label", "Taj Mahal", "Wagh Bakri", "Nescafe", "Bru", "Real", "Tropicana"],
-    "snacks-namkeen": ["Haldiram's", "Bikaji", "Balaji", "Parle", "Britannia", "Sunfeast", "Lays", "Kurkure"],
-    "household-clean": ["Surf Excel", "Ariel", "Tide", "Vim", "Pril", "Dettol", "Lifebuoy", "Lizol", "Harpic", "Colin"],
-    "puja-dryfruits": ["Cycle Pure", "Mangalam", "Moksh", "Tulsi", "Nutraj", "Happilo", "Farmley"]
+    "staples": ["Aashirvaad", "Pillsbury", "Fortune", "Nature Fresh", "India Gate", "Daawat", "Royal Organic", "BB Royal"],
+    "sugar-sweeteners": ["Madhur", "Trust Classic", "Patanjali", "Organic Tattva", "Dhampure", "24 Mantra"],
+    "oils-ghee": ["Fortune", "Dhara", "Saffola", "Emami Healthy", "Gemini", "Amul", "Gowardhan", "Mother Dairy"],
+    "dals-pulses": ["Tata Sampann", "Organic Tattva", "BB Royal", "Patanjali", "Safe Harvest", "24 Mantra"],
+    "spices-masala": ["Everest", "MDH", "Catch", "MTR", "Aachi", "Badshah", "Eastern", "Ramdev"],
+    "dairy-bread": ["Amul", "Nandini", "Mother Dairy", "Britannia", "Modern", "English Oven"],
+    "tea-beverages": ["Tata Tea", "Red Label", "Taj Mahal", "Wagh Bakri", "Bru", "Nescafé", "Lipton"],
+    "snacks-namkeen": ["Haldiram's", "Bikaji", "Balaji", "Britannia", "Parle", "Sunfeast", "Lays", "Kurkure"],
+    "household-clean": ["Surf Excel", "Ariel", "Tide", "Vim", "Pril", "Lizol", "Harpic", "Dettol", "Godrej"],
+    "puja-dryfruits": ["Happilo", "Nutraj", "Tulsi", "Cycle Pure", "Mangaldeep", "Zed Black"]
   };
 
   const itemTemplates = [
-    { cat: "staples", name: "Premium MP Lokwan Wheat Grains (गेहूं)", price: 42, unit: "1 kg", v: ["5 kg", "10 kg", "25 kg"] },
-    { cat: "staples", name: "Roasted Chana with Skin (भुना चना)", price: 65, unit: "500g", v: ["500g", "1 kg"] },
-    { cat: "staples", name: "Organic Poha / Flattened Rice (मोटा पोहा)", price: 45, unit: "500g", v: ["500g", "1 kg"] },
-    { cat: "staples", name: "Makhana / Foxnuts Grade A (मखाना)", price: 180, unit: "250g", v: ["250g", "500g"] },
-    { cat: "staples", name: "Brown Basmati Rice (ब्राउन राइस)", price: 130, unit: "1 kg", v: ["1 kg", "5 kg"] },
-    { cat: "staples", name: "Jowar / Sorghum Flour (ज्वार आटा)", price: 65, unit: "1 kg", v: ["1 kg", "5 kg"] },
-    { cat: "staples", name: "Bajra / Pearl Millet Flour (बाजरा आटा)", price: 55, unit: "1 kg", v: ["1 kg", "5 kg"] },
-    { cat: "staples", name: "Ragi / Finger Millet Flour (रागी आटा)", price: 70, unit: "1 kg", v: ["1 kg", "2 kg"] },
-    { cat: "staples", name: "Sabudana / Tapioca Sago (साबूदाना)", price: 55, unit: "500g", v: ["500g", "1 kg"] },
-    { cat: "sugar-sweeteners", name: "Organic Jaggery Powder (गुड़ पाउडर)", price: 75, unit: "500g", v: ["500g", "1 kg"] },
-    { cat: "sugar-sweeteners", name: "Pure Cane Sugar Cubes (चीनी क्यूब्स)", price: 60, unit: "500g", v: ["500g"] },
-    { cat: "oils-ghee", name: "Cold Pressed Sesame / Til Oil (तिल का तेल)", price: 210, unit: "500 ml", v: ["500 ml", "1 L"] },
-    { cat: "oils-ghee", name: "Cold Pressed Coconut Cooking Oil (नारियल तेल)", price: 190, unit: "500 ml", v: ["500 ml", "1 L"] },
-    { cat: "oils-ghee", name: "Pure A2 Gir Cow Desi Ghee (A2 गिर गाय घी)", price: 690, unit: "500 ml", v: ["500 ml", "1 L"] },
-    { cat: "oils-ghee", name: "Physically Refined Rice Bran Oil (राइस ब्रान तेल)", price: 145, unit: "1 Litre", v: ["1 L", "5 L"] },
-    { cat: "dals-pulses", name: "Urad Dal Dhuli (धुली उड़द दाल)", price: 140, unit: "1 kg", v: ["500g", "1 kg"] },
-    { cat: "dals-pulses", name: "Urad Dal Chilka (छिलका उड़द)", price: 135, unit: "1 kg", v: ["500g", "1 kg"] },
-    { cat: "dals-pulses", name: "Urad Sabut Kali Dal / Dal Makhani (काली उड़द)", price: 145, unit: "1 kg", v: ["500g", "1 kg"] },
-    { cat: "dals-pulses", name: "Masoor Dal Malkha / Red Lentil (लाल मसूर)", price: 110, unit: "1 kg", v: ["500g", "1 kg"] },
-    { cat: "dals-pulses", name: "Whole Green Moong Sabut (साबुत हरी मूंग)", price: 125, unit: "1 kg", v: ["500g", "1 kg"] },
-    { cat: "dals-pulses", name: "Kala Chana / Desi Brown Chickpeas (काला चना)", price: 90, unit: "1 kg", v: ["500g", "1 kg"] },
-    { cat: "dals-pulses", name: "White Safed Vatana / Matar (सफेद मटर)", price: 80, unit: "1 kg", v: ["500g", "1 kg"] },
-    { cat: "spices-masala", name: "Kashmiri Lal Mirch Whole Stemless (साबुत लाल मिर्च)", price: 120, unit: "200g", v: ["200g", "500g"] },
-    { cat: "spices-masala", name: "Whole Cumin Seeds / Jeera (जीरा साबुत)", price: 115, unit: "200g", v: ["200g", "500g", "1 kg"] },
-    { cat: "spices-masala", name: "Whole Black Mustard Seeds / Rai (राई)", price: 40, unit: "200g", v: ["200g", "500g"] },
-    { cat: "spices-masala", name: "Fenugreek Seeds / Methi Dana (मेथी दाना)", price: 35, unit: "200g", v: ["200g", "500g"] },
-    { cat: "spices-masala", name: "Ajwain / Carom Seeds (अजवाइन)", price: 50, unit: "200g", v: ["200g", "500g"] },
-    { cat: "spices-masala", name: "Green Cardamom / Chhoti Elaichi (छोटी इलायची)", price: 290, unit: "50g", v: ["50g", "100g"] },
-    { cat: "spices-masala", name: "Black Cardamom / Badi Moti Elaichi (बड़ी इलायची)", price: 180, unit: "50g", v: ["50g", "100g"] },
-    { cat: "spices-masala", name: "Whole Cloves / Laung (लौंग)", price: 110, unit: "50g", v: ["50g", "100g"] },
-    { cat: "spices-masala", name: "Cinnamon Sticks / Dalchini (दालचीनी)", price: 75, unit: "100g", v: ["100g", "250g"] },
-    { cat: "spices-masala", name: "Whole Black Pepper / Kali Mirch (काली मिर्च)", price: 130, unit: "100g", v: ["100g", "250g"] },
-    { cat: "spices-masala", name: "Chat Masala Sprinkler (चाट मसाला)", price: 45, unit: "100g", v: ["100g"] },
-    { cat: "spices-masala", name: "Pav Bhaji Masala (पाव भाजी मसाला)", price: 55, unit: "100g", v: ["100g"] },
-    { cat: "spices-masala", name: "Chole Masala (छोले मसाला)", price: 55, unit: "100g", v: ["100g"] },
-    { cat: "spices-masala", name: "Kitchen King Masala (किचन किंग)", price: 65, unit: "100g", v: ["100g"] },
-    { cat: "spices-masala", name: "Sambhar Masala (सांभर मसाला)", price: 55, unit: "100g", v: ["100g"] },
-    { cat: "dairy-bread", name: "Amul Cheese Slices (चीज स्लाइस)", price: 140, unit: "200g (10 Slices)", v: ["200g", "400g"] },
-    { cat: "dairy-bread", name: "Amul Fresh Cream (ताज़ा क्रीम)", price: 65, unit: "250 ml", v: ["250 ml", "1 L"] },
-    { cat: "dairy-bread", name: "Amul Masti Dahi Pouch (ताज़ा दही)", price: 35, unit: "400g", v: ["400g", "1 kg"] },
-    { cat: "dairy-bread", name: "Fresh White Farm Eggs (अंडे)", price: 85, unit: "Tray of 12", v: ["Tray of 6", "Tray of 12", "Crate of 30"] },
-    { cat: "tea-beverages", name: "Taj Mahal Long Leaf CTC Tea (ताज महल चाय)", price: 195, unit: "250g", v: ["250g", "500g"] },
-    { cat: "tea-beverages", name: "Wagh Bakri Premium Leaf Tea (वाघ बकरी)", price: 145, unit: "250g", v: ["250g", "500g"] },
-    { cat: "tea-beverages", name: "Green Tea with Honey & Lemon (ग्रीन टी)", price: 180, unit: "Box of 25 Bags", v: ["25 Bags", "50 Bags"] },
-    { cat: "tea-beverages", name: "Bru Gold Roasted Filter Coffee (ब्रू गोल्ड)", price: 175, unit: "50g Jar", v: ["50g", "100g"] },
-    { cat: "snacks-namkeen", name: "Haldiram's Khatta Meetha Mixture (खट्टा मीठा)", price: 48, unit: "200g", v: ["200g", "400g", "1 kg"] },
-    { cat: "snacks-namkeen", name: "Haldiram's Moong Dal Fried (मूंग दाल नमकीन)", price: 50, unit: "200g", v: ["200g", "400g"] },
-    { cat: "snacks-namkeen", name: "Haldiram's Bikaneri Bhujia (बीकानेरी भुजिया)", price: 55, unit: "200g", v: ["200g", "400g", "1 kg"] },
-    { cat: "snacks-namkeen", name: "Britannia Good Day Butter Cookies (गुड डे बिस्कुट)", price: 35, unit: "200g", v: ["200g", "600g"] },
-    { cat: "snacks-namkeen", name: "Britannia Marie Gold Tea Biscuits (मारी गोल्ड)", price: 30, unit: "250g", v: ["250g", "1 kg"] },
-    { cat: "household-clean", name: "Ariel Matic Front & Top Load Detergent (एरियल मैटिक)", price: 235, unit: "1 kg", v: ["1 kg", "2 kg", "4 kg"] },
-    { cat: "household-clean", name: "Tide Plus Double Power Detergent (टाइड प्लस)", price: 125, unit: "1 kg", v: ["1 kg", "3 kg", "5 kg"] },
-    { cat: "household-clean", name: "Lizol Citrus Surface & Floor Cleaner (लाइज़ोल)", price: 110, unit: "500 ml", v: ["500 ml", "1 L", "2 L"] },
-    { cat: "household-clean", name: "Harpic Power Plus Toilet Cleaner (हार्पिक)", price: 95, unit: "500 ml", v: ["500 ml", "1 L"] },
-    { cat: "puja-dryfruits", name: "Afghani Green Kishmish / Raisins (किशमिश)", price: 110, unit: "250g", v: ["250g", "500g", "1 kg"] },
-    { cat: "puja-dryfruits", name: "Premium Irani Akhrot / Walnuts In-Shell (अखरोट)", price: 280, unit: "500g", v: ["500g", "1 kg"] },
-    { cat: "puja-dryfruits", name: "Premium Salted Pista / Pistachios (पिस्ता)", price: 290, unit: "250g", v: ["250g", "500g"] }
+    { cat: "staples", name: "Chakki Fresh Atta (गेहूं आटा / ಗೋಧಿ ಹಿಟ್ಟು)", price: 48, unit: "1 kg", v: ["500g", "1 kg", "2 kg", "5 kg", "10 kg"] },
+    { cat: "staples", name: "Premium Sona Masoori Rice (सोना मसूरी / ಅಕ್ಕಿ)", price: 58, unit: "1 kg", v: ["1 kg", "2 kg", "5 kg", "10 kg", "25 kg"] },
+    { cat: "staples", name: "Thick Poha / Beaten Rice (मोटा पोहा / ಅವಲಕ್ಕಿ)", price: 45, unit: "1 kg", v: ["500g", "1 kg", "2 kg", "5 kg"] },
+    { cat: "staples", name: "Fine Besan / Gram Flour (बेसन / ಕಡಲೆ ಹಿಟ್ಟು)", price: 85, unit: "1 kg", v: ["500g", "1 kg", "2 kg", "5 kg"] },
+    { cat: "sugar-sweeteners", name: "Crystal White Sugar (चीनी / ಸಕ್ಕರೆ)", price: 44, unit: "1 kg", v: ["250g", "500g", "1 kg", "2 kg", "3 kg", "5 kg", "10 kg"] },
+    { cat: "sugar-sweeteners", name: "Pure Organic Jaggery Powder (गुड़ पाउडर / ಬೆಲ್ಲದ ಪುಡಿ)", price: 75, unit: "1 kg", v: ["500g", "1 kg", "2 kg", "5 kg"] },
+    { cat: "sugar-sweeteners", name: "Roasted Rava / Sooji (भुना रवा / ಹುರಿದ ರವೆ)", price: 55, unit: "1 kg", v: ["500g", "1 kg", "2 kg", "5 kg", "10 kg"] },
+    { cat: "oils-ghee", name: "Refined Sunflower Oil (सनफ्लावर तेल / ಸೂರ್ಯಕಾಂತಿ ಎಣ್ಣೆ)", price: 138, unit: "1 Litre", v: ["500 ml", "1 Litre", "2 Litre", "5 Litre", "15 Litre"] },
+    { cat: "oils-ghee", name: "Pure Desi Cow Ghee (शुद्ध गाय घी / ಹಸುವಿನ ತುಪ್ಪ)", price: 610, unit: "1 Litre", v: ["200 ml", "500 ml", "1 Litre", "2 Litre", "5 Litre"] },
+    { cat: "oils-ghee", name: "Cold Pressed Gingelly / Sesame Oil (तिल का तेल / ಎಳ್ಳೆಣ್ಣೆ)", price: 260, unit: "1 Litre", v: ["500 ml", "1 Litre", "2 Litre", "5 Litre"] },
+    { cat: "dals-pulses", name: "Unpolished Toor Dal (तूर दाल / ತೊಗರಿ ಬೇಳೆ)", price: 155, unit: "1 kg", v: ["250g", "500g", "1 kg", "2 kg", "3 kg", "5 kg", "10 kg"] },
+    { cat: "dals-pulses", name: "Split Yellow Moong Dal (मूंग दाल / ಹೆಸರು ಬೇಳೆ)", price: 130, unit: "1 kg", v: ["250g", "500g", "1 kg", "2 kg", "3 kg", "5 kg", "10 kg"] },
+    { cat: "dals-pulses", name: "White Urad Dal Whole (उड़द दाल / ಉದ್ದಿನ ಬೇಳೆ)", price: 140, unit: "1 kg", v: ["250g", "500g", "1 kg", "2 kg", "3 kg", "5 kg", "10 kg"] },
+    { cat: "dals-pulses", name: "Kabuli Chana / White Chickpeas (काबुली चना / ಕಾಬೂಲಿ ಕಡಲೆ)", price: 145, unit: "1 kg", v: ["250g", "500g", "1 kg", "2 kg", "5 kg"] },
+    { cat: "dals-pulses", name: "Kala Chana / Brown Gram (काला चना / ಕಪ್ಪು ಕಡಲೆ)", price: 90, unit: "1 kg", v: ["500g", "1 kg", "2 kg", "5 kg"] },
+    { cat: "spices-masala", name: "Pure Turmeric Powder (हल्दी / ಅರಿಶಿನ ಪುಡಿ)", price: 36, unit: "100g", v: ["50g", "100g", "250g", "500g", "1 kg"] },
+    { cat: "spices-masala", name: "Coriander Powder / Dhaniya (धनिया पाउडर / ಕೊತ್ತಂಬರಿ ಪುಡಿ)", price: 38, unit: "100g", v: ["100g", "250g", "500g", "1 kg"] },
+    { cat: "spices-masala", name: "Jeera / Cumin Seeds Whole (जीरा / ಜೀರಿಗೆ)", price: 65, unit: "100g", v: ["50g", "100g", "250g", "500g", "1 kg"] },
+    { cat: "tea-beverages", name: "Premium CTC Leaf Tea (कड़क चाय / ಚಹಾ ಪುಡಿ)", price: 145, unit: "250g", v: ["100g", "250g", "500g", "1 kg"] },
+    { cat: "tea-beverages", name: "Filter Coffee Powder 80:20 (फ़िल्टर कॉफ़ी / ಫಿಲ್ಟರ್ ಕಾಫಿ)", price: 160, unit: "200g", v: ["100g", "200g", "500g", "1 kg"] },
+    { cat: "puja-dryfruits", name: "California Whole Almonds / Badam (बादाम / ಬಾದಾಮಿ)", price: 210, unit: "250g", v: ["100g", "250g", "500g", "1 kg"] },
+    { cat: "puja-dryfruits", name: "Whole Premium Cashews / Kaju (काजू / ಗೋಡಂಬಿ)", price: 240, unit: "250g", v: ["100g", "250g", "500g", "1 kg"] }
   ];
 
   let currentId = inventory.length + 1;
@@ -807,35 +660,41 @@ export function generateFullStoreInventory(targetCount = 2000) {
     for (const t of itemTemplates) {
       if (inventory.length >= targetCount) break;
 
-      const brandList = brandsByCategory[t.cat] || ["Shagun Premium", "Choice Best", "Fresh Gold"];
+      const brandList = brandsByCategory[t.cat] || ["Shagun Premium", "Farm Fresh", "Gold Harvest"];
       const brand = brandList[Math.floor(Math.random() * brandList.length)];
       const variationNum = Math.floor(inventory.length / itemTemplates.length) + 1;
       
-      const multiplier = (0.9 + Math.random() * 0.25);
+      const multiplier = (0.92 + Math.random() * 0.2);
       const basePrice = Math.round(t.price * multiplier);
 
-      const variants = [
-        { name: t.unit, price: basePrice }
-      ];
+      const variants = [];
       if (t.v && t.v.length > 0) {
         t.v.forEach(vName => {
-          if (vName !== t.unit) {
-            const factor = vName.includes("5 kg") ? 4.8 : vName.includes("10 kg") ? 9.2 : vName.includes("2 kg") ? 1.95 : 1.9;
-            variants.push({ name: `${vName} Pack`, price: Math.round(basePrice * factor) });
-          }
+          let factor = 1.0;
+          if (vName.includes("250g") || vName.includes("200g")) factor = 0.28;
+          else if (vName.includes("500g") || vName.includes("500 ml")) factor = 0.52;
+          else if (vName.includes("2 kg") || vName.includes("2 Litre")) factor = 1.95;
+          else if (vName.includes("3 kg")) factor = 2.9;
+          else if (vName.includes("5 kg") || vName.includes("5 Litre")) factor = 4.8;
+          else if (vName.includes("10 kg")) factor = 9.3;
+          else if (vName.includes("15 Litre") || vName.includes("25 kg")) factor = 14.2;
+          
+          variants.push({ name: `${vName} Pack`, price: Math.max(10, Math.round(basePrice * factor)) });
         });
+      } else {
+        variants.push({ name: t.unit, price: basePrice });
       }
 
       inventory.push({
         id: `shagun_${t.cat}_${currentId++}`,
         name: `${brand} ${t.name} (Batch #${variationNum})`,
         category: t.cat,
-        price: basePrice,
+        price: variants[0] ? variants[0].price : basePrice,
         unit: t.unit,
         variants,
         inStock: true,
-        badge: variationNum === 1 ? "Top Pick" : (Math.random() > 0.7 ? "Value Deal" : null),
-        description: `Premium quality ${t.name.split('(')[0]} packaged under hygienic store standards at SHAGUN STORE.`,
+        badge: variationNum === 1 ? "Popular" : (Math.random() > 0.75 ? "Value Deal" : null),
+        description: `High purity hygienic grocery item packaged with store warranty at SHAGUN STORE.`,
         image: "https://images.unsplash.com/photo-1542838132-92c53300491e?w=500&auto=format&fit=crop&q=80"
       });
     }
