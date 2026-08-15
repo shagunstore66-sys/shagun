@@ -20,6 +20,7 @@ export const INITIAL_STORE_CONFIG = {
   taglineHindi: "स्कैन करें • सामान चुनें • काउंटर से प्राप्त करें",
   address: "Shop No. 1, Main Market, Near Central Chowk",
   phone: "+91 98765 43210",
+  upiId: "7795565216-1@okbizaxis",
   currency: "₹",
   taxPercent: 0,
   expressPackingFee: 0,
