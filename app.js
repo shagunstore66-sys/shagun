@@ -855,36 +855,25 @@ class ShagunStoreApp {
           </div>
         </div>
 
-        <!-- Official UPI Payment Gateway Box (7795565216-1@okbizaxis) -->
+        <!-- Clean UPI Payment Box (7795565216-1@okbizaxis) -->
         <div class="upi-pay-card" style="margin-top: 1rem; background: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%); border: 1.5px solid #86efac; border-radius: var(--radius-md); padding: 1.25rem; text-align: center;">
           <div style="display: flex; align-items: center; justify-content: center; gap: 8px; margin-bottom: 6px;">
             <span style="font-size: 1.4rem;">📱</span>
-            <h4 style="font-size: 1.05rem; font-weight: 900; color: #166534; font-family: var(--font-display); margin: 0;">
-              Instant UPI Payment (${this.config.currency}${order.totalAmount})
+            <h4 style="font-size: 1.1rem; font-weight: 900; color: #166534; font-family: var(--font-display); margin: 0;">
+              UPI Payment (${this.config.currency}${order.totalAmount})
             </h4>
           </div>
-          <p style="font-size: 0.78rem; color: #15803d; margin: 0 0 12px 0;">
+          <p style="font-size: 0.82rem; color: #15803d; margin: 0 0 14px 0;">
             Payee: <strong>SHAGUN STORE</strong> • UPI ID: <strong style="color: #047857; font-family: var(--font-mono);">${this.config.upiId || '7795565216-1@okbizaxis'}</strong>
           </p>
 
-          <!-- 1-Tap UPI Intent Launch Buttons -->
-          <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; margin-bottom: 10px;">
-            <a href="upi://pay?pa=${this.config.upiId || '7795565216-1@okbizaxis'}&pn=SHAGUN%20STORE&am=${order.totalAmount}&cu=INR&tn=Token%20${order.token}%20SHAGUN%20STORE" class="btn-upi-app" style="background: white; border: 1.5px solid #2563eb; color: #1d4ed8; font-weight: 800; padding: 10px; border-radius: 8px; font-size: 0.8rem; text-decoration: none; display: flex; align-items: center; justify-content: center; gap: 6px; box-shadow: var(--shadow-sm);">
-              🔵 Google Pay
-            </a>
-            <a href="upi://pay?pa=${this.config.upiId || '7795565216-1@okbizaxis'}&pn=SHAGUN%20STORE&am=${order.totalAmount}&cu=INR&tn=Token%20${order.token}%20SHAGUN%20STORE" class="btn-upi-app" style="background: white; border: 1.5px solid #7c3aed; color: #6d28d9; font-weight: 800; padding: 10px; border-radius: 8px; font-size: 0.8rem; text-decoration: none; display: flex; align-items: center; justify-content: center; gap: 6px; box-shadow: var(--shadow-sm);">
-              🟣 PhonePe
-            </a>
-            <a href="upi://pay?pa=${this.config.upiId || '7795565216-1@okbizaxis'}&pn=SHAGUN%20STORE&am=${order.totalAmount}&cu=INR&tn=Token%20${order.token}%20SHAGUN%20STORE" class="btn-upi-app" style="background: white; border: 1.5px solid #0284c7; color: #0369a1; font-weight: 800; padding: 10px; border-radius: 8px; font-size: 0.8rem; text-decoration: none; display: flex; align-items: center; justify-content: center; gap: 6px; box-shadow: var(--shadow-sm);">
-              🔷 Paytm
-            </a>
-            <a href="upi://pay?pa=${this.config.upiId || '7795565216-1@okbizaxis'}&pn=SHAGUN%20STORE&am=${order.totalAmount}&cu=INR&tn=Token%20${order.token}%20SHAGUN%20STORE" class="btn-upi-app" style="background: white; border: 1.5px solid #ea580c; color: #c2410c; font-weight: 800; padding: 10px; border-radius: 8px; font-size: 0.8rem; text-decoration: none; display: flex; align-items: center; justify-content: center; gap: 6px; box-shadow: var(--shadow-sm);">
-              🟡 BHIM / FamPay / CRED
-            </a>
-          </div>
+          <!-- Direct Universal UPI Button -->
+          <a href="upi://pay?pa=${encodeURIComponent(this.config.upiId || '7795565216-1@okbizaxis')}&pn=${encodeURIComponent(this.config.name || 'SHAGUN STORE')}&am=${order.totalAmount}&cu=INR&tn=${encodeURIComponent('Order ' + order.token + ' ' + (this.config.name || 'SHAGUN STORE'))}" class="btn-upi-app" style="background: #047857; color: white; font-weight: 900; padding: 14px 20px; border-radius: 10px; font-size: 1.05rem; text-decoration: none; display: flex; align-items: center; justify-content: center; gap: 8px; box-shadow: 0 4px 14px rgba(4,120,87,0.35); margin-bottom: 12px;">
+            📱 Pay ${this.config.currency}${order.totalAmount} via UPI ➔
+          </a>
 
-          <div style="font-size: 0.72rem; color: #166534; font-weight: 700;">
-            ✨ Tap any app above to pay ₹${order.totalAmount} directly from your phone.
+          <div style="font-size: 0.78rem; color: #166534; font-weight: 700;">
+            ✓ Tap above to open your phone's UPI app with exact amount ${this.config.currency}${order.totalAmount}
           </div>
         </div>
 
@@ -1948,8 +1937,8 @@ class ShagunStoreApp {
               <input type="radio" name="payMethod" value="upi" ${this.selectedPaymentMethod === 'upi' ? 'checked' : ''} style="display: none;">
               <span class="payment-icon">📱</span>
               <div class="payment-info">
-                <h5>Instant UPI (GPay / PhonePe / Paytm / BHIM / FamPay / CRED)</h5>
-                <p>Pay to <strong>SHAGUN STORE (${this.config.upiId || '7795565216-1@okbizaxis'})</strong></p>
+                <h5>UPI Payment</h5>
+                <p>Pay ${this.config.currency}${finalTotal} directly via your phone's UPI app</p>
               </div>
             </label>
 
@@ -1990,7 +1979,7 @@ class ShagunStoreApp {
           </div>
 
           <button class="btn-place-order" id="btnSubmitOrder" style="display: flex; align-items: center; justify-content: center; gap: 8px; font-size: 1rem; padding: 14px;">
-            ${this.selectedPaymentMethod === 'upi' ? `📱 Pay ${this.config.currency}${finalTotal} via PhonePe / GPay & Book Bag ➔` : this.selectedPaymentMethod === 'counter' ? `💵 Book Bag & Pay Cash at Counter (${this.config.currency}${finalTotal}) ➔` : `💳 Book Bag (${this.config.currency}${finalTotal}) ➔`}
+            ${this.selectedPaymentMethod === 'upi' ? `📱 Pay ${this.config.currency}${finalTotal} via UPI & Place Order ➔` : this.selectedPaymentMethod === 'counter' ? `💵 Place Order & Pay Cash at Counter (${this.config.currency}${finalTotal}) ➔` : `💳 Place Order (${this.config.currency}${finalTotal}) ➔`}
           </button>
         </div>
       </div>
@@ -2665,11 +2654,11 @@ class ShagunStoreApp {
         const totals = this.getCartTotals();
         if (btnSub) {
           if (this.selectedPaymentMethod === 'upi') {
-            btnSub.innerHTML = `📱 Pay ${this.config.currency}${totals.finalTotal} via PhonePe / GPay & Book Bag ➔`;
+            btnSub.innerHTML = `📱 Pay ${this.config.currency}${totals.finalTotal} via UPI & Place Order ➔`;
           } else if (this.selectedPaymentMethod === 'counter') {
-            btnSub.innerHTML = `💵 Book Bag & Pay Cash at Counter (${this.config.currency}${totals.finalTotal}) ➔`;
+            btnSub.innerHTML = `💵 Place Order & Pay Cash at Counter (${this.config.currency}${totals.finalTotal}) ➔`;
           } else {
-            btnSub.innerHTML = `💳 Book Bag (${this.config.currency}${totals.finalTotal}) ➔`;
+            btnSub.innerHTML = `💳 Place Order (${this.config.currency}${totals.finalTotal}) ➔`;
           }
         }
       });
