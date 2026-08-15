@@ -579,6 +579,36 @@ class ShagunStoreApp {
     this.render();
   }
 
+  addToCartById(productId, variantIdx = 0) {
+    const prod = this.products.find(p => p.id === productId);
+    if (prod) {
+      this.addToCart(prod, variantIdx);
+    }
+  }
+
+  selectVariant(productId, variantIdx) {
+    this.selectedVariants[productId] = parseInt(variantIdx, 10) || 0;
+    sounds.playTapSound();
+    this.render();
+  }
+
+  setCategory(catId) {
+    this.activeCategory = catId;
+    sounds.playTapSound();
+    this.render();
+  }
+
+  updateCartQtyModal(cartItemId, delta) {
+    this.updateCartQty(cartItemId, delta);
+    const modalDiv = document.getElementById('cartModal');
+    if (modalDiv) {
+      modalDiv.remove();
+      if (this.cart.length > 0) {
+        this.openCartModal();
+      }
+    }
+  }
+
   clearCart() {
     this.cart = [];
     this.saveCart();
@@ -1507,7 +1537,7 @@ class ShagunStoreApp {
           const catName = this.currentLang === 'hi' ? cat.nameHindi : this.currentLang === 'kn' ? cat.nameKannada : cat.name;
           const count = cat.id === 'all' ? this.products.length : this.products.filter(p=>p.category===cat.id).length;
           return `
-            <button class="cat-pill ${this.activeCategory === cat.id ? 'active' : ''}" data-category="${cat.id}">
+            <button class="cat-pill ${this.activeCategory === cat.id ? 'active' : ''}" data-category="${cat.id}" onclick="window.shagunApp.setCategory('${cat.id}')">
               <span>${cat.icon}</span> ${catName} <em style="font-size: 0.68rem; opacity: 0.75;">(${count})</em>
             </button>
           `;
@@ -1527,7 +1557,7 @@ class ShagunStoreApp {
 
       ${filteredProducts.length > this.visibleProductsLimit ? `
         <div style="text-align: center; padding: 1.5rem 1rem;">
-          <button id="btnLoadMoreItems" style="padding: 12px 28px; background: #ffffff; border: 1.5px solid var(--champagne-gold); color: var(--deep-charcoal); font-weight: 800; font-family: var(--font-display); border-radius: var(--radius-full); cursor: pointer; box-shadow: var(--shadow-sm); transition: all 0.2s ease;">
+          <button id="btnLoadMoreItems" onclick="window.shagunApp.visibleProductsLimit += 40; window.shagunApp.render();" style="padding: 12px 28px; background: #ffffff; border: 1.5px solid var(--champagne-gold); color: var(--deep-charcoal); font-weight: 800; font-family: var(--font-display); border-radius: var(--radius-full); cursor: pointer; box-shadow: var(--shadow-sm); transition: all 0.2s ease;">
             ${this.t('loadMore')}
           </button>
         </div>
@@ -1535,7 +1565,7 @@ class ShagunStoreApp {
 
       <!-- Floating Cart Action Bar -->
       ${totalItems > 0 ? `
-        <div class="floating-cart-bar" id="btnOpenCart">
+        <div class="floating-cart-bar" id="btnOpenCart" onclick="window.shagunApp.openCartModal()">
           <div>
             <div style="font-size: 0.74rem; color: var(--soft-gold); letter-spacing: 0.04em;">🛍️ ${totalItems} items in selection</div>
             <div class="cart-bar-total">${this.config.currency}${finalTotal}</div>
@@ -1574,7 +1604,7 @@ class ShagunStoreApp {
           <!-- Granular Multi-Variant Selector (250g, 500g, 1kg, 2kg, 3kg, 5kg, 10kg & 500ml, 1L, 5L) -->
           <div class="variant-pills-row">
             ${variants.map((v, idx) => `
-              <button class="variant-btn ${idx === safeIdx ? 'active' : ''}" data-prod-id="${product.id}" data-variant-idx="${idx}">
+              <button class="variant-btn ${idx === safeIdx ? 'active' : ''}" data-prod-id="${product.id}" data-variant-idx="${idx}" onclick="window.shagunApp.selectVariant('${product.id}', ${idx})">
                 ${v.name.replace(' Pack', '').replace(' Bottle', '').replace(' Can', '')}
               </button>
             `).join('')}
@@ -1585,12 +1615,12 @@ class ShagunStoreApp {
             
             ${inCartQty > 0 ? `
               <div class="qty-control">
-                <button class="qty-btn btn-minus-qty" data-cart-id="${cartItemId}">−</button>
+                <button class="qty-btn btn-minus-qty" data-cart-id="${cartItemId}" onclick="window.shagunApp.updateCartQty('${cartItemId}', -1)">−</button>
                 <span class="qty-count">${inCartQty}</span>
-                <button class="qty-btn btn-plus-qty" data-cart-id="${cartItemId}">+</button>
+                <button class="qty-btn btn-plus-qty" data-cart-id="${cartItemId}" onclick="window.shagunApp.updateCartQty('${cartItemId}', 1)">+</button>
               </div>
             ` : `
-              <button class="btn-add-cart btn-quick-add" data-prod-id="${product.id}" data-variant-idx="${safeIdx}">
+              <button class="btn-add-cart btn-quick-add" data-prod-id="${product.id}" data-variant-idx="${safeIdx}" onclick="window.shagunApp.addToCartById('${product.id}', ${safeIdx})">
                 ${this.t('addBtn')}
               </button>
             `}
@@ -2740,8 +2770,16 @@ class ShagunStoreApp {
   }
 }
 
-// Mount on DOM Ready
-document.addEventListener('DOMContentLoaded', () => {
-  window.shagunApp = new ShagunStoreApp();
-  window.shagunApp.render();
-});
+// Mount immediately on DOM Ready or deferred module execution
+const initShagunStoreApp = () => {
+  if (!window.shagunApp) {
+    window.shagunApp = new ShagunStoreApp();
+    window.shagunApp.render();
+  }
+};
+
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', initShagunStoreApp);
+} else {
+  initShagunStoreApp();
+}
