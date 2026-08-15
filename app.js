@@ -5,8 +5,8 @@
  * - Official High-Resolution Customer QR Code Standee Studio (Print & PNG Download)
  * - Mobile Staff Packing Terminal (iOS & Android) with Web Audio chime alerts
  * - Hidden Store Owner Admin Panel (Secret unlock via Ctrl + Shift + Z)
- * - Mandatory Customer 10-Digit Mobile + SMS OTP Verification
- * - Central Server REST API Live Synchronization
+ * - Customer Mobile Database & CRM for Store Owner
+ * - Central Server REST API & Firebase Cloud Firestore 0ms Sync
  */
 
 import { INITIAL_STORE_CONFIG, CATEGORIES, INITIAL_PRODUCTS } from './mockData.js';
@@ -19,11 +19,6 @@ import {
   updateOrderItemsInFirestore, 
   getFirebaseStatus 
 } from './firebase-config.js';
-import { 
-  sendRealCustomerSmsOtp, 
-  verifyCustomerSmsCode,
-  getCustomerWhatsAppOtpLink
-} from './smsAuthEngine.js';
 
 class ShagunStoreApp {
   constructor() {
@@ -369,7 +364,7 @@ class ShagunStoreApp {
     return { subtotal, totalItems, tax, packingFee, finalTotal };
   }
 
-  // ---------------- Customer Order Placement & Express Verification ----------------
+  // ---------------- Customer Direct Mobile Order Placement ----------------
   async initiateOrderWithOTP(customerName, phone, packingNote) {
     if (this.cart.length === 0) return;
 
@@ -382,168 +377,16 @@ class ShagunStoreApp {
     }
 
     this.pendingOrderData = {
-      customerName: customerName || "Customer",
+      customerName: (customerName || '').trim() || "Customer",
       phone: cleanPhone,
-      packingNote: packingNote || ""
+      packingNote: (packingNote || '').trim()
     };
 
     const cartModal = document.getElementById('cartModal');
     if (cartModal) cartModal.remove();
 
-    // Instant Express Checkout & Order Confirmation (Zero SMS Delays)
+    // Instant Direct Order Placement (Zero OTP Blockers)
     this.finalizeVerifiedOrder();
-  }
-
-  async openOtpModal(phone) {
-    const modalDiv = document.createElement('div');
-    modalDiv.id = 'otpModal';
-    modalDiv.className = 'admin-modal-overlay';
-
-    modalDiv.innerHTML = `
-      <div class="otp-modal-box" style="max-width: 440px;">
-        <div style="font-size: 2.8rem; margin-bottom: 6px;">📱</div>
-        <h3 style="font-size: 1.3rem; font-weight: 900; font-family: var(--font-display); color: var(--text-main);">
-          Mobile Verification
-        </h3>
-        <p style="font-size: 0.85rem; color: var(--text-muted); margin-top: 4px;">
-          SHAGUN STORE Pickup for Mobile: <strong style="color: var(--primary); font-size: 0.95rem;">+91 ${phone}</strong>
-        </p>
-
-        <div id="otpStatusNotice" style="background: #f0fdf4; border: 1px solid #bbf7d0; color: #166534; padding: 10px 14px; border-radius: 8px; font-size: 0.8rem; margin: 14px 0; font-weight: 700; display: flex; align-items: center; gap: 8px; justify-content: center;">
-          <span>✓</span> Mobile Connected • Ready for Express Checkout
-        </div>
-
-        <button class="btn-place-order" id="btnInstantAuthorize" style="width: 100%; padding: 14px; font-size: 1rem; margin-bottom: 12px; background: linear-gradient(135deg, #047857 0%, #065f46 100%);">
-          ⚡ 1-Tap Mobile Verification & Book Order ➔
-        </button>
-
-        <div style="display: flex; align-items: center; gap: 10px; margin: 10px 0; color: var(--text-light); font-size: 0.75rem; font-weight: 700;">
-          <div style="flex: 1; height: 1px; background: var(--border);"></div>
-          <span>OR ENTER CODE MANUALLY</span>
-          <div style="flex: 1; height: 1px; background: var(--border);"></div>
-        </div>
-
-        <div class="otp-digit-inputs" style="display: flex; justify-content: center; gap: 10px; margin: 12px 0;">
-          <input type="text" maxlength="1" class="otp-box-digit" id="otp_1" autofocus style="width: 48px; height: 52px; text-align: center; font-size: 1.3rem; font-weight: 800; border: 2px solid var(--border); border-radius: 8px;">
-          <input type="text" maxlength="1" class="otp-box-digit" id="otp_2" style="width: 48px; height: 52px; text-align: center; font-size: 1.3rem; font-weight: 800; border: 2px solid var(--border); border-radius: 8px;">
-          <input type="text" maxlength="1" class="otp-box-digit" id="otp_3" style="width: 48px; height: 52px; text-align: center; font-size: 1.3rem; font-weight: 800; border: 2px solid var(--border); border-radius: 8px;">
-          <input type="text" maxlength="1" class="otp-box-digit" id="otp_4" style="width: 48px; height: 52px; text-align: center; font-size: 1.3rem; font-weight: 800; border: 2px solid var(--border); border-radius: 8px;">
-        </div>
-
-        <div style="display: flex; justify-content: center; gap: 10px; margin-bottom: 1rem;">
-          <a href="${getCustomerWhatsAppOtpLink(phone)}" target="_blank" id="btnWhatsAppOtp" style="display: inline-flex; align-items: center; gap: 6px; background: #25D366; color: white; padding: 6px 14px; border-radius: 999px; font-size: 0.75rem; font-weight: 800; text-decoration: none;">
-            💬 Get Code on WhatsApp
-          </a>
-          <button type="button" id="btnAutoFillOtp" style="border: 1px solid var(--border); background: var(--bg-surface); padding: 6px 14px; border-radius: 999px; font-size: 0.75rem; font-weight: 800; cursor: pointer; color: var(--primary);">
-            ✨ Auto-Fill Code
-          </button>
-        </div>
-
-        <button class="btn-ticket-action btn-ticket-ready" id="btnVerifyOtpSubmit" style="width: 100%; padding: 12px; font-weight: 800;">
-          Verify Manual Code ➔
-        </button>
-
-        <button class="btn-admin-action" id="btnCancelOtp" style="margin-top: 10px; width: 100%; justify-content: center;">
-          ✕ Cancel
-        </button>
-      </div>
-    `;
-
-    document.body.appendChild(modalDiv);
-    this.attachOtpModalEvents(modalDiv, phone);
-
-    // Trigger Background SMS Dispatch
-    try {
-      const smsRes = await sendRealCustomerSmsOtp(phone);
-      if (smsRes.otp) {
-        modalDiv.setAttribute('data-generated-otp', smsRes.otp);
-      }
-    } catch (err) {}
-  }
-
-  attachOtpModalEvents(modalDiv, phone) {
-    const digits = [
-      modalDiv.querySelector('#otp_1'),
-      modalDiv.querySelector('#otp_2'),
-      modalDiv.querySelector('#otp_3'),
-      modalDiv.querySelector('#otp_4')
-    ];
-
-    if (digits[0]) digits[0].focus();
-
-    digits.forEach((inp, idx) => {
-      inp.addEventListener('input', (e) => {
-        const val = e.target.value;
-        if (val.length === 1 && idx < digits.length - 1) {
-          digits[idx + 1].focus();
-        }
-      });
-
-      inp.addEventListener('keydown', (e) => {
-        if (e.key === 'Backspace' && !inp.value && idx > 0) {
-          digits[idx - 1].focus();
-        }
-      });
-    });
-
-    modalDiv.addEventListener('paste', (e) => {
-      const paste = (e.clipboardData || window.clipboardData).getData('text').trim();
-      if (paste && paste.length >= 4 && /^\d+$/.test(paste)) {
-        for (let i = 0; i < digits.length && i < paste.length; i++) {
-          digits[i].value = paste[i];
-        }
-        if (digits[digits.length - 1]) digits[digits.length - 1].focus();
-      }
-    });
-
-    // 1-Tap Instant Mobile Authorization (Zero Friction)
-    const btnInstant = modalDiv.querySelector('#btnInstantAuthorize');
-    if (btnInstant) {
-      btnInstant.addEventListener('click', () => {
-        btnInstant.innerHTML = "⏳ Verifying Mobile +91 " + phone + "...";
-        setTimeout(() => {
-          modalDiv.remove();
-          this.finalizeVerifiedOrder();
-        }, 200);
-      });
-    }
-
-    // Auto-fill Code Button
-    const btnAutoFill = modalDiv.querySelector('#btnAutoFillOtp');
-    if (btnAutoFill) {
-      btnAutoFill.addEventListener('click', () => {
-        const generated = modalDiv.getAttribute('data-generated-otp') || '8492';
-        for (let i = 0; i < digits.length; i++) {
-          digits[i].value = generated[i] || '0';
-        }
-        digits[digits.length - 1].focus();
-      });
-    }
-
-    modalDiv.querySelector('#btnCancelOtp').addEventListener('click', () => {
-      modalDiv.remove();
-    });
-
-    modalDiv.querySelector('#btnVerifyOtpSubmit').addEventListener('click', async () => {
-      const enteredOtp = digits.map(d => d.value).join('').trim();
-      if (enteredOtp.length < 4) {
-        alert("Please enter the complete 4-digit code or tap '1-Tap Mobile Verification'.");
-        return;
-      }
-
-      const verifyBtn = modalDiv.querySelector('#btnVerifyOtpSubmit');
-      verifyBtn.innerText = "⏳ Verifying...";
-
-      const isVerified = await verifyCustomerSmsCode(enteredOtp);
-      if (isVerified) {
-        modalDiv.remove();
-        this.finalizeVerifiedOrder();
-      } else {
-        alert("❌ Invalid code. You can tap '1-Tap Mobile Verification' or 'Auto-Fill Code'.");
-        verifyBtn.innerText = "Verify Manual Code ➔";
-        digits[0].focus();
-      }
-    });
   }
 
   async finalizeVerifiedOrder() {
@@ -1216,11 +1059,14 @@ class ShagunStoreApp {
         <button class="admin-tab-btn ${this.adminActiveTab === 'analytics' ? 'active' : ''}" data-admin-tab="analytics">
           📊 Business Analytics & Revenue
         </button>
-        <button class="admin-tab-btn ${this.adminActiveTab === 'inventory' ? 'active' : ''}" data-admin-tab="inventory">
-          📦 Grocery Catalog (${this.products.length} Items)
+        <button class="admin-tab-btn ${this.adminActiveTab === 'customers' ? 'active' : ''}" data-admin-tab="customers">
+          👥 Customer Mobile Directory (${this.getUniqueCustomers().length})
         </button>
         <button class="admin-tab-btn ${this.adminActiveTab === 'orders' ? 'active' : ''}" data-admin-tab="orders">
-          📋 Verified Orders History
+          📋 Orders History (${this.orders.length})
+        </button>
+        <button class="admin-tab-btn ${this.adminActiveTab === 'inventory' ? 'active' : ''}" data-admin-tab="inventory">
+          📦 Grocery Catalog (${this.products.length} Items)
         </button>
         <button class="admin-tab-btn ${this.adminActiveTab === 'qr-studio' ? 'active' : ''}" data-admin-tab="qr-studio">
           🖨️ Official Customer QR Standee
@@ -1245,6 +1091,8 @@ class ShagunStoreApp {
   renderAdminTabContent() {
     if (this.adminActiveTab === 'analytics') {
       return this.renderAdminAnalytics();
+    } else if (this.adminActiveTab === 'customers') {
+      return this.renderAdminCustomers();
     } else if (this.adminActiveTab === 'inventory') {
       return this.renderAdminInventory();
     } else if (this.adminActiveTab === 'orders') {
@@ -1483,6 +1331,177 @@ class ShagunStoreApp {
         </div>
       </div>
     `;
+  }
+
+  // ==========================================================================
+  // CUSTOMER MOBILE CRM & DIRECTORY DATABASE
+  // ==========================================================================
+  getUniqueCustomers() {
+    const customerMap = new Map();
+    this.orders.forEach(order => {
+      if (!order.phone) return;
+      const clean = order.phone.replace(/\D/g, '').slice(-10);
+      if (clean.length !== 10) return;
+      const key = `+91 ${clean}`;
+      if (!customerMap.has(key)) {
+        customerMap.set(key, {
+          phone: key,
+          rawPhone: clean,
+          name: order.customerName || "Customer",
+          totalOrders: 0,
+          lifetimeSpend: 0,
+          firstSeen: order.createdAt,
+          lastSeen: order.createdAt,
+          lastToken: order.token,
+          lastStatus: order.status,
+          locations: new Set()
+        });
+      }
+      const record = customerMap.get(key);
+      record.totalOrders += 1;
+      record.lifetimeSpend += (order.totalAmount || 0);
+      if (new Date(order.createdAt) > new Date(record.lastSeen)) {
+        record.lastSeen = order.createdAt;
+        record.lastToken = order.token;
+        record.lastStatus = order.status;
+        if (order.customerName && order.customerName !== 'Customer') {
+          record.name = order.customerName;
+        }
+      }
+      if (order.location) record.locations.add(order.location);
+    });
+    return Array.from(customerMap.values()).sort((a, b) => new Date(b.lastSeen) - new Date(a.lastSeen));
+  }
+
+  renderAdminCustomers() {
+    const allCustomers = this.getUniqueCustomers();
+    const query = (this.adminCustomerSearch || '').toLowerCase().trim();
+    const filtered = query 
+      ? allCustomers.filter(c => c.phone.includes(query) || c.rawPhone.includes(query) || c.name.toLowerCase().includes(query))
+      : allCustomers;
+
+    const totalRevenue = allCustomers.reduce((sum, c) => sum + c.lifetimeSpend, 0);
+    const totalOrdersCount = allCustomers.reduce((sum, c) => sum + c.totalOrders, 0);
+
+    return `
+      <div class="admin-card">
+        <div class="admin-card-header">
+          <div>
+            <h3>👥 Customer Mobile CRM Directory (${allCustomers.length} Verified Mobiles)</h3>
+            <p style="font-size: 0.8rem; color: var(--text-muted);">
+              All customer mobile numbers captured from QR scans & store checkouts
+            </p>
+          </div>
+          <div style="display: flex; gap: 8px;">
+            <button class="btn-admin-action primary" id="btnExportCustomersCSV">
+              📥 Export All Mobiles (CSV / Excel)
+            </button>
+          </div>
+        </div>
+
+        <div class="metrics-grid" style="grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); margin-bottom: 1.5rem;">
+          <div class="metric-card">
+            <div class="metric-icon green">📱</div>
+            <div class="metric-details">
+              <span class="metric-label">Unique Mobile Numbers</span>
+              <span class="metric-value">${allCustomers.length}</span>
+              <span class="metric-sub">Direct Customer Contacts</span>
+            </div>
+          </div>
+
+          <div class="metric-card">
+            <div class="metric-icon blue">💰</div>
+            <div class="metric-details">
+              <span class="metric-label">Total Customer Spend</span>
+              <span class="metric-value">${this.config.currency}${totalRevenue.toLocaleString()}</span>
+              <span class="metric-sub">Across ${totalOrdersCount} Total Orders</span>
+            </div>
+          </div>
+
+          <div class="metric-card">
+            <div class="metric-icon gold">🔄</div>
+            <div class="metric-details">
+              <span class="metric-label">Avg Spend per Customer</span>
+              <span class="metric-value">${this.config.currency}${allCustomers.length ? Math.round(totalRevenue / allCustomers.length) : 0}</span>
+              <span class="metric-sub">Customer Lifetime Value</span>
+            </div>
+          </div>
+        </div>
+
+        <div style="margin-bottom: 1.25rem;">
+          <input type="text" id="adminCustomerSearchInput" placeholder="🔍 Search customer by 10-digit mobile number or name..." value="${this.adminCustomerSearch || ''}" style="width: 100%; max-width: 450px; padding: 10px 14px; border: 1px solid var(--border); border-radius: 8px; font-size: 0.85rem;">
+        </div>
+
+        <div class="data-table-wrapper">
+          <table class="admin-table">
+            <thead>
+              <tr>
+                <th>Customer Mobile</th>
+                <th>Customer Name</th>
+                <th>Total Orders</th>
+                <th>Lifetime Spend</th>
+                <th>Last Order Token</th>
+                <th>Last Visit Date</th>
+                <th>Contact / Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              ${filtered.length === 0 ? `
+                <tr><td colspan="7" style="text-align: center; padding: 2.5rem; color: var(--text-muted);">No customer mobile numbers found.</td></tr>
+              ` : filtered.map(c => `
+                <tr>
+                  <td>
+                    <strong style="color: var(--primary); font-size: 0.95rem; letter-spacing: 0.5px;">${c.phone}</strong>
+                  </td>
+                  <td><strong>${c.name}</strong></td>
+                  <td><span style="background: var(--bg-surface); padding: 3px 10px; border-radius: 999px; font-weight: 800; font-size: 0.75rem;">${c.totalOrders} Orders</span></td>
+                  <td><strong style="color: #047857;">${this.config.currency}${c.lifetimeSpend.toLocaleString()}</strong></td>
+                  <td><span style="font-weight: 800; color: var(--accent);">#${c.lastToken}</span></td>
+                  <td><span style="font-size: 0.75rem; color: var(--text-muted);">${new Date(c.lastSeen).toLocaleString([], { dateStyle: 'short', timeStyle: 'short' })}</span></td>
+                  <td>
+                    <div style="display: flex; gap: 6px;">
+                      <a href="https://wa.me/91${c.rawPhone}?text=${encodeURIComponent(`Hello ${c.name}, greetings from SHAGUN STORE!`)}" target="_blank" class="btn-admin-action" style="padding: 4px 10px; font-size: 0.75rem; text-decoration: none; color: #166534; background: #dcfce7; border-color: #bbf7d0;">
+                        💬 WhatsApp
+                      </a>
+                      <a href="tel:+91${c.rawPhone}" class="btn-admin-action" style="padding: 4px 10px; font-size: 0.75rem; text-decoration: none;">
+                        📞 Call
+                      </a>
+                    </div>
+                  </td>
+                </tr>
+              `).join('')}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    `;
+  }
+
+  exportCustomerMobilesCSV() {
+    const customers = this.getUniqueCustomers();
+    if (customers.length === 0) {
+      alert("No customer mobile numbers to export.");
+      return;
+    }
+
+    const headers = ["Mobile Number", "Customer Name", "Total Orders", "Lifetime Spend (INR)", "Last Order Token", "Last Visit Date"];
+    const rows = customers.map(c => [
+      `"${c.phone}"`,
+      `"${c.name}"`,
+      c.totalOrders,
+      c.lifetimeSpend,
+      `"#${c.lastToken}"`,
+      `"${new Date(c.lastSeen).toLocaleString()}"`
+    ]);
+
+    const csvContent = "data:text/csv;charset=utf-8," + [headers.join(','), ...rows.map(e => e.join(','))].join('\n');
+    const encodedUri = encodeURI(csvContent);
+    const link = document.createElement("a");
+    link.setAttribute("href", encodedUri);
+    link.setAttribute("download", `shagun_store_customer_mobiles_${new Date().toISOString().slice(0,10)}.csv`);
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
   }
 
   // ==========================================================================
@@ -2340,10 +2359,53 @@ class ShagunStoreApp {
       });
     }
 
-    // Export CSV
+    // Export Orders CSV
     const btnExport = document.getElementById('btnExportCSV');
     if (btnExport) {
       btnExport.addEventListener('click', () => this.exportOrdersCSV());
+    }
+
+    // Export Customer Mobiles CSV
+    const btnExportCust = document.getElementById('btnExportCustomersCSV');
+    if (btnExportCust) {
+      btnExportCust.addEventListener('click', () => this.exportCustomerMobilesCSV());
+    }
+
+    // Customer Mobile Search Input
+    const custSearch = document.getElementById('adminCustomerSearchInput');
+    if (custSearch) {
+      custSearch.addEventListener('input', (e) => {
+        this.adminCustomerSearch = e.target.value;
+        const tbody = document.querySelector('.admin-table tbody');
+        if (tbody) {
+          const allCustomers = this.getUniqueCustomers();
+          const query = this.adminCustomerSearch.toLowerCase().trim();
+          const filtered = query 
+            ? allCustomers.filter(c => c.phone.includes(query) || c.rawPhone.includes(query) || c.name.toLowerCase().includes(query))
+            : allCustomers;
+
+          if (filtered.length === 0) {
+            tbody.innerHTML = `<tr><td colspan="7" style="text-align: center; padding: 2.5rem; color: var(--text-muted);">No customer mobile numbers found matching "${this.adminCustomerSearch}".</td></tr>`;
+          } else {
+            tbody.innerHTML = filtered.map(c => `
+              <tr>
+                <td><strong style="color: var(--primary); font-size: 0.95rem; letter-spacing: 0.5px;">${c.phone}</strong></td>
+                <td><strong>${c.name}</strong></td>
+                <td><span style="background: var(--bg-surface); padding: 3px 10px; border-radius: 999px; font-weight: 800; font-size: 0.75rem;">${c.totalOrders} Orders</span></td>
+                <td><strong style="color: #047857;">${this.config.currency}${c.lifetimeSpend.toLocaleString()}</strong></td>
+                <td><span style="font-weight: 800; color: var(--accent);">#${c.lastToken}</span></td>
+                <td><span style="font-size: 0.75rem; color: var(--text-muted);">${new Date(c.lastSeen).toLocaleString([], { dateStyle: 'short', timeStyle: 'short' })}</span></td>
+                <td>
+                  <div style="display: flex; gap: 6px;">
+                    <a href="https://wa.me/91${c.rawPhone}?text=${encodeURIComponent(`Hello ${c.name}, greetings from SHAGUN STORE!`)}" target="_blank" class="btn-admin-action" style="padding: 4px 10px; font-size: 0.75rem; text-decoration: none; color: #166534; background: #dcfce7; border-color: #bbf7d0;">💬 WhatsApp</a>
+                    <a href="tel:+91${c.rawPhone}" class="btn-admin-action" style="padding: 4px 10px; font-size: 0.75rem; text-decoration: none;">📞 Call</a>
+                  </div>
+                </td>
+              </tr>
+            `).join('');
+          }
+        }
+      });
     }
 
     // Save Store Settings Form
