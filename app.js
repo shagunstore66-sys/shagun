@@ -385,94 +385,29 @@ class ShagunStoreApp {
     const cartModal = document.getElementById('cartModal');
     if (cartModal) cartModal.remove();
 
-    // If UPI is selected, complete Payment BEFORE sending order to Shop Admin
-    if (this.selectedPaymentMethod === 'upi') {
-      this.openUpiPrePaymentModal();
-    } else {
-      // Cash at Counter (Direct Order Placement)
-      this.finalizeVerifiedOrder('Pay at Counter');
-    }
-  }
-
-  // Pre-Payment UPI Verification Modal (Payment Done BEFORE Admin Order Dispatch)
-  openUpiPrePaymentModal() {
     const totals = this.getCartTotals();
+    const tokenNum = `SG-${100 + (this.orders.length + 1) % 900}`;
     const upiId = this.config.upiId || '7795565216-1@okbizaxis';
     const storeName = this.config.name || 'SHAGUN STORE';
-    const tempToken = `SG-${100 + (this.orders.length + 1) % 900}`;
-    const upiUri = `upi://pay?pa=${encodeURIComponent(upiId)}&pn=${encodeURIComponent(storeName)}&am=${totals.finalTotal}&cu=INR&tn=${encodeURIComponent('Order ' + tempToken + ' ' + storeName)}`;
 
-    const modalDiv = document.createElement('div');
-    modalDiv.id = 'upiPrePaymentModal';
-    modalDiv.className = 'admin-modal-overlay';
-    modalDiv.style.zIndex = '99999';
+    // If UPI is selected, auto-trigger UPI app with exact amount
+    if (this.selectedPaymentMethod === 'upi') {
+      const upiUri = `upi://pay?pa=${encodeURIComponent(upiId)}&pn=${encodeURIComponent(storeName)}&am=${totals.finalTotal}&cu=INR&tn=${encodeURIComponent('Order ' + tokenNum + ' ' + storeName)}`;
+      setTimeout(() => {
+        try {
+          window.location.href = upiUri;
+        } catch (e) {}
+      }, 200);
 
-    modalDiv.innerHTML = `
-      <div class="admin-modal-box" style="max-width: 440px; text-align: center; border-radius: 18px; overflow: hidden; padding: 0; box-shadow: 0 20px 40px rgba(0,0,0,0.3);">
-        <div style="background: linear-gradient(135deg, #047857 0%, #064e3b 100%); color: white; padding: 20px; position: relative;">
-          <button class="btn-close-modal" id="btnCloseUpiModal" style="position: absolute; right: 14px; top: 14px; color: white; background: rgba(255,255,255,0.2); border: none; width: 32px; height: 32px; border-radius: 50%; cursor: pointer; font-size: 16px;">✕</button>
-          <div style="font-size: 2rem; margin-bottom: 4px;">📱</div>
-          <h3 style="font-size: 1.25rem; font-weight: 900; margin: 0;">Complete UPI Payment</h3>
-          <p style="font-size: 0.82rem; opacity: 0.9; margin: 4px 0 0 0;">Pay exact bill amount to confirm your grocery order</p>
-        </div>
-
-        <div style="padding: 20px; background: white;">
-          <div style="background: #f8fafc; border: 1.5px dashed #cbd5e1; border-radius: 14px; padding: 14px; margin-bottom: 16px;">
-            <div style="font-size: 0.8rem; color: #64748b; font-weight: 600; text-transform: uppercase;">Total Bill Amount</div>
-            <div style="font-size: 2.2rem; font-weight: 900; color: #047857; font-family: var(--font-display); line-height: 1.1; margin: 4px 0;">
-              ${this.config.currency}${totals.finalTotal}
-            </div>
-            <div style="font-size: 0.78rem; color: #475569; font-weight: 600;">
-              Payee: <strong>SHAGUN STORE</strong> • UPI ID: <strong style="color: #047857; font-family: var(--font-mono);">${upiId}</strong>
-            </div>
-          </div>
-
-          <!-- Direct 1-Tap Trigger Button -->
-          <a href="${upiUri}" id="btnTriggerUpiApp" style="display: flex; align-items: center; justify-content: center; gap: 10px; width: 100%; padding: 15px; background: linear-gradient(135deg, #047857 0%, #065f46 100%); color: white; border-radius: 12px; font-size: 1.05rem; font-weight: 900; text-decoration: none; box-shadow: 0 4px 14px rgba(4,120,87,0.35); margin-bottom: 14px;">
-            <span>🚀</span> Open UPI App to Pay ${this.config.currency}${totals.finalTotal} ➔
-          </a>
-
-          <div style="border-top: 1px solid #e2e8f0; margin: 16px 0 14px 0; position: relative;">
-            <span style="position: absolute; top: -10px; left: 50%; transform: translateX(-50%); background: white; padding: 0 10px; font-size: 0.72rem; color: #94a3b8; font-weight: 700;">STEP 2: CONFIRM AFTER PAYING</span>
-          </div>
-
-          <button id="btnConfirmUpiPaymentDone" style="width: 100%; padding: 14px; background: #0f172a; color: white; border: none; border-radius: 12px; font-size: 0.95rem; font-weight: 800; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; box-shadow: var(--shadow-md);">
-            <span>✓</span> I Have Paid ${this.config.currency}${totals.finalTotal} (Confirm Order)
-          </button>
-          
-          <div style="font-size: 0.72rem; color: #64748b; margin-top: 10px; font-weight: 600;">
-            🔒 Your order is sent to the packing staff immediately after payment is done.
-          </div>
-        </div>
-      </div>
-    `;
-
-    document.body.appendChild(modalDiv);
-
-    // Auto-launch UPI App on phone
-    setTimeout(() => {
-      try {
-        window.location.href = upiUri;
-      } catch (e) {}
-    }, 300);
-
-    // Close Handler
-    const btnClose = modalDiv.querySelector('#btnCloseUpiModal');
-    if (btnClose) {
-      btnClose.onclick = () => modalDiv.remove();
-    }
-
-    // Confirm Payment Handler (Dispatches Order to Shop Admin)
-    const btnConfirm = modalDiv.querySelector('#btnConfirmUpiPaymentDone');
-    if (btnConfirm) {
-      btnConfirm.onclick = () => {
-        modalDiv.remove();
-        this.finalizeVerifiedOrder(`Paid Online (UPI - ${upiId})`);
-      };
+      // Order created automatically with Pending Shop Owner Verification
+      this.finalizeVerifiedOrder('UPI - Awaiting Shop Verification', false);
+    } else {
+      // Cash at Counter
+      this.finalizeVerifiedOrder('Pay Cash at Counter', true);
     }
   }
 
-  async finalizeVerifiedOrder(paymentStatusText = 'Paid Online (UPI)') {
+  async finalizeVerifiedOrder(paymentStatusText = 'UPI - Awaiting Shop Verification', paymentVerified = false) {
     const totals = this.getCartTotals();
     const tokenNum = `SG-${100 + (this.orders.length + 1) % 900}`;
     
@@ -495,13 +430,14 @@ class ShagunStoreApp {
       })),
       packingNote: this.pendingOrderData.packingNote,
       paymentMethod: this.selectedPaymentMethod,
-      paymentStatus: paymentStatusText || (this.selectedPaymentMethod === 'counter' ? 'Pay at Counter' : 'Paid Online (UPI)'),
+      paymentStatus: paymentStatusText,
+      paymentVerified: paymentVerified,
       subtotal: totals.subtotal,
       tax: totals.tax,
       totalAmount: totals.finalTotal,
       status: 'NEW',
       history: [
-        { status: 'NEW', time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }), text: 'Order placed & payment confirmed' }
+        { status: 'NEW', time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }), text: 'Order created automatically upon UPI trigger' }
       ]
     };
 
@@ -528,6 +464,25 @@ class ShagunStoreApp {
     sounds.playTapSound();
 
     this.render();
+  }
+
+  // Shop Owner / Staff verifies UPI Payment in 1 click
+  verifyUpiPaymentByAdmin(orderId) {
+    const order = this.orders.find(o => o.id === orderId);
+    if (order) {
+      order.paymentVerified = true;
+      order.paymentStatus = '🟢 Verified & Paid Online (UPI)';
+      order.history.push({
+        status: order.status,
+        time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+        text: 'UPI Payment received in bank and verified by Shop Admin'
+      });
+      this.saveOrders();
+      saveOrderToFirestore(order);
+      this.broadcast('ORDER_UPDATED', order);
+      sounds.playReadySound();
+      this.render();
+    }
   }
 
   // ---------------- Staff Order Workflow ----------------
@@ -863,6 +818,24 @@ class ShagunStoreApp {
           <div class="location-badge">📍 Collection Spot: ${order.location}</div>
         </div>
 
+        ${order.paymentMethod === 'upi' && !order.paymentVerified ? `
+          <div style="margin-bottom: 1rem; background: #fffbeb; border: 1.5px solid #fde68a; padding: 14px; border-radius: 14px; text-align: center;">
+            <div style="font-size: 1.5rem; margin-bottom: 4px;">⏳</div>
+            <h4 style="font-size: 1rem; font-weight: 900; color: #92400e; margin: 0 0 4px 0;">Order Submitted • Awaiting Shop UPI Verification</h4>
+            <p style="font-size: 0.8rem; color: #b45309; margin: 0 0 10px 0;">
+              Store owner is confirming receipt of <strong>${this.config.currency}${order.totalAmount}</strong> on UPI ID <strong>${this.config.upiId || '7795565216-1@okbizaxis'}</strong>. Packing begins automatically once verified by store admin.
+            </p>
+            <a href="upi://pay?pa=${encodeURIComponent(this.config.upiId || '7795565216-1@okbizaxis')}&pn=${encodeURIComponent(this.config.name || 'SHAGUN STORE')}&am=${order.totalAmount}&cu=INR&tn=${encodeURIComponent('Order ' + order.token + ' ' + (this.config.name || 'SHAGUN STORE'))}" style="display: inline-flex; align-items: center; gap: 6px; padding: 8px 16px; background: #047857; color: white; border-radius: 8px; font-size: 0.82rem; font-weight: 800; text-decoration: none;">
+              <span>📱</span> Re-open UPI App (${this.config.currency}${order.totalAmount})
+            </a>
+          </div>
+        ` : order.paymentMethod === 'upi' && order.paymentVerified ? `
+          <div style="margin-bottom: 1rem; background: #ecfdf5; border: 1.5px solid #a7f3d0; padding: 12px 14px; border-radius: 14px; text-align: center; color: #065f46;">
+            <div style="font-size: 0.95rem; font-weight: 900;">🟢 UPI Payment Verified by Store Owner (${this.config.currency}${order.totalAmount})</div>
+            <div style="font-size: 0.78rem; opacity: 0.9; margin-top: 2px;">Bank receipt confirmed. Staff is packing your groceries!</div>
+          </div>
+        ` : ''}
+
         ${isReady ? `
           <div class="ready-alert-box" style="animation: pulse 1.5s infinite; margin-bottom: 1rem;">
             <h3 style="font-size: 1.15rem; margin: 0 0 6px 0;">🎉 Your Grocery Bag is Packed & Ready!</h3>
@@ -871,7 +844,7 @@ class ShagunStoreApp {
         ` : `
           <div style="margin-bottom: 1rem; font-weight: 800; color: #047857; font-size: 0.95rem; background: #ecfdf5; padding: 12px 14px; border-radius: 12px; border: 1px solid #a7f3d0; display: flex; align-items: center; gap: 8px;">
             <span style="font-size: 1.2rem;">${isPacking ? '👨‍🍳' : '⏳'}</span>
-            <div>${isPacking ? 'Staff is currently packing your items at shelves...' : 'Order confirmed & paid! Packing staff notified at counter.'}</div>
+            <div>${isPacking ? 'Staff is currently packing your items at shelves...' : 'Order confirmed! Packing staff notified at counter.'}</div>
           </div>
         `}
 
@@ -1135,6 +1108,17 @@ class ShagunStoreApp {
         ${order.packingNote ? `
           <div class="ticket-notes">
             📝 Note: "${order.packingNote}"
+          </div>
+        ` : ''}
+
+        ${order.paymentMethod === 'upi' && !order.paymentVerified ? `
+          <div style="background: #fffbeb; border: 1.5px solid #fde68a; border-radius: 10px; padding: 10px; margin: 8px 0; text-align: center;">
+            <div style="font-size: 0.78rem; font-weight: 800; color: #b45309; margin-bottom: 6px;">
+              ⚠️ UPI Payment: ${this.config.currency}${order.totalAmount} (Check Soundbox / Bank SMS)
+            </div>
+            <button class="btn-verify-upi-payment" data-order-id="${order.id}" style="width: 100%; padding: 8px 12px; background: #047857; color: white; border: none; border-radius: 8px; font-weight: 800; font-size: 0.82rem; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 6px; box-shadow: var(--shadow-sm);">
+              <span>🟢</span> Confirm ₹${order.totalAmount} Received in Bank
+            </button>
           </div>
         ` : ''}
 
@@ -2459,6 +2443,14 @@ class ShagunStoreApp {
         sounds.playNewOrderChime();
       });
     }
+
+    // Staff / Admin UPI Payment Verification
+    document.querySelectorAll('.btn-verify-upi-payment').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const ordId = btn.getAttribute('data-order-id');
+        this.verifyUpiPaymentByAdmin(ordId);
+      });
+    });
 
     // Admin Open Add Product Modal
     const btnAddProd = document.getElementById('btnOpenAddProductModal');
