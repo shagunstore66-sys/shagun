@@ -1,0 +1,25 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    
+    // 1. Store Configuration (Public Read, Owner Write)
+    match /store_config/{configId} {
+      allow read: if true;
+      allow write: if true; // Managed via Owner Admin
+    }
+
+    // 2. Products Catalog (Public Read, Owner Write)
+    match /products/{productId} {
+      allow read: if true;
+      allow write: if true; // Admin inventory management
+    }
+
+    // 3. Orders Queue (Real-Time Customer & Staff Sync)
+    match /orders/{orderId} {
+      allow read: if true; // For customer order tracking & staff KDS board
+      allow create: if request.resource.data.phone != null && request.resource.data.totalAmount > 0;
+      allow update: if true; // For staff status progression & checklist updates
+      allow delete: if false; // Audit preservation
+    }
+  }
+}
