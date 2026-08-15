@@ -789,8 +789,31 @@ class ShagunStoreApp {
     const btnDone = modalDiv.querySelector('#btnDonePaying');
     if (btnDone) {
       btnDone.onclick = () => {
+        const now = new Date();
+        const formattedDate = now.toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' });
+        const formattedTime = now.toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit', hour12: true });
+        const fullStamp = `${formattedDate}, ${formattedTime}`;
+
+        order.customerPaid = true;
+        order.paymentVerified = true;
+        order.paymentCompletedAt = now.toISOString();
+        order.paymentCompletedFormatted = fullStamp;
+        order.paymentStatus = `🟢 UPI Paid (${fullStamp})`;
+
+        order.history.push({
+          status: order.status,
+          time: formattedTime,
+          text: `Payment of ${this.config.currency}${order.totalAmount} completed via UPI on ${fullStamp} • Recorded in Store Admin Book`
+        });
+
+        this.saveOrders();
+        this.broadcast('ORDER_UPDATED', order);
+        updateOrderStatusInFirestore(order.id, order.status, order.history[order.history.length - 1]);
+
+        sounds.playNewOrderChime();
+        this.showToastNotification(`✅ Payment Completed & Recorded: ${fullStamp}!`);
+
         modalDiv.remove();
-        sounds.playTapSound();
         this.render();
       };
     }
@@ -1322,7 +1345,7 @@ class ShagunStoreApp {
         </div>
 
         <!-- Shop Owner Bank Verification Status Banner -->
-        ${order.paymentMethod === 'upi' && !order.paymentVerified ? `
+        ${order.paymentMethod === 'upi' && !order.customerPaid && !order.paymentVerified ? `
           <div style="margin-bottom: 1rem; background: var(--bg-cream); border: 1.5px solid var(--champagne-gold); padding: 14px; border-radius: 14px; text-align: center;">
             <div style="font-size: 1.5rem; margin-bottom: 4px;">⏳</div>
             <h4 style="font-size: 0.95rem; font-weight: 800; color: var(--deep-charcoal); font-family: var(--font-display); margin: 0 0 4px 0;">${this.t('orderAwaitingVerify')}</h4>
@@ -1333,10 +1356,16 @@ class ShagunStoreApp {
               <span>📱</span> ${this.t('reopenUpi')} (${this.config.currency}${order.totalAmount})
             </button>
           </div>
-        ` : order.paymentMethod === 'upi' && order.paymentVerified ? `
-          <div style="margin-bottom: 1rem; background: var(--bg-cream); border: 1.5px solid var(--champagne-gold); padding: 12px 14px; border-radius: 14px; text-align: center; color: var(--deep-charcoal);">
-            <div style="font-size: 0.95rem; font-weight: 800; font-family: var(--font-display);">🟢 ${this.t('verifiedUpi')} (${this.config.currency}${order.totalAmount})</div>
-            <div style="font-size: 0.78rem; color: var(--text-muted); margin-top: 2px;">${this.t('verifiedUpiDesc')}</div>
+        ` : (order.customerPaid || order.paymentVerified) ? `
+          <div style="margin-bottom: 1rem; background: #ecfdf5; border: 1.5px solid #10b981; padding: 14px 16px; border-radius: 14px; text-align: center; color: #065f46;">
+            <div style="font-size: 1.6rem; margin-bottom: 4px;">✅</div>
+            <div style="font-size: 1rem; font-weight: 900; font-family: var(--font-display);">Payment Completed & Recorded</div>
+            <div style="font-size: 0.82rem; color: #047857; margin-top: 4px; font-weight: 700;">
+              Paid ${this.config.currency}${order.totalAmount} via ${order.paymentMethod === 'upi' ? 'UPI' : 'Cash'} on <strong>${order.paymentCompletedFormatted || new Date(order.createdAt).toLocaleString('en-IN', { day: '2-digit', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit', hour12: true })}</strong>
+            </div>
+            <div style="font-size: 0.72rem; color: #059669; margin-top: 5px; font-weight: 600;">
+              🔒 Payment window closed • Order recorded in Store Admin Book
+            </div>
           </div>
         ` : ''}
 
@@ -1673,6 +1702,67 @@ class ShagunStoreApp {
           <div style="background: #f8fafc; padding: 14px; border-radius: 12px; border: 1px solid var(--border);">
             <div style="font-size: 0.75rem; font-weight: 800; color: #475569;">MERCHANT UPI ID</div>
             <div style="font-size: 0.95rem; font-weight: 900; color: #1e3a8a; word-break: break-all;">${this.config.upiId || '7795565216-1@okbizaxis'}</div>
+          </div>
+        </div>
+
+        <!-- Store Master Orders & Payment Ledger (Admin Book) -->
+        <div style="border: 1.5px solid var(--border); border-radius: var(--radius-md); padding: 14px; background: #ffffff; margin-bottom: 1.5rem;">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+            <div>
+              <h3 style="font-size: 1.05rem; font-weight: 900; color: #0f172a; margin: 0;">📖 Store Orders & Payment Ledger (Admin Book)</h3>
+              <p style="font-size: 0.76rem; color: #64748b; margin: 2px 0 0 0;">Automatic permanent record of customer payment date, time & order status</p>
+            </div>
+            <span style="font-size: 0.78rem; font-weight: 800; background: #eff6ff; color: #1e3a8a; padding: 4px 10px; border-radius: 99px;">
+              ${this.orders.length} Total Records
+            </span>
+          </div>
+
+          <div style="overflow-x: auto;">
+            <table style="width: 100%; border-collapse: collapse; font-size: 0.8rem; text-align: left;">
+              <thead>
+                <tr style="background: #f8fafc; border-bottom: 1.5px solid var(--border);">
+                  <th style="padding: 9px 8px;">Token</th>
+                  <th style="padding: 9px 8px;">Order Time</th>
+                  <th style="padding: 9px 8px;">Customer</th>
+                  <th style="padding: 9px 8px;">Amount</th>
+                  <th style="padding: 9px 8px;">Payment Date & Time (Admin Record)</th>
+                  <th style="padding: 9px 8px;">Mode</th>
+                  <th style="padding: 9px 8px;">Status</th>
+                </tr>
+              </thead>
+              <tbody>
+                ${this.orders.length === 0 ? `<tr><td colspan="7" style="text-align:center; padding:2rem; color:#64748b;">No orders in ledger book yet</td></tr>` : this.orders.map(o => {
+                  const createdStr = new Date(o.createdAt).toLocaleString('en-IN', { day: '2-digit', month: 'short', hour: '2-digit', minute: '2-digit', hour12: true });
+                  const paidStamp = o.paymentCompletedFormatted || (o.paymentVerified ? createdStr : (o.paymentMethod === 'upi' ? '⏳ Awaiting Verification' : '💵 Cash at Pickup'));
+                  const isPaid = o.customerPaid || o.paymentVerified || o.paymentMethod === 'counter';
+
+                  return `
+                    <tr style="border-bottom: 1px solid #f1f5f9;">
+                      <td style="padding: 9px 8px; font-weight: 900; font-family: var(--font-display); color: #0f172a; font-size: 0.95rem;">#${o.token}</td>
+                      <td style="padding: 9px 8px; color: #475569;">${createdStr}</td>
+                      <td style="padding: 9px 8px;">
+                        <strong>${o.customerName}</strong><br>
+                        <span style="font-size: 0.72rem; color: #64748b;">${o.phone}</span>
+                      </td>
+                      <td style="padding: 9px 8px; font-weight: 900; color: #1e3a8a;">${this.config.currency}${o.totalAmount}</td>
+                      <td style="padding: 9px 8px;">
+                        <span style="font-weight: 800; color: ${isPaid ? '#166534' : '#b45309'}; background: ${isPaid ? '#dcfce7' : '#fef3c7'}; padding: 3px 8px; border-radius: 4px; display: inline-block;">
+                          ${isPaid ? '✓ ' : ''}${paidStamp}
+                        </span>
+                      </td>
+                      <td style="padding: 9px 8px; font-weight: 700; text-transform: uppercase; font-size: 0.72rem; color: #475569;">
+                        ${o.paymentMethod === 'upi' ? '📱 UPI' : '💵 CASH'}
+                      </td>
+                      <td style="padding: 9px 8px;">
+                        <span style="padding: 3px 8px; border-radius: 99px; font-size: 0.72rem; font-weight: 800; background: ${o.status === 'COMPLETED' ? '#dcfce7' : o.status === 'READY' ? '#fef3c7' : '#eff6ff'}; color: ${o.status === 'COMPLETED' ? '#166534' : o.status === 'READY' ? '#92400e' : '#1e40af'};">
+                          ${o.status}
+                        </span>
+                      </td>
+                    </tr>
+                  `;
+                }).join('')}
+              </tbody>
+            </table>
           </div>
         </div>
 
@@ -2100,27 +2190,30 @@ class ShagunStoreApp {
       });
     }
 
-    // Export Customer Mobiles CSV
+    // Export Customer & Payment Ledger CSV
     const btnExpCust = document.getElementById('btnExportCustomersCSV');
     if (btnExpCust) {
       btnExpCust.addEventListener('click', () => {
-        const customers = this.getUniqueCustomers();
-        const headers = ["Mobile Number", "Customer Name", "Total Orders", "Lifetime Spend (INR)", "Last Token", "Last Order Date"];
-        const rows = customers.map(c => [
-          `"${c.phone}"`,
-          `"${(c.name || '').replace(/"/g, '""')}"`,
-          c.totalOrders,
-          c.lifetimeSpend,
-          `"${c.lastToken}"`,
-          `"${new Date(c.lastSeen).toLocaleString()}"`
+        const headers = ["Token", "Order Date & Time", "Payment Completed Date & Time", "Customer Name", "Phone", "Amount (INR)", "Payment Mode", "Payment Status", "Order Status"];
+        const rows = this.orders.map(o => [
+          `"${o.token}"`,
+          `"${new Date(o.createdAt).toLocaleString('en-IN')}"`,
+          `"${o.paymentCompletedFormatted || (o.paymentVerified ? new Date(o.createdAt).toLocaleString('en-IN') : (o.paymentMethod === 'upi' ? 'Awaiting Verification' : 'Cash at Pickup'))}"`,
+          `"${(o.customerName || '').replace(/"/g, '""')}"`,
+          `"${o.phone}"`,
+          o.totalAmount,
+          `"${o.paymentMethod === 'upi' ? 'UPI' : 'Cash'}"`,
+          `"${(o.paymentStatus || '').replace(/"/g, '""')}"`,
+          `"${o.status}"`
         ]);
         const csvContent = "data:text/csv;charset=utf-8," + [headers.join(','), ...rows.map(e => e.join(','))].join('\n');
         const link = document.createElement("a");
         link.setAttribute("href", encodeURI(csvContent));
-        link.setAttribute("download", `shagun_store_customer_crm_${new Date().toISOString().slice(0,10)}.csv`);
+        link.setAttribute("download", `shagun_store_payment_ledger_${new Date().toISOString().slice(0,10)}.csv`);
         document.body.appendChild(link);
         link.click();
         link.remove();
+        this.showToastNotification("📥 Payment Ledger CSV Exported!");
       });
     }
 
