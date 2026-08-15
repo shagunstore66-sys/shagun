@@ -11,23 +11,21 @@ export const INITIAL_STORE_CONFIG = {
   name: "SHAGUN STORE",
   nameHindi: "शगुन स्टोर",
   nameKannada: "ಶಗುನ್ ಸ್ಟೋರ್",
-  tagline: "Scan in Aisle • Order • Collect at Counter",
-  taglineHindi: "स्कैन करें • सामान चुनें • काउंटर से प्राप्त करें",
-  taglineKannada: "ಸ್ಕ್ಯಾನ್ ಮಾಡಿ • ಸಾಮಗ್ರಿ ಆರಿಸಿ • ಕೌಂಟರ್‌ನಲ್ಲಿ ಪಡೆಯಿರಿ",
-  address: "Shop No. 1, Main Market, Bengaluru, Karnataka",
-  phone: "+91 98765 43210",
+  tagline: "P.H. Road, Near Chamundi Textiles, Bettadapura - 571102",
+  taglineHindi: "पी.एच. रोड, चामुंडी टेक्सटाइल्स के पास, बेट्टदपुरा - 571102",
+  taglineKannada: "ಪಿ.ಹೆಚ್. ರಸ್ತೆ, ಚಾಮುಂಡಿ ಟೆಕ್ಸ್‌ಟೈಲ್ಸ್ ಹತ್ತಿರ, ಬೆಟ್ಟದಪುರ - 571102",
+  address: "P.H. Road, Near Chamundi Textiles, Bettadapura, Karnataka - 571102",
+  addressHindi: "पी.एच. रोड, चामुंडी टेक्सटाइल्स के पास, बेट्टदपुरा, कर्नाटक - 571102",
+  addressKannada: "ಪಿ.ಹೆಚ್. ರಸ್ತೆ, ಚಾಮುಂಡಿ ಟೆಕ್ಸ್‌ಟೈಲ್ಸ್ ಹತ್ತಿರ, ಬೆಟ್ಟದಪುರ, ಕರ್ನಾಟಕ - 571102",
+  phone: "+91 77955 65216",
   upiId: "7795565216-1@okbizaxis",
   currency: "₹",
   taxPercent: 0,
   expressPackingFee: 0,
   pickupLocations: [
-    "Main Entrance Stand (Express)",
-    "Aisle 1 - Grains & Staples (ಧಾನ್ಯಗಳು)",
-    "Aisle 2 - Oils, Ghee & Masalas (ಎಣ್ಣೆ, ತುಪ್ಪ)",
-    "Aisle 3 - Dairy & Beverages (ಹಾಲು, ಪಾನೀಯಗಳು)",
-    "Aisle 4 - Household & Cleaning (ಸ್ವಚ್ಛತೆ)",
-    "Billing Counter 1",
-    "Billing Counter 2"
+    "Counter (ಕೌಂಟರ್ / काउंटर)",
+    "Counter 1",
+    "Counter 2"
   ]
 };
 
@@ -50,8 +48,8 @@ export const CATEGORIES = [
 export const I18N = {
   en: {
     langName: "English",
-    storeTagline: "Scan in Aisle • Order • Collect at Counter",
-    searchPlaceholder: "Search 2,000+ Groceries (Sugar, Dals, Rice, Oils...)",
+    storeTagline: "P.H. Road, Near Chamundi Textiles, Bettadapura - 571102",
+    searchPlaceholder: "Search Groceries (Sugar, Dals, Rice, Oils...)",
     cartTitle: "Your Shopping Cart",
     cartEmpty: "Your cart is empty. Add grocery items to begin!",
     itemsSubtotal: "Items Subtotal",
@@ -111,8 +109,8 @@ export const I18N = {
   },
   hi: {
     langName: "हिंदी",
-    storeTagline: "स्कैन करें • सामान चुनें • काउंटर से प्राप्त करें",
-    searchPlaceholder: "2,000+ सामान खोजें (चीनी, दाल, चावल, तेल...)",
+    storeTagline: "पी.एच. रोड, चामुंडी टेक्सटाइल्स के पास, बेट्टदपुरा - 571102",
+    searchPlaceholder: "किराना सामान खोजें (चीनी, दाल, चावल, तेल...)",
     cartTitle: "आपकी शॉपिंग कार्ट",
     cartEmpty: "आपकी कार्ट खाली है। खरीदारी शुरू करने के लिए सामान जोड़ें!",
     itemsSubtotal: "सामान का कुल मूल्य",
@@ -172,8 +170,8 @@ export const I18N = {
   },
   kn: {
     langName: "ಕನ್ನಡ",
-    storeTagline: "ಸ್ಕ್ಯಾನ್ ಮಾಡಿ • ಸಾಮಗ್ರಿ ಆರಿಸಿ • ಕೌಂಟರ್‌ನಲ್ಲಿ ಪಡೆಯಿರಿ",
-    searchPlaceholder: "2,000+ ದಿನಸಿ ಸಾಮಗ್ರಿ ಹುಡುಕಿ (ಸಕ್ಕರೆ, ಬೇಳೆ, ಅಕ್ಕಿ, ಎಣ್ಣೆ...)",
+    storeTagline: "ಪಿ.ಹೆಚ್. ರಸ್ತೆ, ಚಾಮುಂಡಿ ಟೆಕ್ಸ್‌ಟೈಲ್ಸ್ ಹತ್ತಿರ, ಬೆಟ್ಟದಪುರ - 571102",
+    searchPlaceholder: "ದಿನಸಿ ಸಾಮಗ್ರಿ ಹುಡುಕಿ (ಸಕ್ಕರೆ, ಬೇಳೆ, ಅಕ್ಕಿ, ಎಣ್ಣೆ...)",
     cartTitle: "ನಿಮ್ಮ ಶಾಪಿಂಗ್ ಕಾರ್ಟ್",
     cartEmpty: "ನಿಮ್ಮ ಕಾರ್ಟ್ ಖಾಲಿಯಾಗಿದೆ. ಸಾಮಗ್ರಿಗಳನ್ನು ಸೇರಿಸಿ!",
     itemsSubtotal: "ಒಟ್ಟು ಸಾಮಗ್ರಿಗಳ ಮೊತ್ತ",
