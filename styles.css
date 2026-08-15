@@ -682,6 +682,202 @@ main {
   border: 1px solid var(--border-gold);
 }
 
+/* ---------------- Customer OTP Verification Modal ---------------- */
+.otp-modal-box {
+  background: #ffffff;
+  border-radius: var(--radius-xl);
+  width: 100%;
+  max-width: 440px;
+  box-shadow: var(--shadow-xl);
+  border: 1.5px solid var(--border-gold);
+  overflow: hidden;
+  animation: modalPop 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.otp-header {
+  padding: 16px 20px;
+  background: var(--deep-charcoal);
+  color: #FAF9F7;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 2px solid var(--champagne-gold);
+}
+
+.otp-header h3 {
+  font-family: var(--font-display);
+  font-size: 1.12rem;
+  font-weight: 800;
+  color: var(--champagne-gold);
+  margin: 0;
+}
+
+.otp-body {
+  padding: 20px 18px;
+}
+
+.otp-number-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: var(--bg-surface);
+  border: 1px solid var(--border);
+  padding: 8px 12px;
+  border-radius: var(--radius-md);
+  margin-bottom: 14px;
+}
+
+.otp-number-text {
+  font-size: 0.88rem;
+  font-weight: 800;
+  color: var(--deep-charcoal);
+}
+
+.btn-change-number {
+  background: transparent;
+  border: none;
+  color: #1e40af;
+  font-weight: 700;
+  font-size: 0.78rem;
+  cursor: pointer;
+  text-decoration: underline;
+}
+
+.otp-banner-card {
+  background: linear-gradient(135deg, #1A1A1A 0%, #2D2D2D 100%);
+  border: 1px solid var(--champagne-gold);
+  border-radius: var(--radius-lg);
+  padding: 14px;
+  text-align: center;
+  margin-bottom: 16px;
+  box-shadow: 0 4px 14px rgba(0,0,0,0.1);
+}
+
+.otp-banner-label {
+  font-size: 0.76rem;
+  color: var(--soft-gold);
+  font-weight: 700;
+  margin-bottom: 6px;
+}
+
+.otp-banner-digits {
+  font-family: var(--font-display);
+  font-size: 2rem;
+  font-weight: 900;
+  letter-spacing: 0.25em;
+  color: #ffffff;
+  background: rgba(212, 175, 55, 0.2);
+  padding: 4px 16px;
+  border-radius: var(--radius-md);
+  display: inline-block;
+  border: 1px solid rgba(212, 175, 55, 0.4);
+}
+
+.otp-input-wrap {
+  margin: 16px 0;
+  text-align: center;
+}
+
+.otp-input-field {
+  width: 200px;
+  padding: 10px 14px;
+  font-size: 1.8rem;
+  font-weight: 900;
+  letter-spacing: 0.35em;
+  text-align: center;
+  color: var(--deep-charcoal);
+  border: 2px solid var(--border);
+  border-radius: var(--radius-lg);
+  background: #ffffff;
+  outline: none;
+  transition: all 0.2s ease;
+  font-family: 'JetBrains Mono', monospace;
+}
+
+.otp-input-field:focus {
+  border-color: var(--champagne-gold);
+  box-shadow: 0 0 0 3px var(--gold-glow);
+}
+
+.otp-actions-col {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.btn-verify-otp {
+  width: 100%;
+  padding: 13px;
+  background: var(--deep-charcoal);
+  color: var(--champagne-gold);
+  border: 1px solid var(--champagne-gold);
+  border-radius: var(--radius-lg);
+  font-size: 0.96rem;
+  font-weight: 800;
+  cursor: pointer;
+  box-shadow: 0 4px 14px var(--primary-glow);
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+}
+
+.btn-verify-otp:hover {
+  background: #000000;
+  transform: translateY(-1px);
+}
+
+.btn-whatsapp-otp {
+  width: 100%;
+  padding: 10px;
+  background: #25D366;
+  color: #ffffff;
+  border: none;
+  border-radius: var(--radius-lg);
+  font-size: 0.85rem;
+  font-weight: 800;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  transition: all 0.2s ease;
+}
+
+.btn-whatsapp-otp:hover {
+  background: #1eb954;
+}
+
+.otp-resend-row {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: 12px;
+  font-size: 0.78rem;
+  color: var(--text-muted);
+  font-weight: 700;
+  gap: 6px;
+}
+
+.btn-resend-link {
+  background: transparent;
+  border: none;
+  color: var(--deep-charcoal);
+  font-weight: 800;
+  text-decoration: underline;
+  cursor: pointer;
+  padding: 0;
+}
+
+.otp-error-msg {
+  color: #dc2626;
+  font-size: 0.8rem;
+  font-weight: 800;
+  text-align: center;
+  margin-top: 8px;
+}
+
 .cart-modal-header {
   padding: 18px 22px;
   background: var(--bg-cream);
