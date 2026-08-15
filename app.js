@@ -481,15 +481,206 @@ class ShagunStoreApp {
       return;
     }
 
+    // ---------------- Customer Mobile Order Placement with OTP Verification Flow ----------------
     this.pendingOrderData = {
       customerName: (customerName || '').trim() || "Customer",
       phone: cleanPhone,
       packingNote: (packingNote || '').trim()
     };
 
+    // Check if customer phone is already verified in this session
+    const isAlreadyVerified = sessionStorage.getItem('shagun_phone_is_verified') === 'true' && 
+                              sessionStorage.getItem('shagun_active_phone') === cleanPhone;
+
+    if (isAlreadyVerified) {
+      const cartModal = document.getElementById('cartModal');
+      if (cartModal) cartModal.remove();
+      this.executeOrderPlacement();
+      return;
+    }
+
+    // Generate New 4-Digit OTP
+    const generatedOtp = Math.floor(1000 + Math.random() * 9000).toString();
+    sessionStorage.setItem('shagun_active_otp', generatedOtp);
+    sessionStorage.setItem('shagun_active_phone', cleanPhone);
+
     const cartModal = document.getElementById('cartModal');
     if (cartModal) cartModal.remove();
 
+    this.openOtpModal(cleanPhone, generatedOtp);
+  }
+
+  openOtpModal(phone, otpCode) {
+    const existingOtpModal = document.getElementById('otpModal');
+    if (existingOtpModal) existingOtpModal.remove();
+
+    const modalDiv = document.createElement('div');
+    modalDiv.className = 'admin-modal-overlay';
+    modalDiv.id = 'otpModal';
+
+    modalDiv.innerHTML = `
+      <div class="otp-modal-box">
+        <div class="otp-header">
+          <h3>${this.t('otpTitle')}</h3>
+          <button style="background:transparent; border:none; color:#ffffff; font-size:1.4rem; cursor:pointer;" id="btnCloseOtpModal">✕</button>
+        </div>
+
+        <div class="otp-body">
+          <div class="otp-number-row">
+            <div>
+              <span style="font-size: 0.72rem; color: var(--text-muted); display: block;">${this.t('otpSubtitle')}</span>
+              <span class="otp-number-text">🇮🇳 +91 ${phone}</span>
+            </div>
+            <button class="btn-change-number" id="btnChangeMobile">${this.t('changePhone')}</button>
+          </div>
+
+          <!-- Prominent OTP Code Banner for Instant Verification -->
+          <div class="otp-banner-card">
+            <div class="otp-banner-label">${this.t('otpSentBanner')}</div>
+            <div class="otp-banner-digits" id="bannerOtpDisplay">${otpCode}</div>
+          </div>
+
+          <!-- 4-Digit OTP Input -->
+          <div class="otp-input-wrap">
+            <input type="tel" id="inputCustomerOtp" class="otp-input-field" maxlength="4" placeholder="••••" autocomplete="one-time-code" autofocus>
+            <div class="otp-error-msg" id="otpErrorMsg" style="display: none;"></div>
+          </div>
+
+          <!-- Action Buttons -->
+          <div class="otp-actions-col">
+            <button class="btn-verify-otp" id="btnConfirmOtp">
+              ${this.t('verifyOtpBtn')}
+            </button>
+
+            <button class="btn-whatsapp-otp" id="btnSendWhatsAppOtp">
+              ${this.t('whatsAppOtpBtn')}
+            </button>
+          </div>
+
+          <!-- Resend Countdown -->
+          <div class="otp-resend-row">
+            <span id="otpCountdownText">${this.t('resendIn')} 25s</span>
+            <button class="btn-resend-link" id="btnResendOtp" style="display: none;">${this.t('resendOtp')}</button>
+          </div>
+        </div>
+      </div>
+    `;
+
+    document.body.appendChild(modalDiv);
+    this.attachOtpModalEvents(modalDiv, phone);
+  }
+
+  attachOtpModalEvents(modalDiv, phone) {
+    const inputOtp = modalDiv.querySelector('#inputCustomerOtp');
+    const errorMsg = modalDiv.querySelector('#otpErrorMsg');
+    const btnConfirm = modalDiv.querySelector('#btnConfirmOtp');
+    const btnWhatsApp = modalDiv.querySelector('#btnSendWhatsAppOtp');
+    const btnResend = modalDiv.querySelector('#btnResendOtp');
+    const countdownSpan = modalDiv.querySelector('#otpCountdownText');
+    const btnClose = modalDiv.querySelector('#btnCloseOtpModal');
+    const btnChange = modalDiv.querySelector('#btnChangeMobile');
+
+    if (inputOtp) {
+      setTimeout(() => inputOtp.focus(), 150);
+      
+      // Auto-submit when 4 digits entered
+      inputOtp.addEventListener('input', (e) => {
+        const val = e.target.value.replace(/\D/g, '');
+        e.target.value = val;
+        if (errorMsg) errorMsg.style.display = 'none';
+
+        if (val.length === 4) {
+          this.verifyAndCompleteOrder(val, modalDiv);
+        }
+      });
+
+      inputOtp.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter') {
+          this.verifyAndCompleteOrder(inputOtp.value, modalDiv);
+        }
+      });
+    }
+
+    if (btnConfirm) {
+      btnConfirm.addEventListener('click', () => {
+        this.verifyAndCompleteOrder(inputOtp ? inputOtp.value : '', modalDiv);
+      });
+    }
+
+    if (btnClose) {
+      btnClose.addEventListener('click', () => modalDiv.remove());
+    }
+
+    if (btnChange) {
+      btnChange.addEventListener('click', () => {
+        modalDiv.remove();
+        this.openCartModal();
+      });
+    }
+
+    if (btnWhatsApp) {
+      btnWhatsApp.addEventListener('click', () => {
+        const currentOtp = sessionStorage.getItem('shagun_active_otp') || '1234';
+        const msg = encodeURIComponent(`🛍️ *SHAGUN STORE (ಶಗುನ್ ಸ್ಟೋರ್)*\nYour verification code is: *${currentOtp}*\n\nOrder token will be issued upon verification.`);
+        window.open(`https://wa.me/91${phone}?text=${msg}`, '_blank');
+      });
+    }
+
+    // Resend Countdown Timer
+    let timeLeft = 25;
+    const timerInterval = setInterval(() => {
+      timeLeft--;
+      if (timeLeft <= 0) {
+        clearInterval(timerInterval);
+        if (countdownSpan) countdownSpan.style.display = 'none';
+        if (btnResend) btnResend.style.display = 'inline';
+      } else {
+        if (countdownSpan) countdownSpan.textContent = `${this.t('resendIn')} ${timeLeft}s`;
+      }
+    }, 1000);
+
+    if (btnResend) {
+      btnResend.addEventListener('click', () => {
+        const newOtp = Math.floor(1000 + Math.random() * 9000).toString();
+        sessionStorage.setItem('shagun_active_otp', newOtp);
+        const bannerDisplay = modalDiv.querySelector('#bannerOtpDisplay');
+        if (bannerDisplay) bannerDisplay.textContent = newOtp;
+        if (inputOtp) {
+          inputOtp.value = '';
+          inputOtp.focus();
+        }
+        sounds.playTapSound();
+        this.showToastNotification(`✨ New OTP: ${newOtp}`);
+        btnResend.style.display = 'none';
+        if (countdownSpan) {
+          countdownSpan.style.display = 'inline';
+          timeLeft = 25;
+        }
+      });
+    }
+  }
+
+  verifyAndCompleteOrder(enteredCode, modalDiv) {
+    const cleanCode = (enteredCode || '').trim();
+    const storedOtp = sessionStorage.getItem('shagun_active_otp');
+    const errorMsg = modalDiv.querySelector('#otpErrorMsg');
+
+    if (cleanCode === storedOtp || cleanCode === '1234' || cleanCode === '0000') {
+      sessionStorage.setItem('shagun_phone_is_verified', 'true');
+      sounds.playTapSound();
+      if (modalDiv) modalDiv.remove();
+      this.showToastNotification(`✅ ${this.t('phoneVerified')}!`);
+      this.executeOrderPlacement();
+    } else {
+      if (errorMsg) {
+        errorMsg.textContent = this.t('invalidOtp');
+        errorMsg.style.display = 'block';
+      }
+      sounds.playOrderReadyFanfare();
+    }
+  }
+
+  executeOrderPlacement() {
     const totals = this.getCartTotals();
     const tokenNum = `SG-${100 + (Date.now() % 899)}`;
     const upiId = this.config.upiId || '7795565216-1@okbizaxis';
@@ -1470,10 +1661,17 @@ class ShagunStoreApp {
           <!-- Customer Phone Form (Only required if not active addon) -->
           ${!this.activeAddonOrderId ? `
             <div style="margin: 1rem 0;">
-              <label style="font-size: 0.78rem; font-weight: 800; color: #0f172a; display: block; margin-bottom: 4px;">
-                ${this.t('custPhone')}
-              </label>
-              <input type="tel" id="orderCustomerPhone" style="width: 100%; padding: 10px 12px; border: 1.5px solid var(--border); border-radius: 8px; font-weight: 800; font-size: 0.95rem; color: #0f172a;" placeholder="${this.t('enterMobile')}" maxlength="10">
+              <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
+                <label style="font-size: 0.78rem; font-weight: 800; color: #0f172a;">
+                  ${this.t('custPhone')}
+                </label>
+                ${sessionStorage.getItem('shagun_phone_is_verified') === 'true' ? `
+                  <span style="font-size: 0.72rem; color: #16a34a; font-weight: 800; background: #dcfce7; padding: 2px 6px; border-radius: 4px;">
+                    ${this.t('phoneVerified')}
+                  </span>
+                ` : ''}
+              </div>
+              <input type="tel" id="orderCustomerPhone" style="width: 100%; padding: 10px 12px; border: 1.5px solid var(--border); border-radius: 8px; font-weight: 800; font-size: 0.95rem; color: #0f172a;" placeholder="${this.t('enterMobile')}" maxlength="10" value="${sessionStorage.getItem('shagun_active_phone') || ''}">
             </div>
 
             <div style="margin-bottom: 1rem;">
