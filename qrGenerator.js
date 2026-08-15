@@ -675,7 +675,7 @@
 
     ctx.fillStyle = '#faf9f7';
     ctx.font = '500 22px system-ui, sans-serif';
-    ctx.fillText(options.tagline || 'Scan in Aisle • Order • Collect at Counter (ಸ್ಕ್ಯಾನ್ ಮಾಡಿ • ಆರ್ಡರ್ ಮಾಡಿ)', width / 2, 240);
+    ctx.fillText(options.tagline || 'P.H. Road, Near Chamundi Textiles, Bettadapura - 571102', width / 2, 240);
 
     // 4. Spot / Counter Badge
     ctx.fillStyle = '#F2EFE9';
@@ -685,10 +685,10 @@
 
     ctx.fillStyle = '#1A1A1A';
     ctx.font = 'bold 22px system-ui, sans-serif';
-    ctx.fillText(`📍 ${options.location || 'Main Counter Express'}`, width / 2, 344);
+    ctx.fillText(`📍 ${options.location || 'Counter (ಕೌಂಟರ್ / काउंटर)'}`, width / 2, 344);
 
     // 5. Generate Real QR Core
-    const storeUrl = options.storeUrl || generateSignedStoreUrl(window.location.origin, options.location || 'Main Counter Express');
+    const storeUrl = options.storeUrl || generateSignedStoreUrl(window.location.origin, options.location || 'Counter');
     const qrObj = createQRCode(storeUrl, { size: 560, margin: 8, darkColor: '#1A1A1A' });
     const qrCanvas = qrObj.toCanvas();
 
@@ -734,7 +734,7 @@
     const steps = [
       { num: '1', title: '1. Scan QR', sub: 'ಸ್ಕ್ಯಾನ್ ಮಾಡಿ • स्कैन करें' },
       { num: '2', title: '2. Pick Groceries', sub: 'ಸಾಮಗ್ರಿ ಆರಿಸಿ • सामान चुनें' },
-      { num: '3', title: '3. Collect Bag', sub: 'ಬ್ಯಾಗ್ ಪಡೆಯಿರಿ • बैग प्राप्त करें' }
+      { num: '3', title: '3. Collect at Counter', sub: 'ಕೌಂಟರ್‌ನಲ್ಲಿ ಪಡೆಯಿರಿ • काउंटर से लें' }
     ];
 
     steps.forEach((s, idx) => {
@@ -760,7 +760,7 @@
     // 8. Bottom Footer
     ctx.fillStyle = '#1A1A1A';
     ctx.font = 'bold 22px Georgia, serif';
-    ctx.fillText('✨ SHAGUN STORE • ARTISANAL GROCERY BOUTIQUE & EXPRESS ✨', width / 2, 1340);
+    ctx.fillText('✨ SHAGUN STORE • P.H. ROAD, BETTADAPURA - 571102 ✨', width / 2, 1340);
 
     return canvas;
   }
