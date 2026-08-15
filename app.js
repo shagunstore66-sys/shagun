@@ -369,7 +369,7 @@ class ShagunStoreApp {
     return { subtotal, totalItems, tax, packingFee, finalTotal };
   }
 
-  // ---------------- Customer OTP Verification & Order Placement ----------------
+  // ---------------- Customer Order Placement & Express Verification ----------------
   async initiateOrderWithOTP(customerName, phone, packingNote) {
     if (this.cart.length === 0) return;
 
@@ -390,7 +390,8 @@ class ShagunStoreApp {
     const cartModal = document.getElementById('cartModal');
     if (cartModal) cartModal.remove();
 
-    this.openOtpModal(cleanPhone);
+    // Instant Express Checkout & Order Confirmation (Zero SMS Delays)
+    this.finalizeVerifiedOrder();
   }
 
   async openOtpModal(phone) {
@@ -1864,14 +1865,14 @@ class ShagunStoreApp {
 
             <div class="customer-phone-input-group">
               <div class="phone-label-row">
-                <label>📱 Mobile Number (For OTP Verification)</label>
-                <span class="mandatory-pill">MANDATORY</span>
+                <label>📱 Mobile Number (For Pickup Identification)</label>
+                <span class="mandatory-pill">REQUIRED</span>
               </div>
               <div class="phone-input-wrapper">
                 <span class="country-prefix">+91</span>
                 <input type="tel" id="orderCustomerPhone" placeholder="Enter 10-digit mobile" maxlength="10" required>
               </div>
-              <span style="font-size: 0.72rem; color: #166534; font-weight: 600;">We will send a 4-digit OTP to verify your bag pickup.</span>
+              <span style="font-size: 0.72rem; color: #166534; font-weight: 600;">Your Token will be linked to this mobile number for express counter collection.</span>
             </div>
           </div>
 
@@ -1924,7 +1925,7 @@ class ShagunStoreApp {
           </div>
 
           <button class="btn-place-order" id="btnSubmitOrder">
-            Proceed to Verify Mobile & Place Order (${this.config.currency}${finalTotal}) ➔
+            ⚡ Place Order & Get Token (${this.config.currency}${finalTotal}) ➔
           </button>
         </div>
       </div>
