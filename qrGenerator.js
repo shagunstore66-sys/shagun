@@ -641,61 +641,61 @@
     // 1. Background Gradient & Acrylic Glass Border
     const bgGrad = ctx.createLinearGradient(0, 0, width, height);
     bgGrad.addColorStop(0, '#ffffff');
-    bgGrad.addColorStop(1, '#f8fafc');
+    bgGrad.addColorStop(1, '#faf9f7');
     ctx.fillStyle = bgGrad;
     ctx.fillRect(0, 0, width, height);
 
-    // 2. Outer Security Hologram Border
+    // 2. Outer Luxury Gold Border
     ctx.lineWidth = 12;
-    ctx.strokeStyle = '#1e3a8a';
+    ctx.strokeStyle = '#1A1A1A';
     ctx.strokeRect(20, 20, width - 40, height - 40);
 
     ctx.lineWidth = 2;
-    ctx.strokeStyle = '#2563eb';
+    ctx.strokeStyle = '#D4AF37';
     ctx.strokeRect(34, 34, width - 68, height - 68);
 
     // 3. Top Official Badge Header
-    ctx.fillStyle = '#1e3a8a';
+    ctx.fillStyle = '#1A1A1A';
     ctx.fillRect(40, 40, width - 80, 250);
 
     // Official Trilingual Header
-    ctx.fillStyle = '#60a5fa';
-    ctx.font = 'bold 20px system-ui, sans-serif';
+    ctx.fillStyle = '#D4AF37';
+    ctx.font = 'bold 20px Georgia, serif';
     ctx.textAlign = 'center';
     ctx.fillText('★ OFFICIAL SMART ORDER COUNTER • अधिकृत डिजिटल काउंटर • ಅಧಿಕೃತ ಡಿಜಿಟಲ್ ಕೌಂಟರ್ ★', width / 2, 80);
 
     // Store Name English & Hindi & Kannada
     ctx.fillStyle = '#ffffff';
-    ctx.font = '900 54px system-ui, sans-serif';
+    ctx.font = '900 54px Georgia, serif';
     ctx.fillText(options.storeName || 'SHAGUN STORE', width / 2, 145);
 
-    ctx.fillStyle = '#93c5fd';
-    ctx.font = 'bold 32px system-ui, sans-serif';
+    ctx.fillStyle = '#E5DACE';
+    ctx.font = 'bold 30px system-ui, sans-serif';
     ctx.fillText(`${options.storeNameHindi || 'शगुन स्टोर'} • ${options.storeNameKannada || 'ಶಗುನ್ ಸ್ಟೋರ್'}`, width / 2, 195);
 
-    ctx.fillStyle = '#eff6ff';
-    ctx.font = '600 22px system-ui, sans-serif';
+    ctx.fillStyle = '#faf9f7';
+    ctx.font = '500 22px system-ui, sans-serif';
     ctx.fillText(options.tagline || 'Scan in Aisle • Order • Collect at Counter (ಸ್ಕ್ಯಾನ್ ಮಾಡಿ • ಆರ್ಡರ್ ಮಾಡಿ)', width / 2, 240);
 
     // 4. Spot / Counter Badge
-    ctx.fillStyle = '#dbeafe';
+    ctx.fillStyle = '#F2EFE9';
     ctx.beginPath();
     ctx.roundRect(width / 2 - 260, 310, 520, 50, 25);
     ctx.fill();
 
-    ctx.fillStyle = '#1e3a8a';
-    ctx.font = 'bold 24px system-ui, sans-serif';
+    ctx.fillStyle = '#1A1A1A';
+    ctx.font = 'bold 22px system-ui, sans-serif';
     ctx.fillText(`📍 ${options.location || 'Main Counter Express'}`, width / 2, 344);
 
     // 5. Generate Real QR Core
     const storeUrl = options.storeUrl || generateSignedStoreUrl(window.location.origin, options.location || 'Main Counter Express');
-    const qrObj = createQRCode(storeUrl, { size: 560, margin: 8, darkColor: '#0f172a' });
+    const qrObj = createQRCode(storeUrl, { size: 560, margin: 8, darkColor: '#1A1A1A' });
     const qrCanvas = qrObj.toCanvas();
 
     // QR White Base with Drop Shadow
     ctx.save();
-    ctx.shadowColor = 'rgba(0,0,0,0.12)';
-    ctx.shadowBlur = 20;
+    ctx.shadowColor = 'rgba(0,0,0,0.1)';
+    ctx.shadowBlur = 25;
     ctx.shadowOffsetY = 10;
     ctx.fillStyle = '#ffffff';
     ctx.beginPath();
@@ -712,19 +712,19 @@
     ctx.arc(width / 2, 690, 50, 0, Math.PI * 2);
     ctx.fill();
     ctx.lineWidth = 4;
-    ctx.strokeStyle = '#1e3a8a';
+    ctx.strokeStyle = '#D4AF37';
     ctx.stroke();
 
-    ctx.fillStyle = '#1e3a8a';
+    ctx.fillStyle = '#1A1A1A';
     ctx.font = 'bold 36px system-ui, sans-serif';
     ctx.fillText('🛍️', width / 2, 702);
 
     // 6. Security Authentication Text
-    ctx.fillStyle = '#0f172a';
+    ctx.fillStyle = '#1A1A1A';
     ctx.font = 'bold 24px system-ui, sans-serif';
     ctx.fillText('SCAN WITH CAMERA / ANY UPI APP (ಯಾವುದೇ ಯುಪಿಐ ಆಪ್ ಮೂಲಕ ಸ್ಕ್ಯಾನ್ ಮಾಡಿ)', width / 2, 1040);
 
-    ctx.fillStyle = '#64748b';
+    ctx.fillStyle = '#747878';
     ctx.font = '500 18px monospace';
     ctx.fillText(`AUTH TOKEN: SG-SEC-2026 • REG: SHAGUN-STORE-066`, width / 2, 1075);
 
@@ -739,28 +739,28 @@
 
     steps.forEach((s, idx) => {
       const sx = 80 + idx * 360;
-      ctx.fillStyle = '#f8fafc';
+      ctx.fillStyle = '#F2EFE9';
       ctx.beginPath();
       ctx.roundRect(sx, stepY, stepBoxWidth, 120, 16);
       ctx.fill();
 
-      ctx.lineWidth = 1.5;
-      ctx.strokeStyle = '#e2e8f0';
+      ctx.lineWidth = 1;
+      ctx.strokeStyle = '#E5DACE';
       ctx.stroke();
 
-      ctx.fillStyle = '#1e3a8a';
-      ctx.font = 'bold 24px system-ui, sans-serif';
+      ctx.fillStyle = '#1A1A1A';
+      ctx.font = 'bold 24px Georgia, serif';
       ctx.fillText(s.title, sx + stepBoxWidth / 2, stepY + 48);
 
-      ctx.fillStyle = '#475569';
+      ctx.fillStyle = '#444748';
       ctx.font = '600 18px system-ui, sans-serif';
       ctx.fillText(s.sub, sx + stepBoxWidth / 2, stepY + 88);
     });
 
     // 8. Bottom Footer
-    ctx.fillStyle = '#1e3a8a';
-    ctx.font = 'bold 22px system-ui, sans-serif';
-    ctx.fillText('✨ SHAGUN STORE • 100% PURE & PACKED GROCERY EXPRESS ✨', width / 2, 1340);
+    ctx.fillStyle = '#1A1A1A';
+    ctx.font = 'bold 22px Georgia, serif';
+    ctx.fillText('✨ SHAGUN STORE • ARTISANAL GROCERY BOUTIQUE & EXPRESS ✨', width / 2, 1340);
 
     return canvas;
   }
