@@ -16,17 +16,23 @@
   <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&family=Playfair+Display:ital,wght@0,600;0,700;0,800;0,900;1,600;1,700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Noto+Sans+Kannada:wght@400;600;700;800;900&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
   <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet">
 
-  <!-- Core Stylesheet with Cache Busting -->
-  <link rel="stylesheet" href="styles.css?v=6.7">
+  <!-- Core Stylesheet with Timestamp Cache Busting -->
+  <link rel="stylesheet" href="styles.css?t=1786807300">
+  <script>
+    // Force cache eviction on reload
+    if ('caches' in window) {
+      caches.keys().then(keys => keys.forEach(k => caches.delete(k)));
+    }
+  </script>
 </head>
 <body>
   <!-- Master Application Mounting Point -->
   <div id="app"></div>
 
   <!-- QR Code Standalone Engine -->
-  <script src="qrGenerator.js?v=6.7"></script>
+  <script src="qrGenerator.js?t=1786807300"></script>
 
   <!-- App Logic & Real-time Synchronization Module with Cache Busting -->
-  <script type="module" src="app.js?v=6.7"></script>
+  <script type="module" src="app.js?t=1786807300"></script>
 </body>
 </html>
