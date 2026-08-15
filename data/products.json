@@ -1,0 +1,155 @@
+[
+  {
+    "id": "sug-01",
+    "name": "Refined White Crystal Sugar (चीनी)",
+    "category": "sugar-sweeteners",
+    "price": 44,
+    "unit": "1 kg",
+    "variants": [
+      { "name": "1 kg Pack", "price": 44 },
+      { "name": "5 kg Bulk Pack", "price": 215 }
+    ],
+    "inStock": true,
+    "badge": "Bestseller",
+    "description": "Pure sulphur-free white crystal sugar, sparkling clean for daily tea, sweets, and cooking.",
+    "image": "https://images.unsplash.com/photo-1581441363689-1f3c3c414635?w=500&auto=format&fit=crop&q=80"
+  },
+  {
+    "id": "sug-02",
+    "name": "Pure Desi Jaggery / Gur (गुड़)",
+    "category": "sugar-sweeteners",
+    "price": 65,
+    "unit": "1 kg",
+    "variants": [
+      { "name": "500g Tub", "price": 35 },
+      { "name": "1 kg Block", "price": 65 }
+    ],
+    "inStock": true,
+    "badge": "Organic",
+    "description": "Traditional chemical-free sugarcane jaggery block rich in iron and natural minerals.",
+    "image": "https://images.unsplash.com/photo-1615485290382-441e4d049cb5?w=500&auto=format&fit=crop&q=80"
+  },
+  {
+    "id": "rice-01",
+    "name": "Royal Daawat Rozana Basmati Rice (बासमती चावल)",
+    "category": "staples",
+    "price": 110,
+    "unit": "1 kg",
+    "variants": [
+      { "name": "1 kg Bag", "price": 110 },
+      { "name": "5 kg Bag", "price": 520 },
+      { "name": "10 kg Family Pack", "price": 999 }
+    ],
+    "inStock": true,
+    "badge": "Popular",
+    "description": "Aromatic long-grain basmati rice, perfect for everyday meals, pulao, and biryani.",
+    "image": "https://images.unsplash.com/photo-1586201375761-83865001e31c?w=500&auto=format&fit=crop&q=80"
+  },
+  {
+    "id": "rice-02",
+    "name": "Premium Sona Masoori Rice (सोना मसूरी)",
+    "category": "staples",
+    "price": 68,
+    "unit": "1 kg",
+    "variants": [
+      { "name": "1 kg Pack", "price": 68 },
+      { "name": "5 kg Bag", "price": 330 },
+      { "name": "25 kg Sack", "price": 1550 }
+    ],
+    "inStock": true,
+    "badge": "Daily Essential",
+    "description": "Lightweight and aromatic medium-grain rice, double polished for daily consumption.",
+    "image": "https://images.unsplash.com/photo-1536304993881-ff6e9eefa2a6?w=500&auto=format&fit=crop&q=80"
+  },
+  {
+    "id": "atta-01",
+    "name": "Aashirvaad Shudh Chakki Atta (गेहूं का आटा)",
+    "category": "staples",
+    "price": 245,
+    "unit": "5 kg",
+    "variants": [
+      { "name": "5 kg Bag", "price": 245 },
+      { "name": "10 kg Bag", "price": 470 }
+    ],
+    "inStock": true,
+    "badge": "100% MP Wheat",
+    "description": "100% whole wheat grains ground in stone chakkis, gives super soft and fluffy rotis.",
+    "image": "https://images.unsplash.com/photo-1509440159596-0249088772ff?w=500&auto=format&fit=crop&q=80"
+  },
+  {
+    "id": "oil-01",
+    "name": "Fortune Sunlite Refined Sunflower Oil (सनफ्लावर तेल)",
+    "category": "oils-ghee",
+    "price": 135,
+    "unit": "1 Litre Pouch",
+    "variants": [
+      { "name": "1 Litre Pouch", "price": 135 },
+      { "name": "5 Litre Jar / Can", "price": 660 }
+    ],
+    "inStock": true,
+    "badge": "Heart Healthy",
+    "description": "Enriched with Vitamins A & D, light and easy to digest cooking oil.",
+    "image": "https://images.unsplash.com/photo-1474979266404-7eaacbcd87c5?w=500&auto=format&fit=crop&q=80"
+  },
+  {
+    "id": "oil-02",
+    "name": "Engine Kacchi Ghani Pure Mustard Oil (सरसों का तेल)",
+    "category": "oils-ghee",
+    "price": 155,
+    "unit": "1 Litre Bottle",
+    "variants": [
+      { "name": "1 Litre Bottle", "price": 155 },
+      { "name": "2 Litre Bottle", "price": 305 },
+      { "name": "5 Litre Can", "price": 740 }
+    ],
+    "inStock": true,
+    "badge": "Pure Kacchi Ghani",
+    "description": "Strong pungent cold-pressed mustard oil, ideal for traditional Indian curries and pickling.",
+    "image": "https://images.unsplash.com/photo-1620706857370-e1b9770e8bb1?w=500&auto=format&fit=crop&q=80"
+  },
+  {
+    "id": "ghee-01",
+    "name": "Amul Pure Cow Desi Ghee (गाय का शुद्ध घी)",
+    "category": "oils-ghee",
+    "price": 330,
+    "unit": "500 ml",
+    "variants": [
+      { "name": "500 ml Refill Pack", "price": 330 },
+      { "name": "1 Litre Tin", "price": 640 }
+    ],
+    "inStock": true,
+    "badge": "Aromatic Pure Ghee",
+    "description": "Rich granulated golden cow ghee made from fresh cream with authentic homemade aroma.",
+    "image": "https://images.unsplash.com/photo-1631451095765-2c91616fc9e6?w=500&auto=format&fit=crop&q=80"
+  },
+  {
+    "id": "dal-01",
+    "name": "Tata Sampann Unpolished Toor / Arhar Dal (अरहर दाल)",
+    "category": "dals-pulses",
+    "price": 175,
+    "unit": "1 kg",
+    "variants": [
+      { "name": "500g Pack", "price": 90 },
+      { "name": "1 kg Pack", "price": 175 }
+    ],
+    "inStock": true,
+    "badge": "Unpolished",
+    "description": "High-protein unpolished toor dal, cooks faster with rich authentic flavor.",
+    "image": "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=500&auto=format&fit=crop&q=80"
+  },
+  {
+    "id": "dry-01",
+    "name": "Amul Taaza Homogenised Toned Milk (दूध)",
+    "category": "dairy-bakery",
+    "price": 54,
+    "unit": "1 Litre Tetra Pack",
+    "variants": [
+      { "name": "1 Litre Tetra Pack", "price": 54 },
+      { "name": "Case (12 x 1L)", "price": 630 }
+    ],
+    "inStock": true,
+    "badge": "No Boiling Needed",
+    "description": "UHT treated fresh toned milk, stays fresh without refrigeration until opened.",
+    "image": "https://images.unsplash.com/photo-1563636619-e9143da7973b?w=500&auto=format&fit=crop&q=80"
+  }
+]
