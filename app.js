@@ -686,19 +686,130 @@ class ShagunStoreApp {
     const upiId = this.config.upiId || '7795565216-1@okbizaxis';
     const storeName = this.config.name || 'SHAGUN STORE';
 
-    // If UPI is selected, auto-trigger UPI app with exact amount
     if (this.selectedPaymentMethod === 'upi') {
-      const shortNote = `Order ${tokenNum} ${storeName}`.slice(0, 40);
-      const upiUri = `upi://pay?pa=${encodeURIComponent(upiId)}&pn=${encodeURIComponent(storeName)}&am=${totals.finalTotal}&cu=INR&tn=${encodeURIComponent(shortNote)}`;
-      setTimeout(() => {
-        try {
-          window.location.href = upiUri;
-        } catch (e) {}
-      }, 200);
-
-      this.finalizeVerifiedOrder('UPI - Awaiting Shop Verification', false);
+      const order = this.finalizeVerifiedOrder('UPI - Awaiting Shop Verification', false);
+      if (order) {
+        this.openUpiPaymentModal(order);
+      }
     } else {
       this.finalizeVerifiedOrder(this.t('cashCounter'), true);
+    }
+  }
+
+  openUpiPaymentModal(order) {
+    const existing = document.getElementById('upiPaymentModal');
+    if (existing) existing.remove();
+
+    const upiId = this.config.upiId || '7795565216-1@okbizaxis';
+    const storeName = this.config.name || 'SHAGUN STORE';
+    const cleanNote = `Order${order.token.replace(/[^A-Za-z0-9]/g, '')}`;
+    const amount = order.totalAmount;
+
+    // Standard NPCI Compliant URIs
+    const standardUpiUri = `upi://pay?pa=${encodeURIComponent(upiId)}&pn=${encodeURIComponent(storeName)}&am=${amount}&cu=INR&tn=${encodeURIComponent(cleanNote)}&mc=5411`;
+    const gpayUri = `tez://upi/pay?pa=${encodeURIComponent(upiId)}&pn=${encodeURIComponent(storeName)}&am=${amount}&cu=INR&tn=${encodeURIComponent(cleanNote)}&mc=5411`;
+    const phonepeUri = `phonepe://pay?pa=${encodeURIComponent(upiId)}&pn=${encodeURIComponent(storeName)}&am=${amount}&cu=INR&tn=${encodeURIComponent(cleanNote)}&mc=5411`;
+    const paytmUri = `paytmmp://pay?pa=${encodeURIComponent(upiId)}&pn=${encodeURIComponent(storeName)}&am=${amount}&cu=INR&tn=${encodeURIComponent(cleanNote)}&mc=5411`;
+
+    let qrSvgHtml = '';
+    if (window.QRCodeLib) {
+      const qr = window.QRCodeLib.generate(standardUpiUri, { size: 170, margin: 2, darkColor: '#1A1A1A' });
+      qrSvgHtml = qr.toSVG();
+    }
+
+    const modalDiv = document.createElement('div');
+    modalDiv.className = 'admin-modal-overlay';
+    modalDiv.id = 'upiPaymentModal';
+
+    modalDiv.innerHTML = `
+      <div class="upi-pay-box">
+        <div class="upi-pay-header">
+          <h3>📱 ${this.t('upiPayment')} (${order.token})</h3>
+          <button style="background:transparent; border:none; color:#ffffff; font-size:1.4rem; cursor:pointer;" id="btnCloseUpiModal">✕</button>
+        </div>
+
+        <div class="upi-pay-body">
+          <!-- Total Amount Hero -->
+          <div class="upi-amount-hero">
+            <div class="amount-val">${this.config.currency}${amount}</div>
+            <div class="payee-sub">Paying to: <strong>${storeName}</strong> • Official Axis Bank VPA</div>
+          </div>
+
+          <!-- Dynamic Live QR Code -->
+          <div class="upi-qr-card">
+            ${qrSvgHtml}
+            <div class="upi-qr-caption">📷 Scan with Google Pay, PhonePe, Paytm or Any UPI App</div>
+          </div>
+
+          <!-- Direct 1-Tap App Launch Buttons -->
+          <div class="upi-apps-grid">
+            <a href="${gpayUri}" class="btn-upi-app btn-upi-gpay">
+              <span>🟢</span> Google Pay
+            </a>
+            <a href="${phonepeUri}" class="btn-upi-app btn-upi-phonepe">
+              <span>🟣</span> PhonePe
+            </a>
+            <a href="${paytmUri}" class="btn-upi-app btn-upi-paytm">
+              <span>🔵</span> Paytm
+            </a>
+            <a href="${standardUpiUri}" class="btn-upi-app btn-upi-any">
+              <span>⚡</span> Open in Any UPI App
+            </a>
+          </div>
+
+          <!-- 1-Tap UPI ID Copy Box -->
+          <div class="upi-copy-box">
+            <div>
+              <span style="font-size:0.7rem; color:var(--text-muted); display:block; font-weight:700;">MERCHANT UPI ID:</span>
+              <span class="upi-id-text" id="merchantUpiIdText">${upiId}</span>
+            </div>
+            <button class="btn-copy-vpa" id="btnCopyUpiId">📋 Copy UPI ID</button>
+          </div>
+
+          <!-- Bank Risk Security Note (Explaining self-payment restriction) -->
+          <div class="upi-security-note">
+            <p>
+              💡 <strong>Bank Security Tip:</strong> Agar aap usi bank account/phone se test kar rahe hain jisme ye UPI ID link hai, toh bank <em>"Risky transaction / Self payment"</em> error deta hai. Doosre kisi bhi customer account ya phone se payment turant 100% successful ho jayegi.
+            </p>
+          </div>
+
+          <!-- Completed Payment CTA -->
+          <button class="btn-done-paying" id="btnDonePaying">
+            ✓ I Have Completed Payment ➔
+          </button>
+        </div>
+      </div>
+    `;
+
+    document.body.appendChild(modalDiv);
+
+    const btnClose = modalDiv.querySelector('#btnCloseUpiModal');
+    if (btnClose) btnClose.onclick = () => modalDiv.remove();
+
+    const btnDone = modalDiv.querySelector('#btnDonePaying');
+    if (btnDone) {
+      btnDone.onclick = () => {
+        modalDiv.remove();
+        sounds.playTapSound();
+        this.render();
+      };
+    }
+
+    const btnCopy = modalDiv.querySelector('#btnCopyUpiId');
+    if (btnCopy) {
+      btnCopy.onclick = () => {
+        navigator.clipboard.writeText(upiId).then(() => {
+          btnCopy.textContent = '✅ Copied!';
+          btnCopy.style.background = '#16a34a';
+          this.showToastNotification('📋 UPI ID Copied! Paste in your UPI app to pay.');
+          setTimeout(() => {
+            btnCopy.textContent = '📋 Copy UPI ID';
+            btnCopy.style.background = 'var(--deep-charcoal)';
+          }, 2500);
+        }).catch(() => {
+          this.showToastNotification(`UPI ID: ${upiId}`);
+        });
+      };
     }
   }
 
@@ -810,6 +921,7 @@ class ShagunStoreApp {
     sounds.playTapSound();
 
     this.render();
+    return newOrder;
   }
 
   verifyUpiPaymentByAdmin(orderId) {
@@ -1217,9 +1329,9 @@ class ShagunStoreApp {
             <p style="font-size: 0.78rem; color: var(--text-muted); margin: 0 0 10px 0;">
               ${this.t('orderAwaitingVerifyDesc')} (UPI ID: <strong>${this.config.upiId || '7795565216-1@okbizaxis'}</strong>)
             </p>
-            <a href="upi://pay?pa=${encodeURIComponent(this.config.upiId || '7795565216-1@okbizaxis')}&pn=${encodeURIComponent(this.config.name || 'SHAGUN STORE')}&am=${order.totalAmount}&cu=INR&tn=${encodeURIComponent('Order ' + order.token + ' ' + (this.config.name || 'SHAGUN STORE'))}" style="display: inline-flex; align-items: center; gap: 6px; padding: 10px 20px; background: var(--champagne-gold); color: var(--deep-charcoal); border-radius: var(--radius-full); font-size: 0.82rem; font-weight: 800; text-decoration: none; box-shadow: 0 2px 8px var(--gold-glow);">
+            <button class="btn-reopen-upi-modal" data-order-id="${order.id}" style="display: inline-flex; align-items: center; gap: 6px; padding: 11px 22px; background: var(--champagne-gold); color: var(--deep-charcoal); border-radius: var(--radius-full); font-size: 0.85rem; font-weight: 800; border: none; cursor: pointer; box-shadow: 0 2px 8px var(--gold-glow);">
               <span>📱</span> ${this.t('reopenUpi')} (${this.config.currency}${order.totalAmount})
-            </a>
+            </button>
           </div>
         ` : order.paymentMethod === 'upi' && order.paymentVerified ? `
           <div style="margin-bottom: 1rem; background: var(--bg-cream); border: 1.5px solid var(--champagne-gold); padding: 12px 14px; border-radius: 14px; text-align: center; color: var(--deep-charcoal);">
@@ -1959,6 +2071,15 @@ class ShagunStoreApp {
         sounds.playNewOrderChime();
       });
     }
+
+    // Customer Reopen UPI Payment Sheet
+    document.querySelectorAll('.btn-reopen-upi-modal').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const ordId = btn.getAttribute('data-order-id');
+        const order = this.orders.find(o => o.id === ordId);
+        if (order) this.openUpiPaymentModal(order);
+      });
+    });
 
     // UPI Verification by Store Admin
     document.querySelectorAll('.btn-verify-upi-payment').forEach(btn => {
