@@ -745,6 +745,7 @@ class ShagunStoreApp {
   renderHeader() {
     const activeIncomingCount = this.orders.filter(o => o.status === 'NEW' || o.status === 'PACKING').length;
     const storeDisplayName = this.currentLang === 'hi' ? (this.config.nameHindi || this.config.name) : this.currentLang === 'kn' ? (this.config.nameKannada || this.config.name) : this.config.name;
+    const storeAddress = this.currentLang === 'hi' ? (this.config.addressHindi || this.config.address || this.config.taglineHindi || this.config.tagline) : this.currentLang === 'kn' ? (this.config.addressKannada || this.config.address || this.config.taglineKannada || this.config.tagline) : (this.config.address || this.config.tagline);
 
     // 1. PUBLIC CUSTOMER SCAN VIEW (QR Scanner): 100% Clean - No Staff/Admin buttons visible
     if (this.currentView === 'customer' && !this.adminUnlocked) {
@@ -754,11 +755,11 @@ class ShagunStoreApp {
             <div class="brand-icon">🛍️</div>
             <div class="brand-info">
               <h1>${storeDisplayName}</h1>
-              <p>${this.t('storeTagline')}</p>
+              <p class="header-tagline-text">${storeAddress}</p>
             </div>
           </div>
 
-          <div style="display: flex; align-items: center; gap: 8px;">
+          <div style="display: flex; align-items: center; gap: 6px; flex-shrink: 0;">
             <!-- Trilingual Language Selector (English, Hindi, Kannada) -->
             <div class="lang-selector-group">
               <button class="lang-btn ${this.currentLang === 'en' ? 'active' : ''}" data-lang="en">🇬🇧 EN</button>
@@ -860,6 +861,9 @@ class ShagunStoreApp {
 
     const displayedProducts = filteredProducts.slice(0, this.visibleProductsLimit);
 
+    const storeDisplayName = this.currentLang === 'hi' ? (this.config.nameHindi || this.config.name) : this.currentLang === 'kn' ? (this.config.nameKannada || this.config.name) : this.config.name;
+    const storeAddress = this.currentLang === 'hi' ? (this.config.addressHindi || this.config.address || this.config.taglineHindi || this.config.tagline) : this.currentLang === 'kn' ? (this.config.addressKannada || this.config.address || this.config.taglineKannada || this.config.tagline) : (this.config.address || this.config.tagline);
+
     return `
       <!-- Top Banner -->
       <div class="store-hero-banner">
@@ -867,8 +871,15 @@ class ShagunStoreApp {
           <div class="spot-pill">📍 ${this.activeLocation || 'Counter'}</div>
           <span style="font-size: 0.72rem; background: rgba(255,255,255,0.12); color: var(--soft-gold); padding: 3px 10px; border-radius: 99px; font-weight: 700; border: 1px solid rgba(212,175,55,0.3);">✨ Authentic Quality</span>
         </div>
-        <div class="hero-title">${this.config.name}</div>
-        <div class="hero-sub">${this.t('storeTagline')}</div>
+        <div class="hero-title">${storeDisplayName}</div>
+        
+        <!-- Mobile-Friendly Full Store Address Card (100% visible on all mobile phones) -->
+        <div class="hero-address-card">
+          <span class="address-pin-icon">📍</span>
+          <div class="address-text-wrap">
+            <span class="address-full-line">${storeAddress}</span>
+          </div>
+        </div>
       </div>
 
       <!-- Addon Active Order Alert Banner if adding items -->
