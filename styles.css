@@ -878,6 +878,210 @@ main {
   margin-top: 8px;
 }
 
+/* ---------------- UPI Payment Sheet & Deep Link Modal ---------------- */
+.upi-pay-box {
+  background: #ffffff;
+  border-radius: var(--radius-xl);
+  width: 100%;
+  max-width: 460px;
+  max-height: 92vh;
+  overflow-y: auto;
+  box-shadow: var(--shadow-xl);
+  border: 1.5px solid var(--border-gold);
+  animation: modalPop 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.upi-pay-header {
+  padding: 16px 20px;
+  background: var(--deep-charcoal);
+  color: #FAF9F7;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 2px solid var(--champagne-gold);
+}
+
+.upi-pay-header h3 {
+  font-family: var(--font-display);
+  font-size: 1.15rem;
+  font-weight: 800;
+  color: var(--champagne-gold);
+  margin: 0;
+}
+
+.upi-pay-body {
+  padding: 18px 20px;
+}
+
+.upi-amount-hero {
+  text-align: center;
+  background: var(--bg-cream);
+  border: 1px solid var(--border);
+  padding: 12px;
+  border-radius: var(--radius-lg);
+  margin-bottom: 14px;
+}
+
+.upi-amount-hero .amount-val {
+  font-family: var(--font-display);
+  font-size: 1.85rem;
+  font-weight: 900;
+  color: var(--deep-charcoal);
+  line-height: 1.1;
+}
+
+.upi-amount-hero .payee-sub {
+  font-size: 0.76rem;
+  color: var(--text-muted);
+  font-weight: 600;
+  margin-top: 3px;
+}
+
+.upi-qr-card {
+  text-align: center;
+  background: #ffffff;
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 12px;
+  margin-bottom: 14px;
+  box-shadow: var(--shadow-sm);
+}
+
+.upi-qr-card svg {
+  max-width: 170px;
+  height: auto;
+  margin: 0 auto;
+  display: block;
+}
+
+.upi-qr-caption {
+  font-size: 0.74rem;
+  color: var(--text-muted);
+  font-weight: 700;
+  margin-top: 6px;
+}
+
+.upi-apps-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 8px;
+  margin-bottom: 14px;
+}
+
+.btn-upi-app {
+  padding: 10px 8px;
+  border-radius: var(--radius-md);
+  border: 1.5px solid var(--border);
+  background: #ffffff;
+  font-size: 0.8rem;
+  font-weight: 800;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  transition: all 0.2s ease;
+}
+
+.btn-upi-app:hover {
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-sm);
+}
+
+.btn-upi-gpay {
+  border-color: #4285F4;
+  color: #1a73e8;
+  background: #f8faff;
+}
+
+.btn-upi-phonepe {
+  border-color: #5f259f;
+  color: #5f259f;
+  background: #faf5ff;
+}
+
+.btn-upi-paytm {
+  border-color: #00baf2;
+  color: #002970;
+  background: #f0f9ff;
+}
+
+.btn-upi-any {
+  border-color: var(--deep-charcoal);
+  color: var(--champagne-gold);
+  background: var(--deep-charcoal);
+  grid-column: span 2;
+  padding: 11px;
+}
+
+.upi-copy-box {
+  background: var(--bg-surface);
+  border: 1px dashed var(--border);
+  padding: 10px 12px;
+  border-radius: var(--radius-md);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 14px;
+}
+
+.upi-id-text {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.84rem;
+  font-weight: 800;
+  color: var(--deep-charcoal);
+}
+
+.btn-copy-vpa {
+  background: var(--deep-charcoal);
+  color: var(--champagne-gold);
+  border: none;
+  padding: 5px 10px;
+  border-radius: var(--radius-sm);
+  font-size: 0.74rem;
+  font-weight: 800;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.upi-security-note {
+  background: #eff6ff;
+  border: 1px solid #bfdbfe;
+  border-radius: var(--radius-md);
+  padding: 10px 12px;
+  margin-bottom: 14px;
+}
+
+.upi-security-note p {
+  font-size: 0.73rem;
+  color: #1e40af;
+  line-height: 1.35;
+  font-weight: 600;
+  margin: 0;
+}
+
+.btn-done-paying {
+  width: 100%;
+  padding: 13px;
+  background: #16a34a;
+  color: #ffffff;
+  border: none;
+  border-radius: var(--radius-lg);
+  font-size: 0.95rem;
+  font-weight: 800;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  box-shadow: 0 4px 12px rgba(22, 163, 74, 0.25);
+  transition: all 0.2s ease;
+}
+
+.btn-done-paying:hover {
+  background: #15803d;
+}
+
 .cart-modal-header {
   padding: 18px 22px;
   background: var(--bg-cream);
