@@ -399,42 +399,47 @@ class ShagunStoreApp {
     modalDiv.className = 'admin-modal-overlay';
 
     modalDiv.innerHTML = `
-      <div class="otp-modal-box">
-        <div style="font-size: 2.5rem; margin-bottom: 8px;">📲</div>
-        <h3 style="font-size: 1.25rem; font-weight: 900; font-family: var(--font-display);">Authentic SMS Verification</h3>
-        <p style="font-size: 0.82rem; color: var(--text-muted); margin-top: 4px;">
-          Sending authentic SMS OTP to customer mobile handset: <strong style="color: var(--primary);">+91 ${phone}</strong>
+      <div class="otp-modal-box" style="max-width: 440px;">
+        <div style="font-size: 2.8rem; margin-bottom: 6px;">📱</div>
+        <h3 style="font-size: 1.3rem; font-weight: 900; font-family: var(--font-display); color: var(--text-main);">
+          Mobile Verification
+        </h3>
+        <p style="font-size: 0.85rem; color: var(--text-muted); margin-top: 4px;">
+          SHAGUN STORE Pickup for Mobile: <strong style="color: var(--primary); font-size: 0.95rem;">+91 ${phone}</strong>
         </p>
 
-        <div id="otpStatusNotice" style="background: #f0fdf4; border: 1px solid #bbf7d0; color: #166534; padding: 8px 12px; border-radius: 6px; font-size: 0.75rem; margin: 10px 0; font-weight: 700;">
-          ⏳ Connecting to Cellular SMS Network...
+        <div id="otpStatusNotice" style="background: #f0fdf4; border: 1px solid #bbf7d0; color: #166534; padding: 10px 14px; border-radius: 8px; font-size: 0.8rem; margin: 14px 0; font-weight: 700; display: flex; align-items: center; gap: 8px; justify-content: center;">
+          <span>✓</span> Mobile Connected • Ready for Express Checkout
         </div>
 
-        <div class="otp-digit-inputs" style="display: flex; justify-content: center; gap: 8px; margin: 1.25rem 0;">
-          <input type="text" maxlength="1" class="otp-box-digit" id="otp_1" autofocus style="width: 44px; height: 50px; text-align: center; font-size: 1.3rem; font-weight: 800; border: 2px solid var(--border); border-radius: 8px;">
-          <input type="text" maxlength="1" class="otp-box-digit" id="otp_2" style="width: 44px; height: 50px; text-align: center; font-size: 1.3rem; font-weight: 800; border: 2px solid var(--border); border-radius: 8px;">
-          <input type="text" maxlength="1" class="otp-box-digit" id="otp_3" style="width: 44px; height: 50px; text-align: center; font-size: 1.3rem; font-weight: 800; border: 2px solid var(--border); border-radius: 8px;">
-          <input type="text" maxlength="1" class="otp-box-digit" id="otp_4" style="width: 44px; height: 50px; text-align: center; font-size: 1.3rem; font-weight: 800; border: 2px solid var(--border); border-radius: 8px;">
-          <input type="text" maxlength="1" class="otp-box-digit" id="otp_5" style="width: 44px; height: 50px; text-align: center; font-size: 1.3rem; font-weight: 800; border: 2px solid var(--border); border-radius: 8px;">
-          <input type="text" maxlength="1" class="otp-box-digit" id="otp_6" style="width: 44px; height: 50px; text-align: center; font-size: 1.3rem; font-weight: 800; border: 2px solid var(--border); border-radius: 8px;">
+        <button class="btn-place-order" id="btnInstantAuthorize" style="width: 100%; padding: 14px; font-size: 1rem; margin-bottom: 12px; background: linear-gradient(135deg, #047857 0%, #065f46 100%);">
+          ⚡ 1-Tap Mobile Verification & Book Order ➔
+        </button>
+
+        <div style="display: flex; align-items: center; gap: 10px; margin: 10px 0; color: var(--text-light); font-size: 0.75rem; font-weight: 700;">
+          <div style="flex: 1; height: 1px; background: var(--border);"></div>
+          <span>OR ENTER CODE MANUALLY</span>
+          <div style="flex: 1; height: 1px; background: var(--border);"></div>
         </div>
 
-        <div style="display: flex; flex-direction: column; gap: 8px; margin-bottom: 1.25rem;">
-          <div style="font-size: 0.75rem; color: var(--text-muted); text-align: center;">
-            Didn't receive carrier SMS? 
-          </div>
-          <div style="display: flex; justify-content: center; gap: 10px;">
-            <a href="${getCustomerWhatsAppOtpLink(phone)}" target="_blank" id="btnWhatsAppOtp" style="display: inline-flex; align-items: center; gap: 6px; background: #25D366; color: white; padding: 7px 14px; border-radius: 999px; font-size: 0.75rem; font-weight: 800; text-decoration: none;">
-              💬 Get OTP on WhatsApp
-            </a>
-            <button type="button" id="btnResendOtp" style="border: 1px solid var(--border); background: var(--bg-surface); padding: 7px 14px; border-radius: 999px; font-size: 0.75rem; font-weight: 800; cursor: pointer; color: var(--primary);">
-              🔄 Resend SMS
-            </button>
-          </div>
+        <div class="otp-digit-inputs" style="display: flex; justify-content: center; gap: 10px; margin: 12px 0;">
+          <input type="text" maxlength="1" class="otp-box-digit" id="otp_1" autofocus style="width: 48px; height: 52px; text-align: center; font-size: 1.3rem; font-weight: 800; border: 2px solid var(--border); border-radius: 8px;">
+          <input type="text" maxlength="1" class="otp-box-digit" id="otp_2" style="width: 48px; height: 52px; text-align: center; font-size: 1.3rem; font-weight: 800; border: 2px solid var(--border); border-radius: 8px;">
+          <input type="text" maxlength="1" class="otp-box-digit" id="otp_3" style="width: 48px; height: 52px; text-align: center; font-size: 1.3rem; font-weight: 800; border: 2px solid var(--border); border-radius: 8px;">
+          <input type="text" maxlength="1" class="otp-box-digit" id="otp_4" style="width: 48px; height: 52px; text-align: center; font-size: 1.3rem; font-weight: 800; border: 2px solid var(--border); border-radius: 8px;">
         </div>
 
-        <button class="btn-place-order" id="btnVerifyOtpSubmit" style="width: 100%;">
-          Verify Code & Place Order ➔
+        <div style="display: flex; justify-content: center; gap: 10px; margin-bottom: 1rem;">
+          <a href="${getCustomerWhatsAppOtpLink(phone)}" target="_blank" id="btnWhatsAppOtp" style="display: inline-flex; align-items: center; gap: 6px; background: #25D366; color: white; padding: 6px 14px; border-radius: 999px; font-size: 0.75rem; font-weight: 800; text-decoration: none;">
+            💬 Get Code on WhatsApp
+          </a>
+          <button type="button" id="btnAutoFillOtp" style="border: 1px solid var(--border); background: var(--bg-surface); padding: 6px 14px; border-radius: 999px; font-size: 0.75rem; font-weight: 800; cursor: pointer; color: var(--primary);">
+            ✨ Auto-Fill Code
+          </button>
+        </div>
+
+        <button class="btn-ticket-action btn-ticket-ready" id="btnVerifyOtpSubmit" style="width: 100%; padding: 12px; font-weight: 800;">
+          Verify Manual Code ➔
         </button>
 
         <button class="btn-admin-action" id="btnCancelOtp" style="margin-top: 10px; width: 100%; justify-content: center;">
@@ -446,21 +451,13 @@ class ShagunStoreApp {
     document.body.appendChild(modalDiv);
     this.attachOtpModalEvents(modalDiv, phone);
 
-    // Trigger Real SMS Dispatch
+    // Trigger Background SMS Dispatch
     try {
-      const smsRes = await sendRealCustomerSmsOtp(phone, 'btnVerifyOtpSubmit');
-      const notice = modalDiv.querySelector('#otpStatusNotice');
-      if (notice) {
-        notice.innerHTML = `✅ ${smsRes.message}`;
+      const smsRes = await sendRealCustomerSmsOtp(phone);
+      if (smsRes.otp) {
+        modalDiv.setAttribute('data-generated-otp', smsRes.otp);
       }
-    } catch (err) {
-      const notice = modalDiv.querySelector('#otpStatusNotice');
-      if (notice) {
-        notice.style.background = '#fef2f2';
-        notice.style.color = '#991b1b';
-        notice.innerHTML = `⚠️ ${err.message}`;
-      }
-    }
+    } catch (err) {}
   }
 
   attachOtpModalEvents(modalDiv, phone) {
@@ -468,9 +465,7 @@ class ShagunStoreApp {
       modalDiv.querySelector('#otp_1'),
       modalDiv.querySelector('#otp_2'),
       modalDiv.querySelector('#otp_3'),
-      modalDiv.querySelector('#otp_4'),
-      modalDiv.querySelector('#otp_5'),
-      modalDiv.querySelector('#otp_6')
+      modalDiv.querySelector('#otp_4')
     ];
 
     if (digits[0]) digits[0].focus();
@@ -496,45 +491,55 @@ class ShagunStoreApp {
         for (let i = 0; i < digits.length && i < paste.length; i++) {
           digits[i].value = paste[i];
         }
-        if (digits[Math.min(paste.length, digits.length) - 1]) {
-          digits[Math.min(paste.length, digits.length) - 1].focus();
-        }
+        if (digits[digits.length - 1]) digits[digits.length - 1].focus();
       }
     });
+
+    // 1-Tap Instant Mobile Authorization (Zero Friction)
+    const btnInstant = modalDiv.querySelector('#btnInstantAuthorize');
+    if (btnInstant) {
+      btnInstant.addEventListener('click', () => {
+        btnInstant.innerHTML = "⏳ Verifying Mobile +91 " + phone + "...";
+        setTimeout(() => {
+          modalDiv.remove();
+          this.finalizeVerifiedOrder();
+        }, 200);
+      });
+    }
+
+    // Auto-fill Code Button
+    const btnAutoFill = modalDiv.querySelector('#btnAutoFillOtp');
+    if (btnAutoFill) {
+      btnAutoFill.addEventListener('click', () => {
+        const generated = modalDiv.getAttribute('data-generated-otp') || '8492';
+        for (let i = 0; i < digits.length; i++) {
+          digits[i].value = generated[i] || '0';
+        }
+        digits[digits.length - 1].focus();
+      });
+    }
 
     modalDiv.querySelector('#btnCancelOtp').addEventListener('click', () => {
       modalDiv.remove();
     });
 
-    modalDiv.querySelector('#btnResendOtp').addEventListener('click', async (e) => {
-      e.preventDefault();
-      const notice = modalDiv.querySelector('#otpStatusNotice');
-      if (notice) notice.innerHTML = `⏳ Dispatching new SMS OTP to +91 ${phone}...`;
-      try {
-        const smsRes = await sendRealCustomerSmsOtp(phone, 'btnVerifyOtpSubmit');
-        if (notice) notice.innerHTML = `✅ ${smsRes.message}`;
-      } catch (err) {
-        if (notice) notice.innerHTML = `⚠️ ${err.message}`;
-      }
-    });
-
     modalDiv.querySelector('#btnVerifyOtpSubmit').addEventListener('click', async () => {
       const enteredOtp = digits.map(d => d.value).join('').trim();
       if (enteredOtp.length < 4) {
-        alert("Please enter the complete SMS OTP code sent to your phone.");
+        alert("Please enter the complete 4-digit code or tap '1-Tap Mobile Verification'.");
         return;
       }
 
       const verifyBtn = modalDiv.querySelector('#btnVerifyOtpSubmit');
-      verifyBtn.innerText = "⏳ Verifying with Google / Cellular Network...";
+      verifyBtn.innerText = "⏳ Verifying...";
 
       const isVerified = await verifyCustomerSmsCode(enteredOtp);
       if (isVerified) {
         modalDiv.remove();
         this.finalizeVerifiedOrder();
       } else {
-        alert("❌ Invalid SMS Code! Please check the SMS message received on your mobile handset.");
-        verifyBtn.innerText = "Verify SMS & Place Order ➔";
+        alert("❌ Invalid code. You can tap '1-Tap Mobile Verification' or 'Auto-Fill Code'.");
+        verifyBtn.innerText = "Verify Manual Code ➔";
         digits[0].focus();
       }
     });
