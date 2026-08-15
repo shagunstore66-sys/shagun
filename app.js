@@ -40,11 +40,11 @@ class ShagunStoreApp {
 
     this.activeCategory = 'all';
     this.searchQuery = '';
-    this.visibleProductsLimit = 40; // Virtualized pagination chunk size for 2000+ items
+    this.visibleProductsLimit = 40;
     this.currentCustomerOrderId = this.safeGetItem('shagun_customer_active_order', null);
     this.selectedPaymentMethod = 'upi';
     this.audioAlertsEnabled = true;
-    this.activeLocation = 'Main Entrance Stand (Express)';
+    this.activeLocation = 'Counter';
 
     this.pendingOrderData = null;
 
@@ -856,11 +856,11 @@ class ShagunStoreApp {
       <!-- Top Banner -->
       <div class="store-hero-banner">
         <div class="store-badge-row">
-          <div class="spot-pill">📍 ${this.activeLocation}</div>
-          <span style="font-size: 0.72rem; background: rgba(255,255,255,0.2); padding: 3px 8px; border-radius: 99px; font-weight: 800;">⚡ 2-Min Express Pickup</span>
+          <div class="spot-pill">📍 ${this.activeLocation || 'Counter'}</div>
+          <span style="font-size: 0.72rem; background: rgba(255,255,255,0.12); color: var(--soft-gold); padding: 3px 10px; border-radius: 99px; font-weight: 700; border: 1px solid rgba(212,175,55,0.3);">✨ Authentic Quality</span>
         </div>
         <div class="hero-title">${this.config.name}</div>
-        <div class="hero-sub">${this.t('storeTagline')} • 2,000+ Wholesale Items</div>
+        <div class="hero-sub">${this.t('storeTagline')}</div>
       </div>
 
       <!-- Addon Active Order Alert Banner if adding items -->
