@@ -1575,3 +1575,112 @@ main {
     padding: 10px 14px;
   }
 }
+
+/* ---------------- Staff Security & Payment Decision Styles ---------------- */
+.staff-login-wrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 70vh;
+  padding: 1rem;
+}
+
+.staff-login-card {
+  width: 100%;
+  max-width: 440px;
+  background: #ffffff;
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 2.2rem 1.8rem;
+  text-align: center;
+  box-shadow: var(--shadow-md);
+}
+
+.staff-pin-box {
+  margin: 1.5rem 0;
+}
+
+.staff-pin-input {
+  width: 100%;
+  padding: 14px 16px;
+  font-size: 1.5rem;
+  text-align: center;
+  letter-spacing: 8px;
+  border: 2px solid var(--border);
+  border-radius: 12px;
+  font-weight: 900;
+  outline: none;
+  transition: all 0.2s ease;
+  background: #f8fafc;
+}
+
+.staff-pin-input:focus {
+  border-color: #1e3a8a;
+  background: #ffffff;
+  box-shadow: 0 0 0 3px rgba(30, 58, 138, 0.15);
+}
+
+.btn-unlock-staff {
+  width: 100%;
+  padding: 14px;
+  background: #1e3a8a;
+  color: #ffffff;
+  border: none;
+  border-radius: 10px;
+  font-weight: 800;
+  font-size: 0.95rem;
+  cursor: pointer;
+  box-shadow: 0 2px 8px rgba(30, 58, 138, 0.25);
+  transition: all 0.2s ease;
+}
+
+.btn-unlock-staff:hover {
+  background: #172554;
+}
+
+/* Payment Decision Box */
+.payment-decision-container {
+  background: #f8fafc;
+  border: 1.5px solid #cbd5e1;
+  border-radius: 10px;
+  padding: 10px;
+  margin: 10px 0;
+}
+
+.payment-decision-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.76rem;
+  font-weight: 800;
+  margin-bottom: 8px;
+}
+
+.btn-decision-group {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+}
+
+.btn-decision-done {
+  padding: 8px;
+  background: #16a34a;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  font-weight: 900;
+  font-size: 0.75rem;
+  cursor: pointer;
+}
+
+.btn-decision-notdone {
+  padding: 8px;
+  background: #dc2626;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  font-weight: 900;
+  font-size: 0.75rem;
+  cursor: pointer;
+}
+
