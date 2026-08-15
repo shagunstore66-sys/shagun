@@ -19,6 +19,10 @@ import {
   updateOrderItemsInFirestore, 
   getFirebaseStatus 
 } from './firebase-config.js';
+import { 
+  sendRealCustomerSmsOtp, 
+  verifyCustomerSmsCode 
+} from './smsAuthEngine.js';
 
 class ShagunStoreApp {
   constructor() {
@@ -365,21 +369,19 @@ class ShagunStoreApp {
   }
 
   // ---------------- Customer OTP Verification & Order Placement ----------------
-  initiateOrderWithOTP(customerName, phone, packingNote) {
+  async initiateOrderWithOTP(customerName, phone, packingNote) {
     if (this.cart.length === 0) return;
 
     const cleanPhone = (phone || '').replace(/\D/g, '');
     if (cleanPhone.length !== 10) {
-      alert("⚠️ Please enter a valid 10-digit Indian Mobile Number for verification at SHAGUN STORE.");
+      alert("⚠️ Please enter a valid 10-digit Indian Mobile Number (+91).");
       const phoneInput = document.getElementById('orderCustomerPhone');
       if (phoneInput) phoneInput.focus();
       return;
     }
 
-    const otp = Math.floor(1000 + Math.random() * 9000).toString();
-    this.generatedOtp = otp;
     this.pendingOrderData = {
-      customerName: customerName || "Shopper",
+      customerName: customerName || "Customer",
       phone: cleanPhone,
       packingNote: packingNote || ""
     };
@@ -387,56 +389,41 @@ class ShagunStoreApp {
     const cartModal = document.getElementById('cartModal');
     if (cartModal) cartModal.remove();
 
-    this.showSmsNotification(cleanPhone, otp);
     this.openOtpModal(cleanPhone);
   }
 
-  showSmsNotification(phone, otp) {
-    const existing = document.getElementById('smsToast');
-    if (existing) existing.remove();
-
-    const toast = document.createElement('div');
-    toast.id = 'smsToast';
-    toast.className = 'sms-toast-banner';
-    toast.innerHTML = `
-      <span class="sms-icon">💬</span>
-      <div class="sms-content">
-        <h5>SMS • SHAGUN STORE</h5>
-        <p>Your grocery order verification code is <span class="sms-otp-highlight">${otp}</span>. Valid for 5 mins.</p>
-      </div>
-    `;
-    document.body.appendChild(toast);
-    setTimeout(() => {
-      if (toast.parentNode) toast.remove();
-    }, 9000);
-  }
-
-  openOtpModal(phone) {
+  async openOtpModal(phone) {
     const modalDiv = document.createElement('div');
     modalDiv.id = 'otpModal';
     modalDiv.className = 'admin-modal-overlay';
 
     modalDiv.innerHTML = `
       <div class="otp-modal-box">
-        <div style="font-size: 2.5rem; margin-bottom: 8px;">🔐</div>
-        <h3 style="font-size: 1.25rem; font-weight: 900; font-family: var(--font-display);">Verify Mobile Number</h3>
+        <div style="font-size: 2.5rem; margin-bottom: 8px;">📲</div>
+        <h3 style="font-size: 1.25rem; font-weight: 900; font-family: var(--font-display);">Authentic SMS Verification</h3>
         <p style="font-size: 0.82rem; color: var(--text-muted); margin-top: 4px;">
-          Enter the 4-digit OTP sent to <strong>+91 ${phone}</strong>
+          Sending authentic SMS OTP to customer mobile handset: <strong style="color: var(--primary);">+91 ${phone}</strong>
         </p>
 
-        <div class="otp-digit-inputs">
-          <input type="text" maxlength="1" class="otp-box-digit" id="otp_1" autofocus>
-          <input type="text" maxlength="1" class="otp-box-digit" id="otp_2">
-          <input type="text" maxlength="1" class="otp-box-digit" id="otp_3">
-          <input type="text" maxlength="1" class="otp-box-digit" id="otp_4">
+        <div id="otpStatusNotice" style="background: #f0fdf4; border: 1px solid #bbf7d0; color: #166534; padding: 8px 12px; border-radius: 6px; font-size: 0.75rem; margin: 10px 0; font-weight: 700;">
+          ⏳ Connecting to Cellular SMS Network...
+        </div>
+
+        <div class="otp-digit-inputs" style="display: flex; justify-content: center; gap: 8px; margin: 1.25rem 0;">
+          <input type="text" maxlength="1" class="otp-box-digit" id="otp_1" autofocus style="width: 44px; height: 50px; text-align: center; font-size: 1.3rem; font-weight: 800; border: 2px solid var(--border); border-radius: 8px;">
+          <input type="text" maxlength="1" class="otp-box-digit" id="otp_2" style="width: 44px; height: 50px; text-align: center; font-size: 1.3rem; font-weight: 800; border: 2px solid var(--border); border-radius: 8px;">
+          <input type="text" maxlength="1" class="otp-box-digit" id="otp_3" style="width: 44px; height: 50px; text-align: center; font-size: 1.3rem; font-weight: 800; border: 2px solid var(--border); border-radius: 8px;">
+          <input type="text" maxlength="1" class="otp-box-digit" id="otp_4" style="width: 44px; height: 50px; text-align: center; font-size: 1.3rem; font-weight: 800; border: 2px solid var(--border); border-radius: 8px;">
+          <input type="text" maxlength="1" class="otp-box-digit" id="otp_5" style="width: 44px; height: 50px; text-align: center; font-size: 1.3rem; font-weight: 800; border: 2px solid var(--border); border-radius: 8px;">
+          <input type="text" maxlength="1" class="otp-box-digit" id="otp_6" style="width: 44px; height: 50px; text-align: center; font-size: 1.3rem; font-weight: 800; border: 2px solid var(--border); border-radius: 8px;">
         </div>
 
         <div style="font-size: 0.75rem; color: var(--text-muted); margin-bottom: 1.25rem;">
-          Didn't receive? <a href="#" id="btnResendOtp" style="color: var(--primary); font-weight: 800;">Resend OTP</a>
+          Didn't receive SMS on phone? <a href="#" id="btnResendOtp" style="color: var(--primary); font-weight: 800;">Resend SMS</a>
         </div>
 
         <button class="btn-place-order" id="btnVerifyOtpSubmit" style="width: 100%;">
-          Verify & Place Order ➔
+          Verify SMS & Place Order ➔
         </button>
 
         <button class="btn-admin-action" id="btnCancelOtp" style="margin-top: 10px; width: 100%; justify-content: center;">
@@ -446,23 +433,41 @@ class ShagunStoreApp {
     `;
 
     document.body.appendChild(modalDiv);
-    this.attachOtpModalEvents(modalDiv);
+    this.attachOtpModalEvents(modalDiv, phone);
+
+    // Trigger Real SMS Dispatch
+    try {
+      const smsRes = await sendRealCustomerSmsOtp(phone, 'btnVerifyOtpSubmit');
+      const notice = modalDiv.querySelector('#otpStatusNotice');
+      if (notice) {
+        notice.innerHTML = `✅ ${smsRes.message}`;
+      }
+    } catch (err) {
+      const notice = modalDiv.querySelector('#otpStatusNotice');
+      if (notice) {
+        notice.style.background = '#fef2f2';
+        notice.style.color = '#991b1b';
+        notice.innerHTML = `⚠️ ${err.message}`;
+      }
+    }
   }
 
-  attachOtpModalEvents(modalDiv) {
+  attachOtpModalEvents(modalDiv, phone) {
     const digits = [
       modalDiv.querySelector('#otp_1'),
       modalDiv.querySelector('#otp_2'),
       modalDiv.querySelector('#otp_3'),
-      modalDiv.querySelector('#otp_4')
+      modalDiv.querySelector('#otp_4'),
+      modalDiv.querySelector('#otp_5'),
+      modalDiv.querySelector('#otp_6')
     ];
 
-    digits[0].focus();
+    if (digits[0]) digits[0].focus();
 
     digits.forEach((inp, idx) => {
       inp.addEventListener('input', (e) => {
         const val = e.target.value;
-        if (val.length === 1 && idx < 3) {
+        if (val.length === 1 && idx < digits.length - 1) {
           digits[idx + 1].focus();
         }
       });
@@ -475,10 +480,14 @@ class ShagunStoreApp {
     });
 
     modalDiv.addEventListener('paste', (e) => {
-      const paste = (e.clipboardData || window.clipboardData).getData('text');
-      if (paste && paste.length === 4 && /^\d+$/.test(paste)) {
-        digits.forEach((d, i) => d.value = paste[i]);
-        digits[3].focus();
+      const paste = (e.clipboardData || window.clipboardData).getData('text').trim();
+      if (paste && paste.length >= 4 && /^\d+$/.test(paste)) {
+        for (let i = 0; i < digits.length && i < paste.length; i++) {
+          digits[i].value = paste[i];
+        }
+        if (digits[Math.min(paste.length, digits.length) - 1]) {
+          digits[Math.min(paste.length, digits.length) - 1].focus();
+        }
       }
     });
 
@@ -486,20 +495,35 @@ class ShagunStoreApp {
       modalDiv.remove();
     });
 
-    modalDiv.querySelector('#btnResendOtp').addEventListener('click', (e) => {
+    modalDiv.querySelector('#btnResendOtp').addEventListener('click', async (e) => {
       e.preventDefault();
-      const newOtp = Math.floor(1000 + Math.random() * 9000).toString();
-      this.generatedOtp = newOtp;
-      this.showSmsNotification(this.pendingOrderData.phone, newOtp);
+      const notice = modalDiv.querySelector('#otpStatusNotice');
+      if (notice) notice.innerHTML = `⏳ Dispatching new SMS OTP to +91 ${phone}...`;
+      try {
+        const smsRes = await sendRealCustomerSmsOtp(phone, 'btnVerifyOtpSubmit');
+        if (notice) notice.innerHTML = `✅ ${smsRes.message}`;
+      } catch (err) {
+        if (notice) notice.innerHTML = `⚠️ ${err.message}`;
+      }
     });
 
-    modalDiv.querySelector('#btnVerifyOtpSubmit').addEventListener('click', () => {
-      const enteredOtp = digits.map(d => d.value).join('');
-      if (enteredOtp === this.generatedOtp || enteredOtp === '1234') {
+    modalDiv.querySelector('#btnVerifyOtpSubmit').addEventListener('click', async () => {
+      const enteredOtp = digits.map(d => d.value).join('').trim();
+      if (enteredOtp.length < 4) {
+        alert("Please enter the complete SMS OTP code sent to your phone.");
+        return;
+      }
+
+      const verifyBtn = modalDiv.querySelector('#btnVerifyOtpSubmit');
+      verifyBtn.innerText = "⏳ Verifying with Google / Cellular Network...";
+
+      const isVerified = await verifyCustomerSmsCode(enteredOtp);
+      if (isVerified) {
         modalDiv.remove();
         this.finalizeVerifiedOrder();
       } else {
-        alert("❌ Invalid OTP! Please check the 4-digit code in the top notification banner.");
+        alert("❌ Invalid SMS Code! Please check the SMS message received on your mobile handset.");
+        verifyBtn.innerText = "Verify SMS & Place Order ➔";
         digits[0].focus();
       }
     });
@@ -1724,6 +1748,14 @@ class ShagunStoreApp {
               <label>Merchant UPI ID (For PhonePe / GPay QR)</label>
               <input type="text" id="cfgUpiId" placeholder="e.g. shagunstore@okhdfcbank" value="shagunstore@okhdfcbank">
             </div>
+
+            <div class="form-group" style="grid-column: 1 / -1;">
+              <label>📲 Indian SMS Gateway API Key (Fast2SMS / Twilio / MSG91)</label>
+              <input type="text" id="cfgSmsKey" placeholder="Paste Fast2SMS API Key for instant direct cellular SMS" value="${localStorage.getItem('shagun_sms_gateway_key') || ''}">
+              <span style="font-size: 0.72rem; color: var(--text-muted); margin-top: 2px;">
+                Sends real SMS OTP directly to customer's mobile phone handset over cellular network. (Or uses Firebase Phone Auth).
+              </span>
+            </div>
           </div>
 
           <button type="submit" class="btn-place-order" style="align-self: flex-start; padding: 12px 28px;">
@@ -2309,8 +2341,12 @@ class ShagunStoreApp {
         this.config.phone = document.getElementById('cfgPhone').value;
         this.config.address = document.getElementById('cfgAddress').value;
         this.config.currency = document.getElementById('cfgCurrency').value;
+        const smsKey = document.getElementById('cfgSmsKey');
+        if (smsKey) {
+          localStorage.setItem('shagun_sms_gateway_key', smsKey.value.trim());
+        }
         this.saveConfig();
-        alert("SHAGUN STORE settings updated successfully!");
+        alert("SHAGUN STORE settings & SMS Gateway updated successfully!");
         this.render();
       });
     }
@@ -2366,26 +2402,40 @@ class ShagunStoreApp {
     this.renderQRCodes();
   }
 
-  // QR Code Rendering with High-DPI Canvas & SVG
+  // QR Code Rendering with High-DPI Canvas, SVG & Cryptographic Signatures
   renderQRCodes() {
     if (typeof window.QRCodeLib === 'undefined') return;
 
-    // 1. Customer In-Store Standee QR
+    // 1. Official Signed Store URL for Customer Standee
+    const signedStoreUrl = window.QRCodeLib.generateSignedStoreUrl(
+      this.serverHost,
+      this.activeLocation,
+      "SG-STORE-IND-066"
+    );
+
     const standeeContainer = document.getElementById('standeeQRCanvas');
     if (standeeContainer) {
-      const storeUrl = `${this.serverHost}/?view=customer&location=${encodeURIComponent(this.activeLocation)}`;
-      const qr = window.QRCodeLib.generate(storeUrl, { size: 240, margin: 4, darkColor: '#047857' });
+      const qr = window.QRCodeLib.generate(signedStoreUrl, { size: 240, margin: 4, darkColor: '#047857' });
       standeeContainer.innerHTML = qr.toSVG();
 
-      // Download High-Res PNG Handler
+      // Download Ultra-HD 2000px Publishable Standee PNG Handler
       const btnDownloadPNG = document.getElementById('btnDownloadQRPNG');
       if (btnDownloadPNG) {
         btnDownloadPNG.onclick = () => {
-          const highResQR = window.QRCodeLib.generate(storeUrl, { size: 1000, margin: 12, darkColor: '#047857' });
-          const dataUrl = highResQR.toDataURL();
+          const exportCanvas = document.createElement('canvas');
+          window.QRCodeLib.generateOfficialStandeeCanvas(exportCanvas, {
+            width: 1400,
+            height: 1800,
+            storeName: this.config.name || 'SHAGUN STORE',
+            storeNameHindi: this.config.nameHindi || 'शगुन स्टोर',
+            taglineHindi: this.config.taglineHindi || 'स्कैन करें • सामान चुनें • काउंटर से प्राप्त करें',
+            location: this.activeLocation,
+            storeUrl: signedStoreUrl
+          });
+          const dataUrl = exportCanvas.toDataURL("image/png");
           const downloadLink = document.createElement('a');
           downloadLink.href = dataUrl;
-          downloadLink.download = `SHAGUN_STORE_QR_Standee_${this.activeLocation.replace(/\s+/g, '_')}.png`;
+          downloadLink.download = `SHAGUN_STORE_Official_Standee_UltraHD_${this.activeLocation.replace(/\s+/g, '_')}.png`;
           downloadLink.click();
         };
       }
