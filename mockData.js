@@ -105,7 +105,18 @@ export const I18N = {
     awaitingBankReceipt: "⚠️ UPI Payment (Check Soundbox / Bank SMS)",
     loadMore: "Load More Items (+36)",
     outOfStock: "Out of Stock",
-    addBtn: "+ Add"
+    addBtn: "+ Add",
+    otpTitle: "Mobile Verification (OTP)",
+    otpSubtitle: "Enter the 4-digit verification code sent to",
+    otpSentBanner: "✨ SHAGUN Verification Code is:",
+    verifyOtpBtn: "Verify OTP & Confirm Order ➔",
+    resendOtp: "Resend Code",
+    resendIn: "Resend in",
+    invalidOtp: "❌ Incorrect OTP. Please check the code and try again.",
+    phoneVerified: "✅ Mobile Verified",
+    sendOtpBtn: "Send OTP Code",
+    enterOtpPlaceholder: "Enter 4-digit code",
+    whatsAppOtpBtn: "💬 Receive OTP on WhatsApp"
   },
   hi: {
     langName: "हिंदी",
@@ -166,7 +177,18 @@ export const I18N = {
     awaitingBankReceipt: "⚠️ UPI पेमेंट (साउंडबॉक्स/बैंक SMS जांचें)",
     loadMore: "और सामान देखें (+36)",
     outOfStock: "स्टॉक समाप्त",
-    addBtn: "+ जोड़ें"
+    addBtn: "+ जोड़ें",
+    otpTitle: "मोबाइल नंबर सत्यापन (OTP)",
+    otpSubtitle: "इस नंबर पर भेजा गया 4 अंकों का OTP कोड दर्ज करें:",
+    otpSentBanner: "✨ शगुन स्टोर सत्यापन OTP कोड है:",
+    verifyOtpBtn: "OTP सत्यापित करें व ऑर्डर पक्का करें ➔",
+    resendOtp: "पुनः OTP भेजें",
+    resendIn: "पुनः भेजें",
+    invalidOtp: "❌ गलत OTP! कृपया सही 4 अंकों का कोड दर्ज करें।",
+    phoneVerified: "✅ मोबाइल नंबर सत्यापित",
+    sendOtpBtn: "OTP कोड भेजें",
+    enterOtpPlaceholder: "4-अंकों का OTP दर्ज करें",
+    whatsAppOtpBtn: "💬 WhatsApp पर OTP प्राप्त करें"
   },
   kn: {
     langName: "ಕನ್ನಡ",
@@ -227,7 +249,18 @@ export const I18N = {
     awaitingBankReceipt: "⚠️ ಯುಪಿಐ ಪಾವತಿ (ಸೌಂಡ್‌ಬಾಕ್ಸ್ / SMS ಪರಿಶೀಲಿಸಿ)",
     loadMore: "ಇನ್ನಷ್ಟು ಸಾಮಗ್ರಿ ವೀಕ್ಷಿಸಿ (+36)",
     outOfStock: "ಖಾಲಿಯಾಗಿದೆ",
-    addBtn: "+ ಸೇರಿಸಿ"
+    addBtn: "+ ಸೇರಿಸಿ",
+    otpTitle: "ಮೊಬೈಲ್ ಪರಿಶೀಲನೆ (ಒಟಿಪಿ)",
+    otpSubtitle: "ಈ ಸಂಖ್ಯೆಗೆ ಕಳುಹಿಸಲಾದ 4-ಅಂಕಿಯ ಒಟಿಪಿ ಕೋಡ್ ನಮೂದಿಸಿ:",
+    otpSentBanner: "✨ ಶಗುನ್ ಸ್ಟೋರ್ ಪರಿಶೀಲನಾ ಒಟಿಪಿ ಕೋಡ್:",
+    verifyOtpBtn: "ಒಟಿಪಿ ದೃಢೀಕರಿಸಿ ಮತ್ತು ಆರ್ಡರ್ ಮಾಡಿ ➔",
+    resendOtp: "ಮತ್ತೆ ಒಟಿಪಿ ಕಳುಹಿಸಿ",
+    resendIn: "ಮರುಕಳುಹಿಸಲು",
+    invalidOtp: "❌ ತಪ್ಪಾದ ಒಟಿಪಿ! ದಯವಿಟ್ಟು ಸರಿಯಾದ 4-ಅಂಕಿಯ ಕೋಡ್ ನಮೂದಿಸಿ.",
+    phoneVerified: "✅ ಮೊಬೈಲ್ ಪರಿಶೀಲಿಸಲಾಗಿದೆ",
+    sendOtpBtn: "ಒಟಿಪಿ ಕಳುಹಿಸಿ",
+    enterOtpPlaceholder: "4-ಅಂಕಿಯ ಒಟಿಪಿ ನಮೂದಿಸಿ",
+    whatsAppOtpBtn: "💬 WhatsApp ನಲ್ಲಿ ಒಟಿಪಿ ಪಡೆಯಿರಿ"
   }
 };
 
