@@ -907,8 +907,8 @@ class ShagunStoreApp {
       </div>
 
       ${filteredProducts.length > this.visibleProductsLimit ? `
-        <div style="text-align: center; padding: 1rem;">
-          <button id="btnLoadMoreItems" style="padding: 10px 24px; background: #ffffff; border: 1.5px solid #1e3a8a; color: #1e3a8a; font-weight: 800; border-radius: var(--radius-full); cursor: pointer;">
+        <div style="text-align: center; padding: 1.5rem 1rem;">
+          <button id="btnLoadMoreItems" style="padding: 12px 28px; background: #ffffff; border: 1.5px solid var(--champagne-gold); color: var(--deep-charcoal); font-weight: 800; font-family: var(--font-display); border-radius: var(--radius-full); cursor: pointer; box-shadow: var(--shadow-sm); transition: all 0.2s ease;">
             ${this.t('loadMore')}
           </button>
         </div>
@@ -918,10 +918,10 @@ class ShagunStoreApp {
       ${totalItems > 0 ? `
         <div class="floating-cart-bar" id="btnOpenCart">
           <div>
-            <div style="font-size: 0.78rem; opacity: 0.9;">🛍️ ${totalItems} items in bag</div>
+            <div style="font-size: 0.74rem; color: var(--soft-gold); letter-spacing: 0.04em;">🛍️ ${totalItems} items in selection</div>
             <div class="cart-bar-total">${this.config.currency}${finalTotal}</div>
           </div>
-          <button style="background: #1e3a8a; color: white; border: none; padding: 8px 16px; border-radius: 8px; font-weight: 900; font-size: 0.85rem; display: flex; align-items: center; gap: 6px;">
+          <button style="background: var(--champagne-gold); color: var(--deep-charcoal); border: none; padding: 8px 18px; border-radius: var(--radius-full); font-weight: 800; font-size: 0.82rem; letter-spacing: 0.03em; display: flex; align-items: center; gap: 6px; box-shadow: 0 2px 8px var(--gold-glow);">
             <span>${this.activeAddonOrderId ? 'Append to Order' : 'Review & Pay'}</span>
             <span>➔</span>
           </button>
@@ -1001,30 +1001,30 @@ class ShagunStoreApp {
 
         <!-- Shop Owner Bank Verification Status Banner -->
         ${order.paymentMethod === 'upi' && !order.paymentVerified ? `
-          <div style="margin-bottom: 1rem; background: #eff6ff; border: 1.5px solid #bfdbfe; padding: 14px; border-radius: 14px; text-align: center;">
+          <div style="margin-bottom: 1rem; background: var(--bg-cream); border: 1.5px solid var(--champagne-gold); padding: 14px; border-radius: 14px; text-align: center;">
             <div style="font-size: 1.5rem; margin-bottom: 4px;">⏳</div>
-            <h4 style="font-size: 0.95rem; font-weight: 900; color: #1e3a8a; margin: 0 0 4px 0;">${this.t('orderAwaitingVerify')}</h4>
-            <p style="font-size: 0.78rem; color: #1e40af; margin: 0 0 10px 0;">
+            <h4 style="font-size: 0.95rem; font-weight: 800; color: var(--deep-charcoal); font-family: var(--font-display); margin: 0 0 4px 0;">${this.t('orderAwaitingVerify')}</h4>
+            <p style="font-size: 0.78rem; color: var(--text-muted); margin: 0 0 10px 0;">
               ${this.t('orderAwaitingVerifyDesc')} (UPI ID: <strong>${this.config.upiId || '7795565216-1@okbizaxis'}</strong>)
             </p>
-            <a href="upi://pay?pa=${encodeURIComponent(this.config.upiId || '7795565216-1@okbizaxis')}&pn=${encodeURIComponent(this.config.name || 'SHAGUN STORE')}&am=${order.totalAmount}&cu=INR&tn=${encodeURIComponent('Order ' + order.token + ' ' + (this.config.name || 'SHAGUN STORE'))}" style="display: inline-flex; align-items: center; gap: 6px; padding: 8px 16px; background: #1e3a8a; color: white; border-radius: 8px; font-size: 0.82rem; font-weight: 800; text-decoration: none;">
+            <a href="upi://pay?pa=${encodeURIComponent(this.config.upiId || '7795565216-1@okbizaxis')}&pn=${encodeURIComponent(this.config.name || 'SHAGUN STORE')}&am=${order.totalAmount}&cu=INR&tn=${encodeURIComponent('Order ' + order.token + ' ' + (this.config.name || 'SHAGUN STORE'))}" style="display: inline-flex; align-items: center; gap: 6px; padding: 10px 20px; background: var(--champagne-gold); color: var(--deep-charcoal); border-radius: var(--radius-full); font-size: 0.82rem; font-weight: 800; text-decoration: none; box-shadow: 0 2px 8px var(--gold-glow);">
               <span>📱</span> ${this.t('reopenUpi')} (${this.config.currency}${order.totalAmount})
             </a>
           </div>
         ` : order.paymentMethod === 'upi' && order.paymentVerified ? `
-          <div style="margin-bottom: 1rem; background: #eff6ff; border: 1.5px solid #93c5fd; padding: 12px 14px; border-radius: 14px; text-align: center; color: #1e3a8a;">
-            <div style="font-size: 0.95rem; font-weight: 900;">${this.t('verifiedUpi')} (${this.config.currency}${order.totalAmount})</div>
-            <div style="font-size: 0.78rem; opacity: 0.9; margin-top: 2px;">${this.t('verifiedUpiDesc')}</div>
+          <div style="margin-bottom: 1rem; background: var(--bg-cream); border: 1.5px solid var(--champagne-gold); padding: 12px 14px; border-radius: 14px; text-align: center; color: var(--deep-charcoal);">
+            <div style="font-size: 0.95rem; font-weight: 800; font-family: var(--font-display);">🟢 ${this.t('verifiedUpi')} (${this.config.currency}${order.totalAmount})</div>
+            <div style="font-size: 0.78rem; color: var(--text-muted); margin-top: 2px;">${this.t('verifiedUpiDesc')}</div>
           </div>
         ` : ''}
 
         ${isReady ? `
-          <div style="background: #eff6ff; border: 2px solid #3b82f6; border-radius: 14px; padding: 14px; margin-bottom: 1rem; text-align: center;">
-            <h3 style="font-size: 1.1rem; font-weight: 900; color: #1e3a8a; margin: 0 0 6px 0;">${this.t('bagReadyTitle')}</h3>
-            <p style="font-size: 0.82rem; color: #1e40af; margin: 0;">${this.t('bagReadyDesc')}</p>
+          <div style="background: var(--bg-cream); border: 1.5px solid var(--champagne-gold); border-radius: 14px; padding: 16px; margin-bottom: 1rem; text-align: center;">
+            <h3 style="font-size: 1.15rem; font-weight: 800; color: var(--deep-charcoal); font-family: var(--font-display); margin: 0 0 6px 0;">${this.t('bagReadyTitle')}</h3>
+            <p style="font-size: 0.82rem; color: var(--text-muted); margin: 0;">${this.t('bagReadyDesc')}</p>
           </div>
         ` : `
-          <div style="margin-bottom: 1rem; font-weight: 800; color: #1e3a8a; font-size: 0.9rem; background: #eff6ff; padding: 12px 14px; border-radius: 12px; border: 1px solid #bfdbfe; display: flex; align-items: center; gap: 8px;">
+          <div style="margin-bottom: 1rem; font-weight: 700; color: var(--deep-charcoal); font-size: 0.88rem; background: var(--bg-surface); padding: 12px 14px; border-radius: 12px; border: 1px solid var(--border); display: flex; align-items: center; gap: 8px;">
             <span style="font-size: 1.2rem;">${isPacking ? '👨‍🍳' : '⏳'}</span>
             <div>${isPacking ? this.t('staffPacking') : this.t('orderStatus1')}</div>
           </div>
@@ -1064,25 +1064,25 @@ class ShagunStoreApp {
 
         <!-- Add Items Before Staff Packs Button -->
         ${isNew ? `
-          <button class="btn-addon-to-active-order" data-order-id="${order.id}" style="width: 100%; padding: 12px; background: #1e3a8a; color: white; border: none; border-radius: 12px; font-weight: 900; font-size: 0.88rem; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; margin-bottom: 1rem; box-shadow: var(--shadow-sm);">
+          <button class="btn-addon-to-active-order" data-order-id="${order.id}" style="width: 100%; padding: 14px; background: var(--deep-charcoal); color: var(--champagne-gold); border: 1px solid var(--champagne-gold); border-radius: var(--radius-full); font-weight: 800; font-size: 0.88rem; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; margin-bottom: 1rem; box-shadow: var(--shadow-sm);">
             ${this.t('addMoreItems')} (#${order.token})
           </button>
         ` : ''}
 
         <!-- Items in this Order Breakdown -->
-        <div style="background: #ffffff; border: 1.5px solid var(--border); border-radius: var(--radius-md); padding: 14px; margin-bottom: 1rem; text-align: left;">
-          <h4 style="font-size: 0.9rem; font-weight: 900; color: #0f172a; margin-bottom: 10px; display: flex; justify-content: space-between;">
+        <div style="background: #ffffff; border: 1px solid var(--border); border-radius: var(--radius-md); padding: 14px; margin-bottom: 1rem; text-align: left; box-shadow: var(--shadow-sm);">
+          <h4 style="font-family: var(--font-display); font-size: 0.95rem; font-weight: 800; color: var(--deep-charcoal); margin-bottom: 10px; display: flex; justify-content: space-between;">
             <span>🛍️ ${this.t('itemsInOrder')} (${order.items.length})</span>
-            <span style="font-size: 0.75rem; color: #64748b;">${order.customerName} • ${order.phone}</span>
+            <span style="font-size: 0.74rem; font-family: var(--font-sans); color: var(--text-light); font-weight: 600;">${order.customerName} • ${order.phone}</span>
           </h4>
           <div style="display: flex; flex-direction: column; gap: 8px;">
             ${order.items.map(item => `
-              <div style="display: flex; justify-content: space-between; align-items: center; font-size: 0.82rem; padding: 4px 0; border-bottom: 1px solid #f1f5f9;">
+              <div style="display: flex; justify-content: space-between; align-items: center; font-size: 0.82rem; padding: 6px 0; border-bottom: 1px solid var(--border-light);">
                 <div>
-                  <strong style="color: #0f172a;">${item.qty}x</strong> ${item.name}
-                  <div style="font-size: 0.72rem; color: #64748b;">${item.variantName} • ${this.config.currency}${item.price} each</div>
+                  <strong style="color: var(--deep-charcoal);">${item.qty}x</strong> ${item.name}
+                  <div style="font-size: 0.72rem; color: var(--text-muted);">${item.variantName} • ${this.config.currency}${item.price} each</div>
                 </div>
-                <strong style="color: #1e3a8a; font-family: var(--font-display);">${this.config.currency}${item.price * item.qty}</strong>
+                <strong style="color: var(--deep-charcoal); font-family: var(--font-display); font-size: 0.95rem;">${this.config.currency}${item.price * item.qty}</strong>
               </div>
             `).join('')}
           </div>
@@ -1096,7 +1096,7 @@ class ShagunStoreApp {
           </div>
           <div class="bill-row">
             <span>${this.t('bagPacking')}</span>
-            <span style="color: #16a34a; font-weight: 800;">${this.t('free')}</span>
+            <span style="color: var(--success); font-weight: 800;">${this.t('free')}</span>
           </div>
           <div class="bill-row total">
             <span>${this.t('grandTotal')}</span>
@@ -1105,7 +1105,7 @@ class ShagunStoreApp {
         </div>
 
         <!-- Action to Start New Order -->
-        <button id="btnCustomerNewOrder" style="width: 100%; padding: 12px; background: #ffffff; border: 1.5px solid var(--border); color: #0f172a; border-radius: 12px; font-weight: 800; font-size: 0.85rem; cursor: pointer; margin-top: 10px;">
+        <button id="btnCustomerNewOrder" style="width: 100%; padding: 12px; background: #ffffff; border: 1px solid var(--border); color: var(--deep-charcoal); border-radius: var(--radius-full); font-weight: 700; font-size: 0.85rem; cursor: pointer; margin-top: 10px;">
           ${this.t('orderMoreItems')}
         </button>
       </div>
