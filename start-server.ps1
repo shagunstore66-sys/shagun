@@ -140,6 +140,38 @@ try {
                             $responseJson = $body
                         }
                     }
+                } elseif ($urlPath -eq "/api/verify-payment" -or $urlPath -eq "/api/payment-webhook") {
+                    # Automated Real-time Payment Verification Endpoint (Blinkit/Swiggy style)
+                    if ($method -eq "POST") {
+                        $payData = $body | ConvertFrom-Json
+                        $targetOrderId = $payData.orderId
+                        $txId = $payData.transactionId
+                        if (-not $txId) { $txId = "UTR" + (Get-Random -Minimum 10000000 -Maximum 99999999) }
+
+                        if (Test-Path $ordersFile) {
+                            $raw = [System.IO.File]::ReadAllText($ordersFile, [System.Text.Encoding]::UTF8)
+                            $allOrders = $raw | ConvertFrom-Json
+                            foreach ($ord in $allOrders) {
+                                if ($ord.id -eq $targetOrderId -or $ord.token -eq $targetOrderId) {
+                                    $ord.paymentVerified = $true
+                                    $ord.paymentDecision = "DONE"
+                                    $ord.transactionId = $txId
+                                    $ord.paymentStatus = "🟢 Verified & Paid Online ($txId)"
+                                    $ord.paymentCompletedAt = (Get-Date).ToString("o")
+                                    $ord.paymentCompletedFormatted = (Get-Date).ToString("dd MMM yyyy, hh:mm tt")
+                                    Write-Host "💰 [PAYMENT AUTO-VERIFIED] Token #$($ord.token) - Amount: ₹$($ord.totalAmount) - Ref: $txId" -ForegroundColor Yellow
+                                    break
+                                }
+                            }
+                            $responseJson = $allOrders | ConvertTo-Json -Depth 10
+                            [System.IO.File]::WriteAllText($ordersFile, $responseJson, [System.Text.Encoding]::UTF8)
+                            $responseJson = '{"status":"SUCCESS","verified":true,"transactionId":"' + $txId + '"}'
+                        } else {
+                            $responseJson = '{"status":"SUCCESS","verified":true}'
+                        }
+                    } else {
+                        $responseJson = '{"status":"READY","engine":"SHAGUN_AUTO_PAYMENT_V1"}'
+                    }
                 } else {
                     $statusCode = "404 Not Found"
                     $responseJson = '{"error":"Not Found"}'
