@@ -647,49 +647,49 @@
 
     // 2. Outer Security Hologram Border
     ctx.lineWidth = 12;
-    ctx.strokeStyle = '#047857';
+    ctx.strokeStyle = '#1e3a8a';
     ctx.strokeRect(20, 20, width - 40, height - 40);
 
     ctx.lineWidth = 2;
-    ctx.strokeStyle = '#b45309';
+    ctx.strokeStyle = '#2563eb';
     ctx.strokeRect(34, 34, width - 68, height - 68);
 
     // 3. Top Official Badge Header
-    ctx.fillStyle = '#047857';
-    ctx.fillRect(40, 40, width - 80, 240);
+    ctx.fillStyle = '#1e3a8a';
+    ctx.fillRect(40, 40, width - 80, 250);
 
-    // Government / Store Authenticated Ribbon
-    ctx.fillStyle = '#f59e0b';
-    ctx.font = 'bold 22px system-ui, sans-serif';
+    // Official Trilingual Header
+    ctx.fillStyle = '#60a5fa';
+    ctx.font = 'bold 20px system-ui, sans-serif';
     ctx.textAlign = 'center';
-    ctx.fillText('★ OFFICIAL VERIFIED SMART ORDER COUNTER • अधिकृत डिजिटल काउंटर ★', width / 2, 85);
+    ctx.fillText('★ OFFICIAL SMART ORDER COUNTER • अधिकृत डिजिटल काउंटर • ಅಧಿಕೃತ ಡಿಜಿಟಲ್ ಕೌಂಟರ್ ★', width / 2, 80);
 
-    // Store Name English & Hindi
+    // Store Name English & Hindi & Kannada
     ctx.fillStyle = '#ffffff';
-    ctx.font = '900 58px system-ui, sans-serif';
-    ctx.fillText(options.storeName || 'SHAGUN STORE', width / 2, 160);
+    ctx.font = '900 54px system-ui, sans-serif';
+    ctx.fillText(options.storeName || 'SHAGUN STORE', width / 2, 145);
 
-    ctx.fillStyle = '#fef08a';
-    ctx.font = 'bold 36px system-ui, sans-serif';
-    ctx.fillText(options.storeNameHindi || 'शगुन स्टोर', width / 2, 215);
+    ctx.fillStyle = '#93c5fd';
+    ctx.font = 'bold 32px system-ui, sans-serif';
+    ctx.fillText(`${options.storeNameHindi || 'शगुन स्टोर'} • ${options.storeNameKannada || 'ಶಗುನ್ ಸ್ಟೋರ್'}`, width / 2, 195);
 
-    ctx.fillStyle = '#ecfdf5';
-    ctx.font = '600 24px system-ui, sans-serif';
-    ctx.fillText(options.taglineHindi || 'स्कैन करें • सामान चुनें • काउंटर से प्राप्त करें', width / 2, 255);
+    ctx.fillStyle = '#eff6ff';
+    ctx.font = '600 22px system-ui, sans-serif';
+    ctx.fillText(options.tagline || 'Scan in Aisle • Order • Collect at Counter (ಸ್ಕ್ಯಾನ್ ಮಾಡಿ • ಆರ್ಡರ್ ಮಾಡಿ)', width / 2, 240);
 
     // 4. Spot / Counter Badge
-    ctx.fillStyle = '#dcfce7';
+    ctx.fillStyle = '#dbeafe';
     ctx.beginPath();
-    ctx.roundRect(width / 2 - 240, 305, 480, 50, 25);
+    ctx.roundRect(width / 2 - 260, 310, 520, 50, 25);
     ctx.fill();
 
-    ctx.fillStyle = '#166534';
+    ctx.fillStyle = '#1e3a8a';
     ctx.font = 'bold 24px system-ui, sans-serif';
-    ctx.fillText(`📍 ${options.location || 'Main Counter Express'}`, width / 2, 338);
+    ctx.fillText(`📍 ${options.location || 'Main Counter Express'}`, width / 2, 344);
 
     // 5. Generate Real QR Core
     const storeUrl = options.storeUrl || generateSignedStoreUrl(window.location.origin, options.location || 'Main Counter Express');
-    const qrObj = createQRCode(storeUrl, { size: 560, margin: 8, darkColor: '#064e3b' });
+    const qrObj = createQRCode(storeUrl, { size: 560, margin: 8, darkColor: '#0f172a' });
     const qrCanvas = qrObj.toCanvas();
 
     // QR White Base with Drop Shadow
@@ -712,49 +712,53 @@
     ctx.arc(width / 2, 690, 50, 0, Math.PI * 2);
     ctx.fill();
     ctx.lineWidth = 4;
-    ctx.strokeStyle = '#047857';
+    ctx.strokeStyle = '#1e3a8a';
     ctx.stroke();
 
-    ctx.fillStyle = '#047857';
+    ctx.fillStyle = '#1e3a8a';
     ctx.font = 'bold 36px system-ui, sans-serif';
     ctx.fillText('🛍️', width / 2, 702);
 
     // 6. Security Authentication Text
     ctx.fillStyle = '#0f172a';
-    ctx.font = 'bold 26px system-ui, sans-serif';
-    ctx.fillText('SCAN WITH CAMERA / GPAY / PHONEPE / PAYTM / BHIM / FAMPAY', width / 2, 1040);
+    ctx.font = 'bold 24px system-ui, sans-serif';
+    ctx.fillText('SCAN WITH CAMERA / ANY UPI APP (ಯಾವುದೇ ಯುಪಿಐ ಆಪ್ ಮೂಲಕ ಸ್ಕ್ಯಾನ್ ಮಾಡಿ)', width / 2, 1040);
 
     ctx.fillStyle = '#64748b';
     ctx.font = '500 18px monospace';
     ctx.fillText(`AUTH TOKEN: SG-SEC-2026 • REG: SHAGUN-STORE-066`, width / 2, 1075);
 
-    // 7. Step-by-Step Instructions
+    // 7. Step-by-Step Instructions (Trilingual)
     const stepY = 1130;
     const stepBoxWidth = 330;
     const steps = [
-      { num: '1', title: '1. Scan QR', sub: 'स्कैन करें' },
-      { num: '2', title: '2. Pick Groceries', sub: 'समान चुनें' },
-      { num: '3', title: '3. Collect Bag', sub: 'बैग प्राप्त करें' }
+      { num: '1', title: '1. Scan QR', sub: 'ಸ್ಕ್ಯಾನ್ ಮಾಡಿ • स्कैन करें' },
+      { num: '2', title: '2. Pick Groceries', sub: 'ಸಾಮಗ್ರಿ ಆರಿಸಿ • सामान चुनें' },
+      { num: '3', title: '3. Collect Bag', sub: 'ಬ್ಯಾಗ್ ಪಡೆಯಿರಿ • बैग प्राप्त करें' }
     ];
 
     steps.forEach((s, idx) => {
       const sx = 80 + idx * 360;
-      ctx.fillStyle = '#f1f5f9';
+      ctx.fillStyle = '#f8fafc';
       ctx.beginPath();
       ctx.roundRect(sx, stepY, stepBoxWidth, 120, 16);
       ctx.fill();
 
-      ctx.fillStyle = '#047857';
-      ctx.font = 'bold 26px system-ui, sans-serif';
-      ctx.fillText(s.title, sx + stepBoxWidth / 2, stepY + 50);
+      ctx.lineWidth = 1.5;
+      ctx.strokeStyle = '#e2e8f0';
+      ctx.stroke();
+
+      ctx.fillStyle = '#1e3a8a';
+      ctx.font = 'bold 24px system-ui, sans-serif';
+      ctx.fillText(s.title, sx + stepBoxWidth / 2, stepY + 48);
 
       ctx.fillStyle = '#475569';
-      ctx.font = '600 20px system-ui, sans-serif';
-      ctx.fillText(s.sub, sx + stepBoxWidth / 2, stepY + 90);
+      ctx.font = '600 18px system-ui, sans-serif';
+      ctx.fillText(s.sub, sx + stepBoxWidth / 2, stepY + 88);
     });
 
     // 8. Bottom Footer
-    ctx.fillStyle = '#047857';
+    ctx.fillStyle = '#1e3a8a';
     ctx.font = 'bold 22px system-ui, sans-serif';
     ctx.fillText('✨ SHAGUN STORE • 100% PURE & PACKED GROCERY EXPRESS ✨', width / 2, 1340);
 
