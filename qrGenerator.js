@@ -722,7 +722,7 @@
     // 6. Security Authentication Text
     ctx.fillStyle = '#0f172a';
     ctx.font = 'bold 26px system-ui, sans-serif';
-    ctx.fillText('SCAN WITH ANY CAMERA / GPAY / PAYTM / PHONEPE', width / 2, 1040);
+    ctx.fillText('SCAN WITH CAMERA / GPAY / PHONEPE / PAYTM / BHIM / FAMPAY', width / 2, 1040);
 
     ctx.fillStyle = '#64748b';
     ctx.font = '500 18px monospace';
@@ -733,7 +733,7 @@
     const stepBoxWidth = 330;
     const steps = [
       { num: '1', title: '1. Scan QR', sub: 'स्कैन करें' },
-      { num: '2', title: '2. Pick & OTP', sub: 'समान चुनें व OTP' },
+      { num: '2', title: '2. Pick Groceries', sub: 'समान चुनें' },
       { num: '3', title: '3. Collect Bag', sub: 'बैग प्राप्त करें' }
     ];
 
