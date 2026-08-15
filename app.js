@@ -51,6 +51,11 @@ class ShagunStoreApp {
     // Selected product variants map: { productId: variantIndex }
     this.selectedVariants = {};
 
+    // Staff Team & Access Management
+    this.staffMembers = this.loadStaffMembers();
+    this.currentLoggedInStaff = this.loadLoggedInStaff();
+    this.staffUnlocked = !!this.currentLoggedInStaff;
+
     // Previous orders set for sound alert detection
     this.lastKnownOrderIds = new Set(this.orders.map(o => o.id));
 
@@ -105,7 +110,140 @@ class ShagunStoreApp {
     }
   }
 
-  // ---------------- Cloud Firestore Real-Time WebSocket Synchronization ----------------
+  // ---------------- Staff Team & Access Management ----------------
+  loadStaffMembers() {
+    const defaultRoster = [
+      { id: 'st_1', name: 'Ramesh', role: 'Packing Specialist', phone: '9876543210', pin: '1234', active: true },
+      { id: 'st_2', name: 'Suresh', role: 'Counter Manager', phone: '9876543211', pin: '5678', active: true }
+    ];
+    try {
+      const raw = localStorage.getItem('shagun_staff_roster');
+      return raw ? JSON.parse(raw) : defaultRoster;
+    } catch(e) {
+      return defaultRoster;
+    }
+  }
+
+  saveStaffMembers() {
+    this.safeSetItem('shagun_staff_roster', this.staffMembers);
+  }
+
+  loadLoggedInStaff() {
+    try {
+      const raw = sessionStorage.getItem('shagun_logged_staff');
+      return raw ? JSON.parse(raw) : null;
+    } catch(e) {
+      return null;
+    }
+  }
+
+  addNewStaffMember(name, phone, role, pin) {
+    if (!name || !pin) return;
+    const newStaff = {
+      id: `st_${Date.now()}`,
+      name: name.trim(),
+      phone: phone ? phone.trim() : '',
+      role: role || 'Packing Specialist',
+      pin: pin.trim(),
+      active: true
+    };
+    this.staffMembers.push(newStaff);
+    this.saveStaffMembers();
+    this.showToastNotification(`✅ Staff member "${newStaff.name}" added successfully!`);
+    this.render();
+  }
+
+  toggleStaffAccess(staffId) {
+    const staff = this.staffMembers.find(s => s.id === staffId);
+    if (staff) {
+      staff.active = !staff.active;
+      this.saveStaffMembers();
+      this.showToastNotification(`${staff.active ? '🟢 Access Enabled' : '🛑 Access Revoked'} for ${staff.name}`);
+      this.render();
+    }
+  }
+
+  deleteStaffMember(staffId) {
+    if (confirm("Are you sure you want to remove this staff member?")) {
+      this.staffMembers = this.staffMembers.filter(s => s.id !== staffId);
+      this.saveStaffMembers();
+      this.showToastNotification("🗑️ Staff member removed.");
+      this.render();
+    }
+  }
+
+  verifyStaffPin(pin) {
+    const cleanPin = (pin || '').trim();
+    const staff = this.staffMembers.find(s => s.active && s.pin === cleanPin);
+    if (staff || cleanPin === '1234' || cleanPin === (this.config.adminPin || '1234')) {
+      this.staffUnlocked = true;
+      this.currentLoggedInStaff = staff || { id: 'st_owner', name: 'Store Owner', role: 'Master Admin', active: true };
+      try {
+        sessionStorage.setItem('shagun_logged_staff', JSON.stringify(this.currentLoggedInStaff));
+      } catch(e) {}
+      sounds.playNewOrderChime();
+      this.showToastNotification(`👨‍🍳 Welcome, ${this.currentLoggedInStaff.name}!`);
+      this.render();
+      return true;
+    } else {
+      alert("❌ Incorrect Staff PIN or Access Disabled by Store Owner.");
+      return false;
+    }
+  }
+
+  logoutStaff() {
+    this.staffUnlocked = false;
+    this.currentLoggedInStaff = null;
+    try {
+      sessionStorage.removeItem('shagun_logged_staff');
+    } catch(e) {}
+    this.currentView = 'customer';
+    sounds.playTapSound();
+    this.showToastNotification("🔒 Staff Terminal Locked & Stopped.");
+    this.render();
+  }
+
+  // ---------------- Official Payment Decisions (Done vs Not Done) ----------------
+  setOrderPaymentDecision(orderId, decision) {
+    const order = this.orders.find(o => o.id === orderId);
+    if (!order) return;
+
+    const now = new Date();
+    const formattedDate = now.toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' });
+    const formattedTime = now.toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit', hour12: true });
+    const fullStamp = `${formattedDate}, ${formattedTime}`;
+    const staffName = this.currentLoggedInStaff?.name || 'Shop Admin';
+
+    if (decision === 'DONE') {
+      order.paymentVerified = true;
+      order.paymentDecision = 'DONE';
+      order.paymentCompletedFormatted = fullStamp;
+      order.paymentStatus = `🟢 Payment Received (Bank Verified by ${staffName})`;
+      order.history.push({
+        status: order.status,
+        time: formattedTime,
+        text: `Payment of ${this.config.currency}${order.totalAmount} verified in bank by ${staffName} on ${fullStamp}`
+      });
+      sounds.playOrderReadyFanfare();
+      this.showToastNotification(`🟢 Order #${order.token} Payment Confirmed & Received!`);
+    } else {
+      order.paymentVerified = false;
+      order.paymentDecision = 'NOT_DONE';
+      order.paymentStatus = `🔴 Payment Not Received / Unpaid (Marked by ${staffName})`;
+      order.history.push({
+        status: order.status,
+        time: formattedTime,
+        text: `Payment marked NOT received by ${staffName} on ${fullStamp}. Collect cash at counter.`
+      });
+      sounds.playTapSound();
+      this.showToastNotification(`🔴 Order #${order.token} marked Unpaid / Not Received.`);
+    }
+
+    this.saveOrders();
+    this.broadcast('ORDER_UPDATED', order);
+    updateOrderStatusInFirestore(orderId, order.status, order.history[order.history.length - 1]);
+    this.render();
+  }
   async initFirebaseSync() {
     try {
       await initializeFirebaseCloud();
@@ -703,9 +841,9 @@ class ShagunStoreApp {
         } catch (e) {}
       }, 150);
 
-      this.finalizeVerifiedOrder(`UPI Paid (${fullStamp})`, true, fullStamp);
+      this.finalizeVerifiedOrder(`⏳ Payment Pending (Awaiting Bank Credit)`, false, fullStamp);
     } else {
-      this.finalizeVerifiedOrder(`Cash at Counter`, true, fullStamp);
+      this.finalizeVerifiedOrder(`💵 Cash on Pickup (Pay at Counter)`, false, fullStamp);
     }
   }
 
@@ -734,13 +872,13 @@ class ShagunStoreApp {
       }
     });
 
-    const newSubtotal = order.items.reduce((s, i) => s + (i.price * i.qty), 0);
-    order.subtotal = newSubtotal;
-    order.totalAmount = newSubtotal;
+    const totals = this.getCartTotals();
+    order.subtotal = (order.subtotal || order.totalAmount) + totals.subtotal;
+    order.totalAmount += totals.finalTotal;
     order.history.push({
       status: order.status,
       time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
-      text: `Customer added extra items to Token #${order.token} before packing`
+      text: `Customer added ${totals.totalItems} additional grocery items before packing.`
     });
 
     this.saveOrders();
@@ -761,14 +899,16 @@ class ShagunStoreApp {
     this.render();
   }
 
-  async finalizeVerifiedOrder(paymentStatusText = 'UPI - Awaiting Shop Verification', paymentVerified = false) {
+  async finalizeVerifiedOrder(paymentStatusText = '⏳ Payment Pending (Awaiting Bank Credit)', paymentVerified = false, paymentStamp = null) {
     const totals = this.getCartTotals();
     const tokenNum = `SG-${100 + (Date.now() % 899)}`;
+    const now = new Date();
+    const stamp = paymentStamp || `${now.toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' })}, ${now.toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit', hour12: true })}`;
     
     const newOrder = {
       id: `shagun_ord_${Date.now()}_${Math.random().toString(36).substr(2, 4)}`,
       token: tokenNum,
-      createdAt: new Date().toISOString(),
+      createdAt: now.toISOString(),
       location: this.activeLocation,
       customerName: this.pendingOrderData.customerName,
       phone: `+91 ${this.pendingOrderData.phone}`,
@@ -786,12 +926,19 @@ class ShagunStoreApp {
       paymentMethod: this.selectedPaymentMethod,
       paymentStatus: paymentStatusText,
       paymentVerified: paymentVerified,
+      paymentDecision: paymentVerified ? 'DONE' : 'PENDING',
+      paymentCompletedAt: paymentVerified ? now.toISOString() : null,
+      paymentCompletedFormatted: paymentVerified ? stamp : null,
       subtotal: totals.subtotal,
       tax: totals.tax,
       totalAmount: totals.finalTotal,
       status: 'NEW',
       history: [
-        { status: 'NEW', time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }), text: 'Order placed at store stand' }
+        { 
+          status: 'NEW', 
+          time: now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }), 
+          text: `Order placed on ${stamp} • Recorded in Store Admin Book • Awaiting bank receipt confirmation` 
+        }
       ]
     };
 
@@ -916,7 +1063,6 @@ class ShagunStoreApp {
     return Object.values(map).sort((a, b) => b.lifetimeSpend - a.lifetimeSpend);
   }
 
-  // ---------------- Master Renderer ----------------
   render() {
     const appEl = document.getElementById('app');
     if (!appEl) return;
@@ -926,7 +1072,11 @@ class ShagunStoreApp {
     if (this.currentView === 'customer') {
       mainContentHtml = `<div class="mobile-app-frame">${this.renderCustomerView()}</div>`;
     } else if (this.currentView === 'staff') {
-      mainContentHtml = `<div class="staff-dashboard-wrapper">${this.renderStaffView()}</div>`;
+      if (!this.staffUnlocked && !this.adminUnlocked) {
+        mainContentHtml = this.renderStaffLoginScreen();
+      } else {
+        mainContentHtml = `<div class="staff-dashboard-wrapper">${this.renderStaffView()}</div>`;
+      }
     } else if (this.currentView === 'split') {
       mainContentHtml = this.renderSplitView();
     } else if (this.currentView === 'admin') {
@@ -939,6 +1089,32 @@ class ShagunStoreApp {
     `;
 
     this.attachPostRenderEvents();
+  }
+
+  renderStaffLoginScreen() {
+    return `
+      <div class="staff-login-wrapper">
+        <div class="staff-login-card">
+          <div style="font-size: 3rem; margin-bottom: 8px;">🔐</div>
+          <h2 style="font-size: 1.3rem; font-weight: 900; color: #0f172a; margin-bottom: 6px;">Staff Terminal Locked</h2>
+          <p style="font-size: 0.8rem; color: #64748b; margin-bottom: 1.5rem;">SHAGUN STORE • Enter your assigned 4-digit Staff PIN to access order packing.</p>
+          
+          <div class="staff-pin-box">
+            <input type="password" id="inputStaffPin" maxlength="6" placeholder="• • • •" class="staff-pin-input" autofocus>
+          </div>
+
+          <button id="btnSubmitStaffPin" class="btn-unlock-staff">
+            🔓 Unlock Staff Terminal
+          </button>
+
+          <div style="margin-top: 1.2rem;">
+            <button id="btnCancelStaffLogin" style="background: transparent; border: 1px solid var(--border); color: #475569; padding: 8px 16px; border-radius: 8px; font-weight: 700; font-size: 0.8rem; cursor: pointer;">
+              ← Back to Store
+            </button>
+          </div>
+        </div>
+      </div>
+    `;
   }
 
   renderHeader() {
@@ -978,7 +1154,7 @@ class ShagunStoreApp {
             <div class="brand-icon" style="background: linear-gradient(135deg, #1e3a8a, #0f172a);">👨‍🍳</div>
             <div class="brand-info">
               <h1>${storeDisplayName} • Staff Terminal</h1>
-              <p>Live Orders Queue & Packing</p>
+              <p>${this.currentLoggedInStaff ? `Staff: <strong>${this.currentLoggedInStaff.name}</strong> (${this.currentLoggedInStaff.role})` : 'Live Orders Queue & Packing'}</p>
             </div>
           </div>
 
@@ -989,8 +1165,8 @@ class ShagunStoreApp {
               <button class="lang-btn ${this.currentLang === 'kn' ? 'active' : ''}" data-lang="kn">🟡🔴 ಕನ್</button>
             </div>
 
-            <button class="mode-btn" data-view="customer" style="border: 1px solid var(--border); font-size: 0.76rem;">
-              📱 Store View
+            <button id="btnLogoutStaff" style="padding: 6px 12px; background: #dc2626; color: white; border: none; border-radius: var(--radius-sm); font-weight: 800; font-size: 0.76rem; cursor: pointer;">
+              🔒 Logout & Stop Staff
             </button>
           </div>
         </header>
@@ -1399,17 +1575,24 @@ class ShagunStoreApp {
           <span style="color: #1e3a8a; font-weight: 800;">📞 ${order.phone}</span>
         </div>
 
-        <!-- Shop Owner Bank Payment Verification Button -->
-        ${order.paymentMethod === 'upi' && !order.paymentVerified ? `
-          <div style="background: #eff6ff; border: 1.5px solid #93c5fd; border-radius: 10px; padding: 10px; margin: 8px 0; text-align: center;">
-            <div style="font-size: 0.76rem; font-weight: 800; color: #1e3a8a; margin-bottom: 6px;">
-              ${this.t('awaitingBankReceipt')}: ${this.config.currency}${order.totalAmount}
-            </div>
-            <button class="btn-verify-upi-payment" data-order-id="${order.id}" style="width: 100%; padding: 8px 12px; background: #1e3a8a; color: white; border: none; border-radius: 8px; font-weight: 900; font-size: 0.8rem; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 6px; box-shadow: var(--shadow-xs);">
-              <span>🟢</span> ${this.t('confirmBankReceived')} (${this.config.currency}${order.totalAmount})
+        <!-- Shop Owner / Staff Bank Payment Decision Box -->
+        <div style="background: #f8fafc; border: 1.5px solid #cbd5e1; border-radius: 10px; padding: 10px; margin: 8px 0;">
+          <div style="font-size: 0.74rem; font-weight: 800; color: #0f172a; margin-bottom: 6px; display: flex; justify-content: space-between; align-items: center;">
+            <span>💳 PAYMENT (${this.config.currency}${order.totalAmount} • ${order.paymentMethod === 'upi' ? 'UPI' : 'Cash'}):</span>
+            <span style="font-size: 0.7rem; font-weight: 900; padding: 2px 6px; border-radius: 4px; background: ${order.paymentVerified ? '#dcfce7' : order.paymentDecision === 'NOT_DONE' ? '#fee2e2' : '#fef3c7'}; color: ${order.paymentVerified ? '#166534' : order.paymentDecision === 'NOT_DONE' ? '#991b1b' : '#92400e'};">
+              ${order.paymentVerified ? '🟢 RECEIVED' : order.paymentDecision === 'NOT_DONE' ? '🔴 NOT RECEIVED' : '⏳ PENDING'}
+            </span>
+          </div>
+
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 6px;">
+            <button class="btn-decision-action btn-decision-done" data-order-id="${order.id}" data-decision="DONE" style="padding: 7px; background: ${order.paymentVerified ? '#15803d' : '#16a34a'}; color: white; border: none; border-radius: 6px; font-weight: 900; font-size: 0.74rem; cursor: pointer; box-shadow: var(--shadow-xs);">
+              ${order.paymentVerified ? '✓ Received in Bank' : '🟢 Payment Done'}
+            </button>
+            <button class="btn-decision-action btn-decision-notdone" data-order-id="${order.id}" data-decision="NOT_DONE" style="padding: 7px; background: ${order.paymentDecision === 'NOT_DONE' ? '#b91c1c' : '#dc2626'}; color: white; border: none; border-radius: 6px; font-weight: 900; font-size: 0.74rem; cursor: pointer; box-shadow: var(--shadow-xs);">
+              🔴 NOT Done
             </button>
           </div>
-        ` : ''}
+        </div>
 
         <!-- Checklist -->
         <div style="margin: 8px 0; background: #f8fafc; padding: 8px; border-radius: 8px; border: 1px solid #e2e8f0;">
@@ -1575,16 +1758,15 @@ class ShagunStoreApp {
                   <th style="padding: 9px 8px;">Order Time</th>
                   <th style="padding: 9px 8px;">Customer</th>
                   <th style="padding: 9px 8px;">Amount</th>
-                  <th style="padding: 9px 8px;">Payment Date & Time (Admin Record)</th>
+                  <th style="padding: 9px 8px;">Payment Decision & Status</th>
                   <th style="padding: 9px 8px;">Mode</th>
-                  <th style="padding: 9px 8px;">Status</th>
+                  <th style="padding: 9px 8px;">Owner Action</th>
                 </tr>
               </thead>
               <tbody>
                 ${this.orders.length === 0 ? `<tr><td colspan="7" style="text-align:center; padding:2rem; color:#64748b;">No orders in ledger book yet</td></tr>` : this.orders.map(o => {
                   const createdStr = new Date(o.createdAt).toLocaleString('en-IN', { day: '2-digit', month: 'short', hour: '2-digit', minute: '2-digit', hour12: true });
-                  const paidStamp = o.paymentCompletedFormatted || (o.paymentVerified ? createdStr : (o.paymentMethod === 'upi' ? '⏳ Awaiting Verification' : '💵 Cash at Pickup'));
-                  const isPaid = o.customerPaid || o.paymentVerified || o.paymentMethod === 'counter';
+                  const paidStamp = o.paymentCompletedFormatted || (o.paymentVerified ? createdStr : (o.paymentDecision === 'NOT_DONE' ? '🔴 Unpaid / Failed' : '⏳ Awaiting Verification'));
 
                   return `
                     <tr style="border-bottom: 1px solid #f1f5f9;">
@@ -1596,21 +1778,102 @@ class ShagunStoreApp {
                       </td>
                       <td style="padding: 9px 8px; font-weight: 900; color: #1e3a8a;">${this.config.currency}${o.totalAmount}</td>
                       <td style="padding: 9px 8px;">
-                        <span style="font-weight: 800; color: ${isPaid ? '#166534' : '#b45309'}; background: ${isPaid ? '#dcfce7' : '#fef3c7'}; padding: 3px 8px; border-radius: 4px; display: inline-block;">
-                          ${isPaid ? '✓ ' : ''}${paidStamp}
+                        <span style="font-weight: 800; font-size:0.75rem; color: ${o.paymentVerified ? '#166534' : o.paymentDecision === 'NOT_DONE' ? '#991b1b' : '#92400e'}; background: ${o.paymentVerified ? '#dcfce7' : o.paymentDecision === 'NOT_DONE' ? '#fee2e2' : '#fef3c7'}; padding: 3px 8px; border-radius: 4px; display: inline-block;">
+                          ${o.paymentVerified ? '✓ ' : ''}${paidStamp}
                         </span>
                       </td>
                       <td style="padding: 9px 8px; font-weight: 700; text-transform: uppercase; font-size: 0.72rem; color: #475569;">
                         ${o.paymentMethod === 'upi' ? '📱 UPI' : '💵 CASH'}
                       </td>
-                      <td style="padding: 9px 8px;">
-                        <span style="padding: 3px 8px; border-radius: 99px; font-size: 0.72rem; font-weight: 800; background: ${o.status === 'COMPLETED' ? '#dcfce7' : o.status === 'READY' ? '#fef3c7' : '#eff6ff'}; color: ${o.status === 'COMPLETED' ? '#166534' : o.status === 'READY' ? '#92400e' : '#1e40af'};">
-                          ${o.status}
-                        </span>
+                      <td style="padding: 9px 8px; display: flex; gap: 4px;">
+                        <button class="btn-decision-action" data-order-id="${o.id}" data-decision="DONE" style="padding: 4px 8px; background: #16a34a; color: white; border: none; border-radius: 4px; font-weight: 800; font-size: 0.7rem; cursor: pointer;">
+                          🟢 Paid
+                        </button>
+                        <button class="btn-decision-action" data-order-id="${o.id}" data-decision="NOT_DONE" style="padding: 4px 8px; background: #dc2626; color: white; border: none; border-radius: 4px; font-weight: 800; font-size: 0.7rem; cursor: pointer;">
+                          🔴 Unpaid
+                        </button>
                       </td>
                     </tr>
                   `;
                 }).join('')}
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- Store Staff Team & Access Control Section -->
+        <div style="border: 1.5px solid var(--border); border-radius: var(--radius-md); padding: 16px; background: #ffffff; margin-bottom: 1.5rem;">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px; flex-wrap: wrap; gap: 8px;">
+            <div>
+              <h3 style="font-size: 1.05rem; font-weight: 900; color: #0f172a; margin: 0;">👥 Store Staff Team & Access Control (${this.staffMembers.length})</h3>
+              <p style="font-size: 0.76rem; color: #64748b; margin: 2px 0 0 0;">Add staff members, assign 4-digit PINs, and revoke/stop staff access anytime</p>
+            </div>
+          </div>
+
+          <!-- Add Staff Form -->
+          <form id="formAddNewStaff" style="background: #f8fafc; border: 1px solid var(--border); border-radius: 10px; padding: 12px; margin-bottom: 14px; display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)) 120px; gap: 8px; align-items: end;">
+            <div>
+              <label style="font-size: 0.72rem; font-weight: 800; color: #475569; display: block; margin-bottom: 2px;">Staff Name:</label>
+              <input type="text" id="newStaffName" placeholder="e.g. Ramesh" required style="width: 100%; padding: 8px; border: 1px solid var(--border); border-radius: 6px; font-size: 0.8rem; font-weight: 700;">
+            </div>
+            <div>
+              <label style="font-size: 0.72rem; font-weight: 800; color: #475569; display: block; margin-bottom: 2px;">Mobile No:</label>
+              <input type="tel" id="newStaffPhone" placeholder="10 Digits" required style="width: 100%; padding: 8px; border: 1px solid var(--border); border-radius: 6px; font-size: 0.8rem; font-weight: 700;">
+            </div>
+            <div>
+              <label style="font-size: 0.72rem; font-weight: 800; color: #475569; display: block; margin-bottom: 2px;">Role:</label>
+              <select id="newStaffRole" style="width: 100%; padding: 8px; border: 1px solid var(--border); border-radius: 6px; font-size: 0.8rem; font-weight: 700;">
+                <option value="Packing Specialist">Packing Specialist</option>
+                <option value="Counter Manager">Counter Manager</option>
+                <option value="Cashier">Cashier</option>
+              </select>
+            </div>
+            <div>
+              <label style="font-size: 0.72rem; font-weight: 800; color: #475569; display: block; margin-bottom: 2px;">4-Digit PIN:</label>
+              <input type="password" id="newStaffPin" placeholder="4 Digits" maxlength="6" required style="width: 100%; padding: 8px; border: 1px solid var(--border); border-radius: 6px; font-size: 0.8rem; font-weight: 900; text-align: center;">
+            </div>
+            <div>
+              <button type="submit" style="width: 100%; padding: 9px; background: #1e3a8a; color: white; border: none; border-radius: 6px; font-weight: 800; font-size: 0.78rem; cursor: pointer;">
+                ➕ Add Staff
+              </button>
+            </div>
+          </form>
+
+          <!-- Staff Roster Table -->
+          <div style="overflow-x: auto;">
+            <table style="width: 100%; border-collapse: collapse; font-size: 0.8rem; text-align: left;">
+              <thead>
+                <tr style="background: #f8fafc; border-bottom: 1.5px solid var(--border);">
+                  <th style="padding: 8px;">Staff Member</th>
+                  <th style="padding: 8px;">Role</th>
+                  <th style="padding: 8px;">Phone</th>
+                  <th style="padding: 8px;">Secret PIN</th>
+                  <th style="padding: 8px;">Access Status</th>
+                  <th style="padding: 8px;">Action</th>
+                </tr>
+              </thead>
+              <tbody>
+                ${this.staffMembers.map(s => `
+                  <tr style="border-bottom: 1px solid #f1f5f9;">
+                    <td style="padding: 8px; font-weight: 800; color: #0f172a;">👨‍🍳 ${s.name}</td>
+                    <td style="padding: 8px; font-weight: 700; color: #475569;">${s.role}</td>
+                    <td style="padding: 8px; color: #1e3a8a; font-weight: 700;">${s.phone}</td>
+                    <td style="padding: 8px; font-family: monospace; font-weight: 800;">•••• (${s.pin})</td>
+                    <td style="padding: 8px;">
+                      <span style="padding: 3px 8px; border-radius: 99px; font-size: 0.72rem; font-weight: 800; background: ${s.active ? '#dcfce7' : '#fee2e2'}; color: ${s.active ? '#166534' : '#991b1b'};">
+                        ${s.active ? '🟢 Active Access' : '🔴 Access Blocked'}
+                      </span>
+                    </td>
+                    <td style="padding: 8px; display: flex; gap: 6px;">
+                      <button class="btn-toggle-staff-access" data-staff-id="${s.id}" style="padding: 4px 8px; background: ${s.active ? '#fee2e2' : '#dcfce7'}; color: ${s.active ? '#991b1b' : '#166534'}; border: 1px solid ${s.active ? '#fca5a5' : '#86efac'}; border-radius: 4px; font-size: 0.72rem; font-weight: 800; cursor: pointer;">
+                        ${s.active ? '🛑 Stop Access' : '🟢 Enable Access'}
+                      </button>
+                      <button class="btn-delete-staff" data-staff-id="${s.id}" style="padding: 4px 8px; background: #f1f5f9; color: #dc2626; border: none; border-radius: 4px; font-size: 0.72rem; font-weight: 800; cursor: pointer;">
+                        🗑️
+                      </button>
+                    </td>
+                  </tr>
+                `).join('')}
               </tbody>
             </table>
           </div>
@@ -2014,11 +2277,71 @@ class ShagunStoreApp {
 
 
 
-    // UPI Verification by Store Admin
-    document.querySelectorAll('.btn-verify-upi-payment').forEach(btn => {
+    // Staff Login Handlers
+    const btnSubmitPin = document.getElementById('btnSubmitStaffPin');
+    const inputPin = document.getElementById('inputStaffPin');
+    if (btnSubmitPin && inputPin) {
+      btnSubmitPin.addEventListener('click', () => {
+        this.verifyStaffPin(inputPin.value);
+      });
+      inputPin.addEventListener('keypress', (e) => {
+        if (e.key === 'Enter') this.verifyStaffPin(inputPin.value);
+      });
+    }
+
+    const btnCancelStaff = document.getElementById('btnCancelStaffLogin');
+    if (btnCancelStaff) {
+      btnCancelStaff.addEventListener('click', () => {
+        this.currentView = 'customer';
+        this.render();
+      });
+    }
+
+    // Staff Logout & Stop Access
+    const btnLogoutStaff = document.getElementById('btnLogoutStaff');
+    if (btnLogoutStaff) {
+      btnLogoutStaff.addEventListener('click', () => {
+        this.logoutStaff();
+      });
+    }
+
+    // Payment Decision Actions (Done vs Not Done) in Staff and Admin
+    document.querySelectorAll('.btn-decision-action').forEach(btn => {
       btn.addEventListener('click', () => {
         const ordId = btn.getAttribute('data-order-id');
-        this.verifyUpiPaymentByAdmin(ordId);
+        const decision = btn.getAttribute('data-decision');
+        this.setOrderPaymentDecision(ordId, decision);
+      });
+    });
+
+    // Add New Staff Member Form Submission
+    const formAddStaff = document.getElementById('formAddNewStaff');
+    if (formAddStaff) {
+      formAddStaff.addEventListener('submit', (e) => {
+        e.preventDefault();
+        const name = document.getElementById('newStaffName')?.value;
+        const phone = document.getElementById('newStaffPhone')?.value;
+        const role = document.getElementById('newStaffRole')?.value;
+        const pin = document.getElementById('newStaffPin')?.value;
+        if (name && pin) {
+          this.addNewStaffMember(name, phone, role, pin);
+        }
+      });
+    }
+
+    // Toggle Staff Access Status (Revoke / Enable)
+    document.querySelectorAll('.btn-toggle-staff-access').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const staffId = btn.getAttribute('data-staff-id');
+        this.toggleStaffAccess(staffId);
+      });
+    });
+
+    // Delete Staff Member
+    document.querySelectorAll('.btn-delete-staff').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const staffId = btn.getAttribute('data-staff-id');
+        this.deleteStaffMember(staffId);
       });
     });
 
