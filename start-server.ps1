@@ -17,7 +17,7 @@ $listener = New-Object System.Net.Sockets.TcpListener ([System.Net.IPAddress]::A
 
 try {
     $listener.Start()
-    Write-Host "`n🚀 Apna Mart & Grocery Real-time Server is LIVE!" -ForegroundColor Green
+    Write-Host "`n🚀 SHAGUN STORE (Bettadapura - 571102) Real-time Server is LIVE!" -ForegroundColor Green
     Write-Host "👉 Laptop (Owner) Access: http://localhost:$port/" -ForegroundColor Cyan
     foreach ($ip in $ipAddresses) {
         Write-Host "📱 Staff Phone [iOS / Android]: http://$($ip):$port/?view=staff" -ForegroundColor Yellow
