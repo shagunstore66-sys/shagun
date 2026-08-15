@@ -738,13 +738,65 @@ class ShagunStoreApp {
     const activeIncomingCount = this.orders.filter(o => o.status === 'NEW' || o.status === 'PACKING').length;
     const storeDisplayName = this.currentLang === 'hi' ? (this.config.nameHindi || this.config.name) : this.currentLang === 'kn' ? (this.config.nameKannada || this.config.name) : this.config.name;
 
+    // 1. PUBLIC CUSTOMER SCAN VIEW (QR Scanner): 100% Clean - No Staff/Admin buttons visible
+    if (this.currentView === 'customer' && !this.adminUnlocked) {
+      return `
+        <header class="app-header">
+          <div class="brand-wrapper" id="btnBrandHome" title="SHAGUN STORE">
+            <div class="brand-icon">🛍️</div>
+            <div class="brand-info">
+              <h1>${storeDisplayName}</h1>
+              <p>${this.t('storeTagline')}</p>
+            </div>
+          </div>
+
+          <div style="display: flex; align-items: center; gap: 8px;">
+            <!-- Trilingual Language Selector (English, Hindi, Kannada) -->
+            <div class="lang-selector-group">
+              <button class="lang-btn ${this.currentLang === 'en' ? 'active' : ''}" data-lang="en">🇬🇧 EN</button>
+              <button class="lang-btn ${this.currentLang === 'hi' ? 'active' : ''}" data-lang="hi">🇮🇳 हिं</button>
+              <button class="lang-btn ${this.currentLang === 'kn' ? 'active' : ''}" data-lang="kn">🟡🔴 ಕನ್</button>
+            </div>
+          </div>
+        </header>
+      `;
+    }
+
+    // 2. STAFF TERMINAL VIEW (Dedicated Staff Link ?view=staff)
+    if (this.currentView === 'staff' && !this.adminUnlocked) {
+      return `
+        <header class="app-header">
+          <div class="brand-wrapper" id="btnBrandHome">
+            <div class="brand-icon" style="background: linear-gradient(135deg, #1e3a8a, #0f172a);">👨‍🍳</div>
+            <div class="brand-info">
+              <h1>${storeDisplayName} • Staff Terminal</h1>
+              <p>Live Orders Queue & Packing</p>
+            </div>
+          </div>
+
+          <div style="display: flex; align-items: center; gap: 8px;">
+            <div class="lang-selector-group">
+              <button class="lang-btn ${this.currentLang === 'en' ? 'active' : ''}" data-lang="en">🇬🇧 EN</button>
+              <button class="lang-btn ${this.currentLang === 'hi' ? 'active' : ''}" data-lang="hi">🇮🇳 हिं</button>
+              <button class="lang-btn ${this.currentLang === 'kn' ? 'active' : ''}" data-lang="kn">🟡🔴 ಕನ್</button>
+            </div>
+
+            <button class="mode-btn" data-view="customer" style="border: 1px solid var(--border); font-size: 0.76rem;">
+              📱 Store View
+            </button>
+          </div>
+        </header>
+      `;
+    }
+
+    // 3. OWNER MASTER ADMIN VIEW (Unlocked via Ctrl + Shift + Z or 5-Tap PIN)
     return `
       <header class="app-header">
         <div class="brand-wrapper" id="btnBrandHome">
-          <div class="brand-icon">🛍️</div>
+          <div class="brand-icon">🛡️</div>
           <div class="brand-info">
-            <h1>${storeDisplayName}</h1>
-            <p>${this.t('storeTagline')}</p>
+            <h1>${storeDisplayName} • Master Admin</h1>
+            <p>Full Owner Access Unlocked</p>
           </div>
         </div>
 
@@ -764,13 +816,9 @@ class ShagunStoreApp {
               👨‍🍳 Staff
               ${activeIncomingCount > 0 ? `<span style="background:#dc2626; color:white; padding:1px 6px; border-radius:99px; font-size:0.7rem; font-weight:900;">${activeIncomingCount}</span>` : ''}
             </button>
-
-            ${this.adminUnlocked ? `
-              <button class="mode-btn ${this.currentView === 'admin' ? 'active' : ''}" data-view="admin" style="background:#1e3a8a; color:white;">
-                🛡️ Admin
-              </button>
-            ` : ''}
-
+            <button class="mode-btn ${this.currentView === 'admin' ? 'active' : ''}" data-view="admin" style="background:#1e3a8a; color:white;">
+              🛡️ Admin
+            </button>
             <button class="mode-btn ${this.currentView === 'split' ? 'active' : ''}" data-view="split">
               ⚡ Split
             </button>
@@ -1495,13 +1543,37 @@ class ShagunStoreApp {
       });
     });
 
-    // Brand Home click
+    // Brand Home click (With Secret 5-Tap Mobile Owner PIN unlock)
     const btnBrand = document.getElementById('btnBrandHome');
     if (btnBrand) {
       btnBrand.addEventListener('click', () => {
-        this.currentView = 'customer';
-        this.activeAddonOrderId = null;
-        this.render();
+        const now = Date.now();
+        if (now - (this.lastBrandTap || 0) < 500) {
+          this.brandTapCount = (this.brandTapCount || 0) + 1;
+          if (this.brandTapCount >= 5) {
+            this.brandTapCount = 0;
+            const pin = prompt("🔐 Enter SHAGUN STORE Owner Master PIN:");
+            if (pin === "1234" || pin === "7795" || pin === (this.config.adminPin || "1234")) {
+              this.adminUnlocked = true;
+              this.currentView = 'admin';
+              sounds.playNewOrderChime();
+              this.showToastNotification("🔓 Owner Admin Mode Unlocked!");
+              this.render();
+            } else if (pin !== null) {
+              alert("❌ Incorrect PIN. Access Denied.");
+            }
+            return;
+          }
+        } else {
+          this.brandTapCount = 1;
+        }
+        this.lastBrandTap = now;
+
+        if (this.currentView !== 'customer' && !this.adminUnlocked) {
+          this.currentView = 'customer';
+          this.activeAddonOrderId = null;
+          this.render();
+        }
       });
     }
 
