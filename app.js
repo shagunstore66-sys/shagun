@@ -208,8 +208,10 @@ class ShagunStoreApp {
       if (res.ok) {
         const cfg = await res.json();
         if (cfg && cfg.name) {
-          this.config = cfg;
-          this.safeSetItem('shagun_store_config', this.config);
+          if (cfg.address && cfg.address.includes('Bettadapura')) {
+            this.config = cfg;
+            this.safeSetItem('shagun_store_config', this.config);
+          }
         }
       }
     } catch (e) {}
@@ -328,8 +330,14 @@ class ShagunStoreApp {
   loadConfig() {
     const saved = this.safeGetItem('shagun_store_config', null);
     if (saved) {
-      try { return JSON.parse(saved); } catch (e) {}
+      try {
+        const parsed = JSON.parse(saved);
+        if (parsed && parsed.address && parsed.address.includes('Bettadapura')) {
+          return parsed;
+        }
+      } catch (e) {}
     }
+    this.safeSetItem('shagun_store_config', INITIAL_STORE_CONFIG);
     return INITIAL_STORE_CONFIG;
   }
 
