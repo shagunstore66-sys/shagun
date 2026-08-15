@@ -1,20 +1,21 @@
 {
   "name": "SHAGUN STORE",
   "nameHindi": "शगुन स्टोर",
-  "tagline": "Scan • Order • Express Pickup",
-  "taglineHindi": "स्कैन करें • सामान चुनें • काउंटर से प्राप्त करें",
-  "address": "Shop No. 1, Main Market, Near Central Chowk",
-  "phone": "+91 98765 43210",
+  "nameKannada": "ಶಗುನ್ ಸ್ಟೋರ್",
+  "tagline": "P.H. Road, Near Chamundi Textiles, Bettadapura - 571102",
+  "taglineHindi": "पी.एच. रोड, चामुंडी टेक्सटाइल्स के पास, बेट्टदपुरा - 571102",
+  "taglineKannada": "ಪಿ.ಹೆಚ್. ರಸ್ತೆ, ಚಾಮುಂಡಿ ಟೆಕ್ಸ್‌ಟೈಲ್ಸ್ ಹತ್ತಿರ, ಬೆಟ್ಟದಪುರ - 571102",
+  "address": "P.H. Road, Near Chamundi Textiles, Bettadapura, Karnataka - 571102",
+  "addressHindi": "पी.एच. रोड, चामुंडी टेक्सटाइल्स के पास, बेट्टदपुरा, कर्नाटक - 571102",
+  "addressKannada": "ಪಿ.ಹೆಚ್. ರಸ್ತೆ, ಚಾಮುಂಡಿ ಟೆಕ್ಸ್‌ಟೈಲ್ಸ್ ಹತ್ತಿರ, ಬೆಟ್ಟದಪುರ, ಕರ್ನಾಟಕ - 571102",
+  "phone": "+91 77955 65216",
+  "upiId": "7795565216-1@okbizaxis",
   "currency": "₹",
   "taxPercent": 0,
   "expressPackingFee": 0,
   "pickupLocations": [
-    "Main Entrance Stand (Express)",
-    "Aisle 1 - Grains & Staples",
-    "Aisle 2 - Oils, Ghee & Masalas",
-    "Aisle 3 - Dairy & Beverages",
-    "Aisle 4 - Household & Cleaning",
-    "Billing Counter 1",
-    "Billing Counter 2"
+    "Counter (ಕೌಂಟರ್ / काउंटर)",
+    "Counter 1",
+    "Counter 2"
   ]
 }
