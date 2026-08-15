@@ -132,11 +132,52 @@ button, input, select, textarea {
   text-transform: uppercase;
 }
 
-.brand-info p {
-  font-size: 0.7rem;
+.brand-info p, .header-tagline-text {
+  font-size: 0.72rem;
   color: var(--text-muted);
   font-weight: 600;
-  letter-spacing: 0.04em;
+  letter-spacing: 0.02em;
+  line-height: 1.3;
+  word-break: normal;
+  overflow-wrap: break-word;
+  white-space: normal;
+}
+
+.hero-address-card {
+  display: flex;
+  align-items: flex-start;
+  gap: 9px;
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(212, 175, 55, 0.35);
+  backdrop-filter: blur(8px);
+  border-radius: var(--radius-md);
+  padding: 10px 14px;
+  margin-top: 10px;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.address-pin-icon {
+  font-size: 1.15rem;
+  color: var(--champagne-gold);
+  flex-shrink: 0;
+  margin-top: 1px;
+}
+
+.address-text-wrap {
+  flex: 1;
+  min-width: 0;
+}
+
+.address-full-line {
+  font-size: 0.85rem;
+  color: #faf9f7;
+  font-weight: 600;
+  line-height: 1.45;
+  word-break: normal;
+  overflow-wrap: break-word;
+  white-space: normal;
+  display: block;
 }
 
 /* Trilingual Switcher (Champagne Gold Accent) */
@@ -1000,5 +1041,137 @@ main {
     page-break-inside: avoid;
     font-size: 12px;
     color: black;
+  }
+}
+
+/* ---------------- Mobile Responsive Perfection (Phones 320px - 600px) ---------------- */
+@media (max-width: 600px) {
+  .app-header {
+    height: auto;
+    min-height: 60px;
+    padding: 0.5rem 0.75rem;
+    gap: 8px;
+  }
+
+  .brand-wrapper {
+    gap: 0.55rem;
+    min-width: 0;
+    flex: 1;
+  }
+
+  .brand-icon {
+    width: 36px;
+    height: 36px;
+    font-size: 1.1rem;
+    flex-shrink: 0;
+  }
+
+  .brand-info {
+    min-width: 0;
+    flex: 1;
+  }
+
+  .brand-info h1 {
+    font-size: 0.98rem;
+    letter-spacing: 0.03em;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .header-tagline-text {
+    font-size: 0.64rem;
+    line-height: 1.25;
+    word-break: normal;
+    overflow-wrap: break-word;
+    white-space: normal;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+
+  .lang-selector-group {
+    padding: 2px;
+    gap: 1px;
+    flex-shrink: 0;
+  }
+
+  .lang-btn {
+    padding: 4px 6px;
+    font-size: 0.68rem;
+    gap: 2px;
+  }
+
+  main {
+    padding: 0.5rem 0.4rem 5.5rem 0.4rem;
+  }
+
+  .mobile-app-frame {
+    border-radius: var(--radius-lg);
+    border: none;
+    box-shadow: none;
+  }
+
+  .store-hero-banner {
+    padding: 1.1rem 0.85rem;
+  }
+
+  .hero-title {
+    font-size: 1.3rem;
+  }
+
+  .hero-address-card {
+    padding: 8px 10px;
+    gap: 7px;
+    margin-top: 8px;
+  }
+
+  .address-pin-icon {
+    font-size: 1rem;
+  }
+
+  .address-full-line {
+    font-size: 0.78rem;
+    line-height: 1.4;
+  }
+
+  .product-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 8px;
+    padding: 0.4rem 0.4rem 1rem 0.4rem;
+  }
+
+  .prod-img-wrap {
+    height: 115px;
+  }
+
+  .prod-details {
+    padding: 8px 6px;
+  }
+
+  .prod-title {
+    font-size: 0.84rem;
+    line-height: 1.25;
+  }
+
+  .variant-btn {
+    font-size: 0.62rem;
+    padding: 2px 4px;
+  }
+
+  .prod-price {
+    font-size: 1rem;
+  }
+
+  .btn-add-cart {
+    padding: 5px 10px;
+    font-size: 0.72rem;
+  }
+
+  .floating-cart-bar {
+    width: calc(100% - 16px);
+    bottom: 12px;
+    padding: 10px 14px;
   }
 }
