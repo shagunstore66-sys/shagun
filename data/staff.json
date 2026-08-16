@@ -1,0 +1,26 @@
+[
+  {
+    "id": "st_owner",
+    "name": "Store Owner",
+    "role": "Master Admin",
+    "phone": "7795565216",
+    "pin": "1234",
+    "active": true
+  },
+  {
+    "id": "st_1",
+    "name": "Ramesh",
+    "role": "Packing Specialist",
+    "phone": "9876543210",
+    "pin": "1234",
+    "active": true
+  },
+  {
+    "id": "st_2",
+    "name": "Suresh",
+    "role": "Counter Manager",
+    "phone": "9876543211",
+    "pin": "5678",
+    "active": true
+  }
+]
