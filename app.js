@@ -537,9 +537,17 @@ class ShagunStoreApp {
     this.safeSetItem('shagun_cart_data', this.cart);
   }
 
+  playSafeTapSound() {
+    try {
+      if (typeof sounds !== 'undefined' && sounds && typeof sounds.playTapSound === 'function') {
+        sounds.playTapSound();
+      }
+    } catch (e) {}
+  }
+
   // ---------------- Cart Actions with Strict Boundaries ----------------
   addToCart(product, variantIdx = 0) {
-    sounds.playTapSound();
+    this.playSafeTapSound();
     const vIdx = Math.max(0, parseInt(variantIdx, 10) || 0);
     const variant = (product.variants && product.variants[vIdx]) ? product.variants[vIdx] : { name: product.unit || '1 kg', price: product.price };
     const cartItemId = `${product.id}_${variant.name}`;
@@ -564,7 +572,7 @@ class ShagunStoreApp {
   }
 
   updateCartQty(cartItemId, delta) {
-    sounds.playTapSound();
+    this.playSafeTapSound();
     const d = parseInt(delta, 10);
     if (isNaN(d)) return;
 
@@ -588,13 +596,13 @@ class ShagunStoreApp {
 
   selectVariant(productId, variantIdx) {
     this.selectedVariants[productId] = parseInt(variantIdx, 10) || 0;
-    sounds.playTapSound();
+    this.playSafeTapSound();
     this.render();
   }
 
   setCategory(catId) {
     this.activeCategory = catId;
-    sounds.playTapSound();
+    this.playSafeTapSound();
     this.render();
   }
 
@@ -611,7 +619,7 @@ class ShagunStoreApp {
 
   startAddonOrder(orderId) {
     this.activeAddonOrderId = orderId;
-    sounds.playTapSound();
+    this.playSafeTapSound();
     const ord = this.orders.find(o => o.id === orderId);
     this.showToastNotification(`➕ Browse items and add to Order #${ord ? ord.token : ''}!`);
     this.render();
@@ -621,7 +629,7 @@ class ShagunStoreApp {
     this.currentCustomerOrderId = null;
     this.activeAddonOrderId = null;
     this.safeRemoveItem('shagun_customer_active_order');
-    sounds.playTapSound();
+    this.playSafeTapSound();
     this.render();
   }
 
@@ -639,13 +647,13 @@ class ShagunStoreApp {
 
   switchToCustomerView() {
     this.currentView = 'customer';
-    sounds.playTapSound();
+    this.playSafeTapSound();
     this.render();
   }
 
   switchToStaffView() {
     this.currentView = 'staff';
-    sounds.playTapSound();
+    this.playSafeTapSound();
     this.render();
   }
 
@@ -654,7 +662,7 @@ class ShagunStoreApp {
     this.adminAuthenticated = false;
     this.currentView = 'customer';
     this.showToastNotification("🔒 Admin Mode Locked.");
-    sounds.playTapSound();
+    this.playSafeTapSound();
     this.render();
   }
 
