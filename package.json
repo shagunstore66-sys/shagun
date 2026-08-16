@@ -1,18 +1,23 @@
 {
-  "name": "apna-grocery-qr-order",
-  "version": "1.0.0",
-  "description": "In-store QR Scan, Order & Express Collect System for Grocery Stores",
-  "main": "index.html",
+  "name": "shagun-grocery-store",
+  "version": "2.0.0",
+  "description": "SHAGUN STORE - Full-Stack QR Scan, Automated Bank Payment & 3-Way WhatsApp Grocery System",
+  "main": "server.js",
   "scripts": {
-    "start": "npx -y serve .",
-    "dev": "npx -y serve ."
+    "start": "node server.js",
+    "dev": "node server.js"
+  },
+  "dependencies": {
+    "cors": "^2.8.5",
+    "express": "^4.19.2"
   },
   "keywords": [
-    "qr-order",
-    "grocery-store",
-    "self-checkout",
-    "kds"
+    "shagun-store",
+    "qr-grocery",
+    "whatsapp-order-engine",
+    "upi-bank-autopay",
+    "bettadapura"
   ],
-  "author": "",
+  "author": "SHAGUN STORE Bettadapura (+91 77955 65216)",
   "license": "ISC"
 }
