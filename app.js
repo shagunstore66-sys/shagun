@@ -45,6 +45,7 @@ class ShagunStoreApp {
     this.currentCustomerOrderId = this.safeGetItem('shagun_customer_active_order', null);
     this.showTrackingOnly = false;
     this.selectedPaymentMethod = 'upi';
+    this.selectedPickupSlot = 'Express (15-20 mins)';
     this.audioAlertsEnabled = true;
     this.activeLocation = 'Counter';
 
@@ -1423,6 +1424,7 @@ class ShagunStoreApp {
       token: tokenNum,
       createdAt: now.toISOString(),
       location: this.activeLocation,
+      pickupSlot: this.selectedPickupSlot || 'Express (15-20 mins)',
       customerName: this.pendingOrderData.customerName,
       phone: `+91 ${this.pendingOrderData.phone}`,
       phoneVerified: true,
@@ -1450,7 +1452,9 @@ class ShagunStoreApp {
         { 
           status: 'NEW', 
           time: now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }), 
-          text: `Order placed on ${stamp} • Recorded in Store Admin Book • Awaiting bank receipt confirmation` 
+          text: this.selectedPaymentMethod === 'counter' 
+            ? `Store Pickup Order placed from home (${this.selectedPickupSlot || 'Express'}) • Pay cash at counter desk upon pickup`
+            : `Order placed on ${stamp} • Recorded in Store Admin Book • Awaiting UPI verification`
         }
       ]
     };
@@ -1955,31 +1959,50 @@ class ShagunStoreApp {
     return `
       ${activeOrder ? `
         <!-- Active Order Floating Banner (1-Tap Tracker) -->
-        <div style="background: linear-gradient(135deg, #1e3a8a, #0f172a); color: white; border-radius: 12px; padding: 10px 14px; margin-bottom: 0.8rem; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 4px 12px rgba(30,58,138,0.25);">
+        <div style="background: linear-gradient(135deg, #065f46, #0f172a); color: white; border-radius: 12px; padding: 10px 14px; margin-bottom: 0.8rem; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 4px 12px rgba(6,95,70,0.25);">
           <div>
-            <div style="font-size: 0.68rem; font-weight: 800; color: #93c5fd;">ACTIVE ORDER IN PROGRESS</div>
+            <div style="font-size: 0.68rem; font-weight: 800; color: #86efac;">ACTIVE STORE PICKUP ORDER</div>
             <div style="font-size: 0.85rem; font-weight: 900;">Token #${activeOrder.token} • ${activeOrder.status}</div>
           </div>
-          <button onclick="window.shagunApp.showTrackingOnly = true; window.shagunApp.render();" style="background: #22c55e; color: white; border: none; padding: 6px 12px; border-radius: 99px; font-weight: 900; font-size: 0.76rem; cursor: pointer;">
+          <button onclick="window.shagunApp.showTrackingOnly = true; window.shagunApp.render();" style="background: #10b981; color: white; border: none; padding: 6px 14px; border-radius: 99px; font-weight: 900; font-size: 0.76rem; cursor: pointer;">
             Track ➔
           </button>
         </div>
       ` : ''}
 
-      <!-- Top Banner -->
-      <div class="store-hero-banner">
-        <div class="store-badge-row">
-          <div class="spot-pill">📍 ${this.activeLocation || 'Counter'}</div>
-          <span style="font-size: 0.72rem; background: rgba(255,255,255,0.12); color: var(--soft-gold); padding: 3px 10px; border-radius: 99px; font-weight: 700; border: 1px solid rgba(212,175,55,0.3);">✨ Authentic Quality</span>
+      <!-- Top Announcement Strip -->
+      <div class="bright-announcement-strip">
+        ${this.t('homeOrderBanner')}
+      </div>
+
+      <!-- Digitally Bright Hero Banner -->
+      <div class="home-pickup-hero">
+        <div class="hero-pill-badge-row">
+          <span class="hero-feature-badge highlight">🏠 ${this.t('pickupHeroTitle')}</span>
+          <span class="hero-feature-badge">🥦 Farm Fresh</span>
+          <span class="hero-feature-badge">⚡ 15m Packing</span>
+          <span class="hero-feature-badge">📱 UPI / 💵 Cash</span>
         </div>
-        <div class="hero-title">${storeDisplayName}</div>
+
+        <div class="hero-title-main">${storeDisplayName}</div>
+        <div class="hero-sub-text">${this.t('pickupHeroSub')}</div>
         
-        <!-- Mobile-Friendly Full Store Address Card (100% visible on all mobile phones) -->
-        <div class="hero-address-card">
+        <!-- Mobile-Friendly Store Address Card -->
+        <div class="hero-address-card" style="margin-bottom: 0.85rem;">
           <span class="address-pin-icon">📍</span>
           <div class="address-text-wrap">
             <span class="address-full-line">${storeAddress}</span>
           </div>
+        </div>
+
+        <!-- Hero Action Buttons -->
+        <div class="hero-action-buttons-row">
+          <a href="${this.config.mapsUrl || 'https://maps.google.com/?q=Chamundi+Textiles+Bettadapura+Karnataka+571102'}" target="_blank" class="hero-action-btn map-btn">
+            ${this.t('directionsBtn')}
+          </a>
+          <a href="tel:${this.config.phone ? this.config.phone.replace(/\s+/g, '') : '+917795565216'}" class="hero-action-btn phone-btn">
+            ${this.t('callStoreBtn')}
+          </a>
         </div>
       </div>
 
@@ -1988,7 +2011,7 @@ class ShagunStoreApp {
         <div class="active-order-addon-banner">
           <div>
             <div class="addon-badge-title">➕ ${this.t('addMoreItems')}</div>
-            <div class="addon-badge-desc">Browse catalog and select items. They will be added to your active token!</div>
+            <div class="addon-badge-desc">Browse fresh produce or groceries. Items will be added to your active bag!</div>
           </div>
           <button class="btn-view-tracker" id="btnCancelAddon">View Tracker ➔</button>
         </div>
@@ -2020,15 +2043,15 @@ class ShagunStoreApp {
         ${displayedProducts.length === 0 ? `
           <div style="grid-column: span 2; text-align: center; padding: 3rem 1rem; color: var(--text-muted);">
             <p style="font-size: 2.5rem; margin-bottom: 8px;">🔍</p>
-            <p style="font-weight: 800; font-size: 1.1rem; color: #0f172a;">No grocery items found</p>
-            <p style="font-size: 0.82rem; margin-top: 4px;">Try searching for Sugar, Dals, Atta, Rice, Oils...</p>
+            <p style="font-weight: 800; font-size: 1.1rem; color: #0f172a;">No grocery or vegetable items found</p>
+            <p style="font-size: 0.82rem; margin-top: 4px;">Try searching for Tomatoes, Onions, Potatoes, Sugar, Dals, Atta, Rice, Oils...</p>
           </div>
         ` : displayedProducts.map(product => this.renderProductCard(product)).join('')}
       </div>
 
       ${filteredProducts.length > this.visibleProductsLimit ? `
         <div style="text-align: center; padding: 1.5rem 1rem;">
-          <button id="btnLoadMoreItems" onclick="window.shagunApp.visibleProductsLimit += 40; window.shagunApp.render();" style="padding: 12px 28px; background: #ffffff; border: 1.5px solid var(--champagne-gold); color: var(--deep-charcoal); font-weight: 800; font-family: var(--font-display); border-radius: var(--radius-full); cursor: pointer; box-shadow: var(--shadow-sm); transition: all 0.2s ease;">
+          <button id="btnLoadMoreItems" onclick="window.shagunApp.visibleProductsLimit += 40; window.shagunApp.render();" style="padding: 12px 28px; background: #ffffff; border: 1.5px solid #10b981; color: #0f172a; font-weight: 800; font-family: var(--font-display); border-radius: var(--radius-full); cursor: pointer; box-shadow: var(--shadow-sm); transition: all 0.2s ease;">
             ${this.t('loadMore')}
           </button>
         </div>
@@ -2036,13 +2059,13 @@ class ShagunStoreApp {
 
       <!-- Floating Cart Action Bar -->
       ${totalItems > 0 ? `
-        <div class="floating-cart-bar" id="btnOpenCart" onclick="window.shagunApp.openCartModal()">
+        <div class="floating-cart-bar" id="btnOpenCart" onclick="window.shagunApp.openCartModal()" style="background: linear-gradient(135deg, #065f46, #0f172a); border-color: #10b981;">
           <div>
-            <div style="font-size: 0.74rem; color: var(--soft-gold); letter-spacing: 0.04em;">🛍️ ${totalItems} items in selection</div>
-            <div class="cart-bar-total">${this.config.currency}${finalTotal}</div>
+            <div style="font-size: 0.74rem; color: #86efac; letter-spacing: 0.04em;">🛍️ ${totalItems} items in bag</div>
+            <div class="cart-bar-total" style="color: #ffffff;">${this.config.currency}${finalTotal}</div>
           </div>
-          <button style="background: var(--champagne-gold); color: var(--deep-charcoal); border: none; padding: 8px 18px; border-radius: var(--radius-full); font-weight: 800; font-size: 0.82rem; letter-spacing: 0.03em; display: flex; align-items: center; gap: 6px; box-shadow: 0 2px 8px var(--gold-glow);">
-            <span>${this.activeAddonOrderId ? 'Append to Order' : 'Review & Pay'}</span>
+          <button style="background: #10b981; color: #ffffff; border: none; padding: 8px 18px; border-radius: var(--radius-full); font-weight: 800; font-size: 0.82rem; letter-spacing: 0.03em; display: flex; align-items: center; gap: 6px; box-shadow: 0 2px 8px rgba(16,185,129,0.35);">
+            <span>${this.activeAddonOrderId ? 'Append to Order' : 'Review & Checkout'}</span>
             <span>➔</span>
           </button>
         </div>
@@ -2061,12 +2084,13 @@ class ShagunStoreApp {
     const cartItemId = `${product.id}_${currentVariant.name}`;
     const cartItem = this.cart.find(i => i.cartItemId === cartItemId);
     const inCartQty = cartItem ? cartItem.qty : 0;
+    const isProduce = product.category === 'vegetables' || product.category === 'fruits';
 
     return `
       <div class="product-card" data-product-id="${product.id}">
         <div class="prod-img-wrap">
           <img src="${product.image}" alt="${product.name}" class="prod-img" loading="lazy" onerror="this.src='https://images.unsplash.com/photo-1542838132-92c53300491e?w=500&auto=format&fit=crop&q=80'">
-          ${product.badge ? `<span class="prod-badge">${product.badge}</span>` : ''}
+          ${product.badge ? `<span class="prod-badge ${isProduce ? 'farm-fresh' : 'daily-essential'}">${product.badge}</span>` : ''}
         </div>
 
         <div class="prod-details">
@@ -2118,21 +2142,30 @@ class ShagunStoreApp {
         </button>
 
         <!-- Token Header -->
-        <div class="tracker-token-box">
-          <div class="token-label">${this.t('pickupToken')}</div>
-          <div class="token-number">#${order.token}</div>
-          <div class="location-badge">📍 ${this.t('collectionSpot')} ${order.location}</div>
+        <div class="tracker-token-box" style="background: linear-gradient(135deg, #065f46, #0f172a); border: 2px solid #10b981;">
+          <div class="token-label" style="color: #86efac;">${this.t('pickupToken')}</div>
+          <div class="token-number" style="color: #ffffff;">#${order.token}</div>
+          <div class="location-badge" style="background: rgba(255,255,255,0.15); color: #ffffff;">📍 ${this.t('collectionSpot')} ${order.location || 'Main Counter (Bettadapura)'}</div>
+          ${order.pickupSlot ? `<div style="font-size: 0.74rem; color: #86efac; margin-top: 4px; font-weight: 700;">⏱️ ${order.pickupSlot}</div>` : ''}
         </div>
 
-        <!-- UPI Payment & QR Code Box -->
+        <!-- Cash on Counter Notice Card (If Cash selected) -->
+        ${order.paymentMethod === 'counter' ? `
+          <div class="cash-pickup-notice-card">
+            <strong>${this.t('cashCounter')}</strong>
+            ${(this.t('cashPendingNote') || '').replace('{amount}', order.totalAmount)}
+          </div>
+        ` : ''}
+
+        <!-- UPI Payment & QR Code Box (If UPI selected) -->
         ${order.paymentMethod === 'upi' && !order.paymentVerified ? `
-          <div style="margin-bottom: 1rem; background: var(--bg-cream); border: 1.5px solid var(--champagne-gold); padding: 14px; border-radius: 14px; text-align: center; box-shadow: var(--shadow-sm);">
+          <div style="margin-bottom: 1rem; background: #ecfdf5; border: 1.5px solid #10b981; padding: 14px; border-radius: 14px; text-align: center; box-shadow: var(--shadow-sm);">
             <div style="font-size: 1.5rem; margin-bottom: 4px;">📱</div>
-            <h4 style="font-size: 0.95rem; font-weight: 800; color: var(--deep-charcoal); font-family: var(--font-display); margin: 0 0 4px 0;">${this.t('upiPayment')} (${this.config.currency}${order.totalAmount})</h4>
-            <p style="font-size: 0.78rem; color: var(--text-muted); margin: 0 0 10px 0;">
+            <h4 style="font-size: 0.95rem; font-weight: 800; color: #065f46; font-family: var(--font-display); margin: 0 0 4px 0;">${this.t('upiPayment')} (${this.config.currency}${order.totalAmount})</h4>
+            <p style="font-size: 0.78rem; color: #047857; margin: 0 0 10px 0;">
               Pay via Google Pay, PhonePe, Paytm, QR Code, or UPI ID: <strong>${this.config.upiId || '7795565216-1@okbizaxis'}</strong>
             </p>
-            <button class="btn-reopen-upi-modal" data-order-id="${order.id}" style="display: inline-flex; align-items: center; gap: 6px; padding: 10px 22px; background: var(--champagne-gold); color: var(--deep-charcoal); border-radius: var(--radius-full); font-size: 0.85rem; font-weight: 800; border: none; cursor: pointer; box-shadow: 0 2px 8px var(--gold-glow);">
+            <button class="btn-reopen-upi-modal" data-order-id="${order.id}" style="display: inline-flex; align-items: center; gap: 6px; padding: 10px 22px; background: #10b981; color: #ffffff; border-radius: var(--radius-full); font-size: 0.85rem; font-weight: 800; border: none; cursor: pointer; box-shadow: 0 2px 8px rgba(16,185,129,0.35);">
               <span>📱</span> ${this.t('reopenUpi')} (${this.config.currency}${order.totalAmount})
             </button>
           </div>
@@ -2145,10 +2178,10 @@ class ShagunStoreApp {
 
         <!-- Live Staff Status Notification -->
         ${isReady ? `
-          <div style="background: var(--bg-cream); border: 1.5px solid var(--champagne-gold); border-radius: 14px; padding: 18px; margin-bottom: 1rem; text-align: center; box-shadow: 0 4px 14px var(--gold-glow);">
+          <div style="background: #ecfdf5; border: 1.5px solid #10b981; border-radius: 14px; padding: 18px; margin-bottom: 1rem; text-align: center; box-shadow: 0 4px 14px rgba(16,185,129,0.2);">
             <div style="font-size: 2.2rem; margin-bottom: 4px;">🎉</div>
-            <h3 style="font-size: 1.18rem; font-weight: 800; color: var(--deep-charcoal); font-family: var(--font-display); margin: 0 0 6px 0;">${this.t('bagReadyTitle')}</h3>
-            <p style="font-size: 0.85rem; color: var(--text-muted); margin: 0; font-weight: 600;">${this.t('bagReadyDesc')}</p>
+            <h3 style="font-size: 1.18rem; font-weight: 800; color: #065f46; font-family: var(--font-display); margin: 0 0 6px 0;">${this.t('bagReadyTitle')}</h3>
+            <p style="font-size: 0.85rem; color: #047857; margin: 0; font-weight: 600;">${this.t('bagReadyDesc')}</p>
           </div>
         ` : `
           <div style="margin-bottom: 1rem; font-weight: 700; color: var(--deep-charcoal); font-size: 0.88rem; background: var(--bg-surface); padding: 14px; border-radius: 12px; border: 1px solid var(--border); display: flex; align-items: center; gap: 10px;">
@@ -2189,9 +2222,22 @@ class ShagunStoreApp {
           </div>
         </div>
 
+        <!-- Store Directions Box -->
+        <div class="store-direction-box">
+          <h5>📍 ${this.t('storeAddressLabel')}</h5>
+          <div style="display: flex; gap: 8px; flex-wrap: wrap; margin-top: 8px;">
+            <a href="${this.config.mapsUrl || 'https://maps.google.com/?q=Chamundi+Textiles+Bettadapura+Karnataka+571102'}" target="_blank" class="hero-action-btn map-btn" style="flex: 1; justify-content: center;">
+              ${this.t('directionsBtn')}
+            </a>
+            <a href="tel:${this.config.phone ? this.config.phone.replace(/\s+/g, '') : '+917795565216'}" class="hero-action-btn phone-btn" style="background: #0f172a; color: white; border: none; flex: 1; justify-content: center;">
+              ${this.t('callStoreBtn')}
+            </a>
+          </div>
+        </div>
+
         <!-- Add Items Before Staff Packs Button -->
         ${isNew ? `
-          <button class="btn-addon-to-active-order" data-order-id="${order.id}" style="width: 100%; padding: 14px; background: var(--deep-charcoal); color: var(--champagne-gold); border: 1px solid var(--champagne-gold); border-radius: var(--radius-full); font-weight: 800; font-size: 0.88rem; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; margin-bottom: 1rem; box-shadow: var(--shadow-sm);">
+          <button class="btn-addon-to-active-order" data-order-id="${order.id}" style="width: 100%; padding: 14px; background: #0f172a; color: #10b981; border: 1px solid #10b981; border-radius: var(--radius-full); font-weight: 800; font-size: 0.88rem; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; margin-bottom: 1rem; box-shadow: var(--shadow-sm);">
             ${this.t('addMoreItems')} (#${order.token})
           </button>
         ` : ''}
@@ -2239,7 +2285,7 @@ class ShagunStoreApp {
         <!-- Tracker Action Buttons -->
         <div style="display: flex; flex-direction: column; gap: 8px; margin-top: 12px;">
           ${order.status === 'NEW' ? `
-            <button class="btn-addon-to-active-order" data-order-id="${order.id}" onclick="window.shagunApp.startAddonOrder('${order.id}')" style="width: 100%; padding: 12px; background: #1e3a8a; color: white; border: none; border-radius: var(--radius-full); font-weight: 800; font-size: 0.85rem; cursor: pointer; box-shadow: var(--shadow-sm);">
+            <button class="btn-addon-to-active-order" data-order-id="${order.id}" onclick="window.shagunApp.startAddonOrder('${order.id}')" style="width: 100%; padding: 12px; background: #065f46; color: white; border: none; border-radius: var(--radius-full); font-weight: 800; font-size: 0.85rem; cursor: pointer; box-shadow: var(--shadow-sm);">
               ➕ Add More Items to Token #${order.token}
             </button>
           ` : ''}
@@ -2902,11 +2948,42 @@ class ShagunStoreApp {
               <input type="tel" id="orderCustomerPhone" style="width: 100%; padding: 10px 12px; border: 1.5px solid var(--border); border-radius: 8px; font-weight: 800; font-size: 0.95rem; color: #0f172a;" placeholder="${this.t('enterMobile')}" maxlength="10" value="${sessionStorage.getItem('shagun_active_phone') || ''}">
             </div>
 
-            <div style="margin-bottom: 1rem;">
+            <div style="margin-bottom: 0.85rem;">
               <label style="font-size: 0.78rem; font-weight: 800; color: #0f172a; display: block; margin-bottom: 4px;">
                 ${this.t('custName')}
               </label>
               <input type="text" id="orderCustomerName" style="width: 100%; padding: 10px 12px; border: 1.5px solid var(--border); border-radius: 8px; font-weight: 700; font-size: 0.88rem; color: #0f172a;" placeholder="e.g. Ramesh Kumar">
+            </div>
+
+            <!-- Estimated Counter Pickup Slot Selection -->
+            <div style="margin-bottom: 0.85rem;">
+              <label style="font-size: 0.78rem; font-weight: 800; color: #0f172a; display: block; margin-bottom: 4px;">
+                ⏱️ ${this.t('pickupSlotTitle')}
+              </label>
+              <div class="pickup-slot-grid">
+                <div class="pickup-slot-option ${(this.selectedPickupSlot || 'Express (15-20 mins)').includes('15-20') ? 'selected' : ''}" data-slot="Express (15-20 mins)">
+                  <span class="slot-name">${this.t('slotInstant')}</span>
+                  <span class="slot-hint">Ready in 15-20 mins</span>
+                </div>
+                <div class="pickup-slot-option ${(this.selectedPickupSlot || '').includes('30 - 45') || (this.selectedPickupSlot || '').includes('30-45') ? 'selected' : ''}" data-slot="In 30 - 45 mins">
+                  <span class="slot-name">${this.t('slot30Min')}</span>
+                  <span class="slot-hint">Standard packing</span>
+                </div>
+                <div class="pickup-slot-option ${(this.selectedPickupSlot || '').includes('1 - 2') || (this.selectedPickupSlot || '').includes('1-2') ? 'selected' : ''}" data-slot="In 1 - 2 hours">
+                  <span class="slot-name">${this.t('slot1Hr')}</span>
+                  <span class="slot-hint">Flexible pickup</span>
+                </div>
+                <div class="pickup-slot-option ${(this.selectedPickupSlot || '').includes('Evening') ? 'selected' : ''}" data-slot="Evening (5:00 PM - 8:30 PM)">
+                  <span class="slot-name">${this.t('slotEvening')}</span>
+                  <span class="slot-hint">5:00 PM - 8:30 PM</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Store Collection Desk Info -->
+            <div style="background: #ecfdf5; border: 1px solid #86efac; border-radius: 8px; padding: 8px 12px; margin-bottom: 0.85rem; display: flex; align-items: center; gap: 8px; font-size: 0.76rem; color: #166534; font-weight: 700;">
+              <span>📍</span>
+              <span>Pickup Spot: <strong>Shagun Store Counter</strong> (P.H. Road, Bettadapura)</span>
             </div>
 
             <!-- Payment Method Selector -->
@@ -2922,7 +2999,7 @@ class ShagunStoreApp {
                 </div>
               </label>
 
-              <label class="payment-option-card ${this.selectedPaymentMethod === 'counter' ? 'selected' : ''}">
+              <label class="payment-option-card ${this.selectedPaymentMethod === 'counter' ? 'selected cash-selected' : ''}">
                 <input type="radio" name="payMethod" value="counter" ${this.selectedPaymentMethod === 'counter' ? 'checked' : ''} style="display:none;">
                 <span style="font-size: 1.3rem;">💵</span>
                 <div>
@@ -3371,19 +3448,36 @@ class ShagunStoreApp {
       });
     });
 
-    modalDiv.querySelectorAll('input[name="payMethod"]').forEach(radio => {
-      radio.addEventListener('change', (e) => {
-        this.selectedPaymentMethod = e.target.value;
-        modalDiv.querySelectorAll('.payment-option-card').forEach(card => card.classList.remove('selected'));
-        radio.closest('.payment-option-card').classList.add('selected');
-        
-        const btnSub = modalDiv.querySelector('#btnSubmitOrder');
-        const totals = this.getCartTotals();
-        if (btnSub && !this.activeAddonOrderId) {
-          if (this.selectedPaymentMethod === 'upi') {
-            btnSub.innerHTML = `📱 Pay ${this.config.currency}${totals.finalTotal} via UPI & Place Order ➔`;
-          } else {
-            btnSub.innerHTML = `💵 Place Order & Pay Cash (${this.config.currency}${totals.finalTotal}) ➔`;
+    // Pickup Slot Selection
+    modalDiv.querySelectorAll('.pickup-slot-option').forEach(slotEl => {
+      slotEl.addEventListener('click', () => {
+        modalDiv.querySelectorAll('.pickup-slot-option').forEach(s => s.classList.remove('selected'));
+        slotEl.classList.add('selected');
+        this.selectedPickupSlot = slotEl.getAttribute('data-slot') || 'Express (15-20 mins)';
+      });
+    });
+
+    modalDiv.querySelectorAll('.payment-option-card').forEach(card => {
+      card.addEventListener('click', () => {
+        const radio = card.querySelector('input[type="radio"]');
+        if (radio) {
+          radio.checked = true;
+          this.selectedPaymentMethod = radio.value;
+          modalDiv.querySelectorAll('.payment-option-card').forEach(c => {
+            c.classList.remove('selected');
+            c.classList.remove('cash-selected');
+          });
+          card.classList.add('selected');
+          if (radio.value === 'counter') card.classList.add('cash-selected');
+
+          const btnSub = modalDiv.querySelector('#btnSubmitOrder');
+          const totals = this.getCartTotals();
+          if (btnSub && !this.activeAddonOrderId) {
+            if (this.selectedPaymentMethod === 'upi') {
+              btnSub.innerHTML = `📱 Pay ${this.config.currency}${totals.finalTotal} via UPI & Place Order ➔`;
+            } else {
+              btnSub.innerHTML = `💵 Place Order & Pay Cash (${this.config.currency}${totals.finalTotal}) ➔`;
+            }
           }
         }
       });

@@ -3,7 +3,7 @@
  * Automatically Formats and Dispatches Live WhatsApp Messages to:
  * 1. Store Owner / Admin: +91 77955 65216
  * 2. Store Packing Staff: Active Staff on Duty
- * 3. Customer: Customer Mobile Number (Order confirmation + Digital Tax Invoice)
+ * 3. Customer: Customer Mobile Number (Order confirmation + Digital Tax Invoice + Store Pickup Map)
  */
 
 export const ADMIN_PHONE = "7795565216"; // Master Owner WhatsApp Number
@@ -12,7 +12,8 @@ export class WhatsAppNotificationEngine {
   constructor(config = {}) {
     this.adminPhone = config.phone ? config.phone.replace(/[^0-9]/g, '').slice(-10) : ADMIN_PHONE;
     this.storeName = config.name || "SHAGUN STORE";
-    this.storeAddress = config.address || "P.H. Road, Near Chamundi Textiles, Bettadapura - 571102";
+    this.storeAddress = config.address || "P.H. Road, Near Chamundi Textiles, Bettadapura, Karnataka - 571102";
+    this.mapsUrl = config.mapsUrl || "https://maps.google.com/?q=Chamundi+Textiles+Bettadapura+Karnataka+571102";
   }
 
   // Clean phone number to 10-digit Indian standard
@@ -32,24 +33,27 @@ export class WhatsAppNotificationEngine {
   // 1. Message for Admin / Store Owner (+91 77955 65216)
   formatAdminNewOrderMessage(order) {
     const itemsList = order.items.map((i, idx) => `  ${idx + 1}. ${i.qty}x ${i.name} (${i.variantName}) - ₹${i.price * i.qty}`).join('\n');
-    const paymentBadge = order.paymentVerified ? '🟢 UPI AUTO-VERIFIED & PAID' : (order.paymentMethod === 'counter' ? '💵 CASH AT PICKUP' : '⏳ PENDING PAYMENT');
+    const paymentBadge = order.paymentVerified 
+      ? '🟢 UPI AUTO-VERIFIED & PAID' 
+      : (order.paymentMethod === 'counter' ? '💵 CASH TO BE PAID AT COUNTER TABLE' : '⏳ PENDING UPI PAYMENT');
     const timeStr = new Date(order.createdAt || Date.now()).toLocaleString('en-IN', { hour: '2-digit', minute: '2-digit', hour12: true, day: '2-digit', month: 'short' });
 
-    return `🚨 *${this.storeName} - NEW ORDER ALERT!*
+    return `🚨 *${this.storeName} - NEW STORE PICKUP ORDER RECEIVED!*
 ---------------------------------------
 📦 *Token*: #${order.token}
 ⏰ *Time*: ${timeStr}
 👤 *Customer*: ${order.customerName}
 📞 *Phone*: ${order.phone}
-📍 *Pickup Location*: ${order.location || 'Counter'}
+📍 *Collection Desk*: ${order.location || 'Main Counter (Bettadapura)'}
+⏳ *Pickup Timing*: ${order.pickupSlot || 'Express (15-20 mins)'}
 💰 *Total Amount*: ₹${order.totalAmount}
-💳 *Payment*: ${paymentBadge}
+💳 *Payment Mode*: ${paymentBadge}
 ${order.transactionId ? `🏛️ *Bank Ref (UTR)*: ${order.transactionId}\n` : ''}
-📋 *ITEMS ORDERED*:
+📋 *ITEMS TO PACK*:
 ${itemsList}
 
 ${order.packingNote ? `📝 *Packing Note*: "${order.packingNote}"\n` : ''}
-🔗 *Admin Master Control*:
+🔗 *Admin Dashboard*:
 https://shagunstore66-sys.github.io/shagun/?view=admin`;
   }
 
@@ -60,7 +64,8 @@ https://shagunstore66-sys.github.io/shagun/?view=admin`;
 ---------------------------------------
 📦 *Token*: #${order.token}
 👤 *Customer*: ${order.customerName}
-📍 *Collect at*: ${order.location || 'Counter'}
+📍 *Collect at*: ${order.location || 'Main Counter'}
+⏳ *Pickup Timing*: ${order.pickupSlot || 'Express (15-20 mins)'}
 ${order.packingNote ? `📝 *Note*: ${order.packingNote}\n` : ''}
 📋 *ITEMS TO PACK*:
 ${checklist}
@@ -71,20 +76,25 @@ https://shagunstore66-sys.github.io/shagun/?view=staff`;
 
   // 3. Message for Customer: Order Confirmation & Live Tracking
   formatCustomerConfirmationMessage(order) {
+    const paymentLine = order.paymentVerified
+      ? '🟢 Paid via UPI'
+      : (order.paymentMethod === 'counter' ? '💵 Pay ₹' + order.totalAmount + ' Cash at Counter Table' : '⏳ Awaiting UPI Verification');
+
     return `🛍️ *${this.storeName}, Bettadapura*
 ---------------------------------------
 Namaste *${order.customerName}*!
 Aapka order successfully place ho gaya hai.
 
-📦 *Token Number*: *#${order.token}*
-💰 *Bill Amount*: ₹${order.totalAmount} (${order.paymentVerified ? 'Paid Online' : 'Pay at Counter'})
-⏱️ *Current Status*: 🟡 Packing in Progress
-📍 *Collection Counter*: ${this.storeAddress}
+📦 *Pickup Token*: *#${order.token}*
+💰 *Bill Amount*: ₹${order.totalAmount} (${paymentLine})
+⏱️ *Status*: 🟡 Staff Packing in Progress
+📍 *Collection Point*: ${this.storeAddress}
+🗺️ *Store Map*: ${this.mapsUrl}
 
 🔗 *Live Order Tracker & Bill*:
 https://shagunstore66-sys.github.io/shagun/?token=${order.token}&orderId=${order.id}
 
-Store Helpline: +91 77955 65216
+📞 Store Helpline: +91 77955 65216
 🙏 Dhanyawad / ಧನ್ಯವಾದಗಳು!`;
   }
 
@@ -100,7 +110,7 @@ Store Helpline: +91 77955 65216
 *INVOICE TOKEN*: *#${order.token}*
 *Date & Time*: ${timeStr}
 *Customer*: ${order.customerName} (${order.phone})
-*Location*: ${order.location || 'Counter'}
+*Collection Desk*: ${order.location || 'Shagun Store Counter'}
 ------------------------------------------
 *PARTICULARS / ITEMS*:
 ${itemsTable}
@@ -109,11 +119,11 @@ Subtotal: ₹${order.subtotal}
 GST (5% Tax): ₹${order.tax || 0}
 Express Packing Fee: FREE (₹0)
 ------------------------------------------
-*TOTAL AMOUNT PAID*: *₹${order.totalAmount}*
-Payment Mode: ${order.paymentMethod === 'upi' ? '📱 UPI Auto-Verified' : '💵 Cash at Counter'}
+*TOTAL AMOUNT*: *₹${order.totalAmount}*
+Payment Mode: ${order.paymentMethod === 'upi' ? '📱 UPI Auto-Verified' : '💵 Cash Paid on Counter Table'}
 ${order.transactionId ? `Bank UTR / Ref: ${order.transactionId}\n` : ''}*Status*: ✅ FULFILLED & HANDED OVER
 ------------------------------------------
-🙏 Thank you for choosing SHAGUN STORE!
+🙏 Thank you for choosing SHAGUN STORE, Bettadapura!
 Visit again: https://shagunstore66-sys.github.io/shagun/`;
   }
 

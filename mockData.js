@@ -1,10 +1,12 @@
 /**
- * SHAGUN STORE (शगुन स्टोर / ಶಗುನ್ ಸ್ಟೋರ್) - Master Trilingual Grocery Database & Catalog Engine
+ * SHAGUN STORE (शगुन स्टोर / ಶಗುನ್ ಸ್ಟೋರ್) - Master Trilingual Grocery & Fresh Produce Database
  * Supports:
  * - 🇬🇧 English | 🇮🇳 Hindi (हिंदी) | 🟡🔴 Kannada (ಕನ್ನಡ)
+ * - Complete Fresh Farm Vegetables & Daily Fresh Fruits Catalog
  * - Scaled for 2,000+ Supermarket Items
- * - Full Granular Weight Variations: 250GM, 500GM, 1KG, 2KG, 3KG, 4KG, 5KG, 10KG (Grains, Dals, Sugar, Rava, Maida)
- * - Full Volume Variations: 500ML, 1 Litre, 2 Litre, 5 Litre Can, 15 Litre Tin (Cooking Oils, Ghee)
+ * - Full Granular Weight Variations: 100g, 250g, 500g, 1kg, 2kg, 3kg, 5kg, 10kg
+ * - Full Volume Variations: 200ml, 500ml, 1L, 2L, 5L Can, 15L Tin
+ * - Store Counter Collection & Payment Methods (UPI & Cash on Counter)
  */
 
 export const INITIAL_STORE_CONFIG = {
@@ -18,20 +20,24 @@ export const INITIAL_STORE_CONFIG = {
   addressHindi: "पी.एच. रोड, चामुंडी टेक्सटाइल्स के पास, बेट्टदपुरा, कर्नाटक - 571102",
   addressKannada: "ಪಿ.ಹೆಚ್. ರಸ್ತೆ, ಚಾಮುಂಡಿ ಟೆಕ್ಸ್‌ಟೈಲ್ಸ್ ಹತ್ತಿರ, ಬೆಟ್ಟದಪುರ, ಕರ್ನಾಟಕ - 571102",
   phone: "+91 77955 65216",
+  ownerWhatsApp: "+91 77955 65216",
   upiId: "7795565216-1@okbizaxis",
   currency: "₹",
   taxPercent: 0,
   expressPackingFee: 0,
+  mapsUrl: "https://maps.google.com/?q=Chamundi+Textiles+Bettadapura+Karnataka+571102",
   pickupLocations: [
-    "Counter (ಕೌಂಟರ್ / काउंटर)",
-    "Counter 1",
-    "Counter 2"
+    "Shagun Store Counter (ಪಿ.ಹೆಚ್. ರಸ್ತೆ, ಬೆಟ್ಟದಪುರ)",
+    "Counter 1 (Main Cash Desk)",
+    "Counter 2 (Express Pickup Spot)"
   ]
 };
 
-// Trilingual Category Taxonomy
+// Trilingual Category Taxonomy with Fresh Vegetables & Fruits at the top
 export const CATEGORIES = [
   { id: "all", name: "All Items", nameHindi: "सभी सामान", nameKannada: "ಎಲ್ಲಾ ಸಾಮಗ್ರಿಗಳು", icon: "🛒" },
+  { id: "vegetables", name: "Fresh Vegetables", nameHindi: "ताजी हरी सब्जियाँ", nameKannada: "ತಾಜಾ ತರಕಾರಿಗಳು", icon: "🥦" },
+  { id: "fruits", name: "Fresh Fruits", nameHindi: "ताजे फल", nameKannada: "ತಾಜಾ ಹಣ್ಣುಗಳು", icon: "🍎" },
   { id: "staples", name: "Atta, Rice & Grains", nameHindi: "आटा, चावल व अनाज", nameKannada: "ಹಿಟ್ಟು, ಅಕ್ಕಿ ಮತ್ತು ಧಾನ್ಯಗಳು", icon: "🌾" },
   { id: "sugar-sweeteners", name: "Sugar, Rava & Jaggery", nameHindi: "चीनी, रवा व गुड़", nameKannada: "ಸಕ್ಕರೆ, ರವೆ ಮತ್ತು ಬೆಲ್ಲ", icon: "🍬" },
   { id: "oils-ghee", name: "Cooking Oils & Ghee", nameHindi: "तेल और शुद्ध घी", nameKannada: "ಅಡುಗೆ ಎಣ್ಣೆ ಮತ್ತು ತುಪ್ಪ", icon: "🛢️" },
@@ -49,47 +55,59 @@ export const I18N = {
   en: {
     langName: "English",
     storeTagline: "P.H. Road, Near Chamundi Textiles, Bettadapura - 571102",
-    searchPlaceholder: "Search Groceries (Sugar, Dals, Rice, Oils...)",
+    homeOrderBanner: "🏡 Order from Home • ⚡ Ready for Pickup in 15 Mins • 🛍️ Collect at Shagun Store Counter",
+    pickupHeroTitle: "Order from Home & Collect at Store",
+    pickupHeroSub: "Browse our complete fresh vegetables & daily grocery collection from home. Place your order online, we pack it ready, and you simply collect at our Bettadapura shop counter!",
+    searchPlaceholder: "Search Groceries & Vegetables (Tomatoes, Onions, Sugar, Dals, Rice, Oils...)",
     cartTitle: "Your Shopping Cart",
-    cartEmpty: "Your cart is empty. Add grocery items to begin!",
+    cartEmpty: "Your cart is empty. Add fresh vegetables or groceries to begin!",
     itemsSubtotal: "Items Subtotal",
     bagPacking: "Express Bag Packing",
     free: "FREE",
     taxes: "Taxes & GST",
     totalPayable: "Total Payable",
     selectPaymentMode: "Select Payment Mode:",
-    upiPayment: "UPI Payment",
-    upiSub: "Pay directly via PhonePe, GPay, Paytm or Any UPI app",
-    cashCounter: "Pay Cash at Counter",
-    cashSub: "Pay cash when picking up your packed bag",
+    upiPayment: "UPI Instant Payment (PhonePe, GPay, Paytm)",
+    upiSub: "Pay directly via UPI QR code or any UPI app with Axis Bank verification",
+    cashCounter: "Pay Cash on the Counter Table (Store Pickup)",
+    cashSub: "Pay cash at Shagun Store collection counter when picking up your bag",
     cardPayment: "Card Payment / POS",
     cardSub: "Debit / Credit card at collection counter",
     custName: "Your Full Name",
     custPhone: "10-Digit Mobile Number (For Pickup Identification)",
     enterMobile: "Enter 10-digit mobile number",
-    packingNote: "Special Packing Note (Optional)",
-    payAndBook: "Pay via UPI & Book Bag",
-    placeOrder: "Place Order & Get Token",
+    packingNote: "Special Packing Note (e.g. tight packing, fresh veggies)",
+    pickupSlotTitle: "Estimated Counter Pickup Timing:",
+    slotInstant: "⚡ Express Pickup (Ready in 15-20 mins)",
+    slot30Min: "🕐 In 30 - 45 mins",
+    slot1Hr: "🕑 In 1 - 2 hours",
+    slotEvening: "🌆 Evening Pickup (5:00 PM - 8:30 PM)",
+    payAndBook: "Pay via UPI & Place Pickup Order",
+    placeOrder: "Place Pickup Order & Get Token",
     pickupToken: "SHAGUN STORE PICKUP TOKEN",
-    collectionSpot: "Collection Spot:",
-    orderStatus1: "1. Order Placed & Confirmed",
-    orderStatus2: "2. Staff Packing in Carry Bag",
-    orderStatus3: "3. Ready for Collection",
+    collectionSpot: "Collection Counter:",
+    storeAddressLabel: "Store Location: P.H. Road, Near Chamundi Textiles, Bettadapura - 571102",
+    directionsBtn: "🗺️ Get Store Directions on Google Maps",
+    callStoreBtn: "📞 Call Shagun Store (+91 77955 65216)",
+    orderStatus1: "1. Order Placed from Home",
+    orderStatus2: "2. Staff Packing in Bag at Store",
+    orderStatus3: "3. Ready for Counter Collection",
     orderStatus4: "4. Handed Over to Customer",
-    staffPacking: "Staff is currently packing your items at shelves...",
+    staffPacking: "Staff is currently packing your fresh items at Shagun Store...",
     orderAwaitingVerify: "Order Submitted • Awaiting Shop UPI Verification",
-    orderAwaitingVerifyDesc: "Store owner is verifying payment receipt on UPI ID. Packing begins upon confirmation.",
+    orderAwaitingVerifyDesc: "Store owner is verifying payment on Axis UPI. Packing begins upon confirmation.",
+    cashPendingNote: "💵 Please pay ₹{amount} in cash at Shagun Store counter upon pickup.",
     reopenUpi: "Re-open UPI App",
     verifiedUpi: "🟢 UPI Payment Verified by Store Owner",
     verifiedUpiDesc: "Bank receipt confirmed. Staff is packing your groceries!",
-    bagReadyTitle: "🎉 Your Grocery Bag is Packed & Ready!",
-    bagReadyDesc: "Please walk to the counter and show your Token to collect your bag.",
+    bagReadyTitle: "🎉 Your Grocery Bag is Packed & Ready for Pickup!",
+    bagReadyDesc: "Please visit Shagun Store (P.H. Road, Bettadapura) and show your Token to collect your bag.",
     itemsInOrder: "Items in this Order",
     billSummary: "Bill Summary",
     grandTotal: "Grand Total",
     addMoreItems: "➕ Add More Items to Active Order",
     orderMoreItems: "🛒 Order More Items / New Bag",
-    showTokenStaff: "Show this QR / Token to SHAGUN STORE Staff",
+    showTokenStaff: "Show this Token / QR to SHAGUN STORE Counter Staff",
     staffDashboardTitle: "👨‍🍳 Staff Packing Terminal",
     staffDashboardSub: "Live orders queue • Check off items as you pack into carry bags",
     newOrders: "🔴 New Orders",
@@ -102,6 +120,7 @@ export const I18N = {
     handOver: "✓ Handed to Customer",
     undoStatus: "↩ Undo Status",
     confirmBankReceived: "🟢 Confirm Bank Payment Received",
+    confirmCashReceived: "💵 Mark Cash Paid at Counter",
     awaitingBankReceipt: "⚠️ UPI Payment (Check Soundbox / Bank SMS)",
     loadMore: "Load More Items (+36)",
     outOfStock: "Out of Stock",
@@ -116,52 +135,65 @@ export const I18N = {
     phoneVerified: "✅ Mobile Verified",
     sendOtpBtn: "Send OTP Code",
     enterOtpPlaceholder: "Enter 4-digit code",
-    whatsAppOtpBtn: "💬 Receive OTP on WhatsApp"
+    whatsAppOtpBtn: "💬 Receive OTP on WhatsApp",
+    shareWhatsAppBtn: "💬 Share Order to WhatsApp"
   },
   hi: {
     langName: "हिंदी",
     storeTagline: "पी.एच. रोड, चामुंडी टेक्सटाइल्स के पास, बेट्टदपुरा - 571102",
-    searchPlaceholder: "किराना सामान खोजें (चीनी, दाल, चावल, तेल...)",
+    homeOrderBanner: "🏡 घर बैठे ऑर्डर करें • ⚡ 15 मिनट में तैयार • 🛍️ शगुन स्टोर काउंटर से प्राप्त करें",
+    pickupHeroTitle: "घर बैठे ऑर्डर करें और दुकान से लें",
+    pickupHeroSub: "घर बैठे अपनी पसंद की ताजी सब्जियाँ और किराना सामान ऑर्डर करें। हम आपका सामान पैक करके तैयार रखेंगे, और आप शगुन स्टोर काउंटर पर आकर सीधे अपना बैग ले सकते हैं!",
+    searchPlaceholder: "किराना व ताजी सब्जियाँ खोजें (टमाटर, प्याज, चीनी, दाल, तेल...)",
     cartTitle: "आपकी शॉपिंग कार्ट",
-    cartEmpty: "आपकी कार्ट खाली है। खरीदारी शुरू करने के लिए सामान जोड़ें!",
+    cartEmpty: "आपकी कार्ट खाली है। खरीदारी शुरू करने के लिए सब्जियाँ या किराना जोड़ें!",
     itemsSubtotal: "सामान का कुल मूल्य",
     bagPacking: "एक्सप्रेस बैग पैकिंग",
     free: "मुफ़्त",
     taxes: "टैक्स व जीएसटी",
     totalPayable: "कुल देय राशि",
     selectPaymentMode: "भुगतान का तरीका चुनें:",
-    upiPayment: "UPI पेमेंट",
-    upiSub: "PhonePe, GPay, Paytm या किसी भी UPI ऐप से सीधे भुगतान करें",
-    cashCounter: "काउंटर पर नकद (Cash) दें",
-    cashSub: "सामान का बैग लेते समय काउंटर पर नकद भुगतान करें",
+    upiPayment: "UPI पेमेंट (PhonePe, GPay, Paytm)",
+    upiSub: "Axis Bank UPI QR कोड या किसी भी UPI ऐप से सीधे ऑनलाइन भुगतान करें",
+    cashCounter: "काउंटर टेबल पर नकद (Cash) भुगतान करें",
+    cashSub: "दुकान पर अपना पैक किया हुआ बैग लेते समय काउंटर पर नकद भुगतान करें",
     cardPayment: "कार्ड पेमेंट / POS",
     cardSub: "काउंटर पर डेबिट/क्रेडिट कार्ड से भुगतान करें",
     custName: "आपका नाम",
     custPhone: "10 अंकों का मोबाइल नंबर (टोकन पहचान के लिए)",
     enterMobile: "10 अंकों का मोबाइल नंबर दर्ज करें",
-    packingNote: "पैकिंग निर्देश (वैकल्पिक)",
-    payAndBook: "UPI से भुगतान करें व बैग बुक करें",
+    packingNote: "पैकिंग निर्देश (जैसे: ताजी हरी मिर्च, मजबूत बैग)",
+    pickupSlotTitle: "दुकान से लेने का अनुमानित समय:",
+    slotInstant: "⚡ एक्सप्रेस पिकअप (15-20 मिनट में तैयार)",
+    slot30Min: "🕐 30 - 45 मिनट में",
+    slot1Hr: "🕑 1 - 2 घंटे में",
+    slotEvening: "🌆 शाम का समय (5:00 PM - 8:30 PM)",
+    payAndBook: "UPI से भुगतान करें व पिकअप बुक करें",
     placeOrder: "ऑर्डर बुक करें व टोकन प्राप्त करें",
     pickupToken: "शगुन स्टोर पिकअप टोकन",
     collectionSpot: "प्राप्ति काउंटर:",
-    orderStatus1: "1. ऑर्डर दर्ज व पुष्ट हुआ",
-    orderStatus2: "2. बैग में सामान पैक हो रहा है",
-    orderStatus3: "3. काउंटर पर लेने हेतु तैयार",
+    storeAddressLabel: "दुकान का पता: पी.एच. रोड, चामुंडी टेक्सटाइल्स के पास, बेट्टदपुरा - 571102",
+    directionsBtn: "🗺️ Google Maps पर दुकान का रास्ता देखें",
+    callStoreBtn: "📞 शगुन स्टोर पर कॉल करें (+91 77955 65216)",
+    orderStatus1: "1. घर से ऑर्डर दर्ज हुआ",
+    orderStatus2: "2. दुकान पर बैग में सामान पैक हो रहा है",
+    orderStatus3: "3. काउंटर पर लेने हेतु तैयार है",
     orderStatus4: "4. ग्राहक को सौंप दिया गया",
     staffPacking: "दुकान कर्मचारी अलमारियों से आपका सामान पैक कर रहे हैं...",
-    orderAwaitingVerify: "ऑर्डर दर्ज • दुकानदार सत्यापन की प्रतीक्षा",
+    orderAwaitingVerify: "ऑर्डर दर्ज • दुकानदार UPI सत्यापन की प्रतीक्षा",
     orderAwaitingVerifyDesc: "दुकानदार UPI ID पर भुगतान की पुष्टि कर रहे हैं। पुष्टि होते ही पैकिंग शुरू हो जाएगी।",
+    cashPendingNote: "💵 कृपया दुकान काउंटर पर बैग लेते समय ₹{amount} नकद भुगतान करें।",
     reopenUpi: "UPI ऐप दोबारा खोलें",
     verifiedUpi: "🟢 दुकानदार द्वारा UPI भुगतान सत्यापित",
     verifiedUpiDesc: "बैंक में राशि प्राप्त हो चुकी है। कर्मचारी आपका सामान पैक कर रहे हैं!",
-    bagReadyTitle: "🎉 आपका किराना बैग पैक होकर तैयार है!",
-    bagReadyDesc: "कृपया काउंटर पर जाएं और अपना टोकन दिखाकर बैग प्राप्त करें।",
+    bagReadyTitle: "🎉 आपका किराना बैग पैक होकर काउंटर पर तैयार है!",
+    bagReadyDesc: "कृपया शगुन स्टोर (पी.एच. रोड, बेट्टदपुरा) आएं और अपना टोकन दिखाकर बैग प्राप्त करें।",
     itemsInOrder: "इस ऑर्डर में सामान",
     billSummary: "बिल का विवरण",
     grandTotal: "कुल राशि",
     addMoreItems: "➕ इसी चालू ऑर्डर में और सामान जोड़ें",
     orderMoreItems: "🛒 और सामान खरीदें / नया बैग",
-    showTokenStaff: "यह QR / टोकन शगुन स्टोर स्टाफ को दिखाएं",
+    showTokenStaff: "यह टोकन / QR शगुन स्टोर स्टाफ को दिखाएं",
     staffDashboardTitle: "👨‍🍳 स्टाफ पैकिंग टर्मिनल",
     staffDashboardSub: "लाइव ऑर्डर्स • सामान पैक करते हुए टिक करें",
     newOrders: "🔴 नए ऑर्डर्स",
@@ -170,10 +202,11 @@ export const I18N = {
     completedOrders: "✓ पूर्ण हुए ऑर्डर्स",
     checkAll: "✓ सभी चुनें",
     startPacking: "📦 पैकिंग शुरू करें",
-    markReady: "🔔 तैयार मार्क करें व फोन अलर्ट दें",
+    markReady: "🔔 तैयार मार्क करें व ग्राहक को अलर्ट दें",
     handOver: "✓ ग्राहक को बैग दे दिया",
     undoStatus: "↩ स्थिति वापस बदलें",
-    confirmBankReceived: "🟢 बैंक/साउंडबॉक्स में राशि प्राप्त हुई (पुष्टि करें)",
+    confirmBankReceived: "🟢 बैंक/साउंडबॉक्स में राशि प्राप्त हुई",
+    confirmCashReceived: "💵 काउंटर पर नकद प्राप्त हुआ",
     awaitingBankReceipt: "⚠️ UPI पेमेंट (साउंडबॉक्स/बैंक SMS जांचें)",
     loadMore: "और सामान देखें (+36)",
     outOfStock: "स्टॉक समाप्त",
@@ -188,52 +221,65 @@ export const I18N = {
     phoneVerified: "✅ मोबाइल नंबर सत्यापित",
     sendOtpBtn: "OTP कोड भेजें",
     enterOtpPlaceholder: "4-अंकों का OTP दर्ज करें",
-    whatsAppOtpBtn: "💬 WhatsApp पर OTP प्राप्त करें"
+    whatsAppOtpBtn: "💬 WhatsApp पर OTP प्राप्त करें",
+    shareWhatsAppBtn: "💬 WhatsApp पर ऑर्डर शेयर करें"
   },
   kn: {
     langName: "ಕನ್ನಡ",
     storeTagline: "ಪಿ.ಹೆಚ್. ರಸ್ತೆ, ಚಾಮುಂಡಿ ಟೆಕ್ಸ್‌ಟೈಲ್ಸ್ ಹತ್ತಿರ, ಬೆಟ್ಟದಪುರ - 571102",
-    searchPlaceholder: "ದಿನಸಿ ಸಾಮಗ್ರಿ ಹುಡುಕಿ (ಸಕ್ಕರೆ, ಬೇಳೆ, ಅಕ್ಕಿ, ಎಣ್ಣೆ...)",
+    homeOrderBanner: "🏡 ಮನೆಯಲ್ಲೇ ಕುಳಿತು ಆರ್ಡರ್ ಮಾಡಿ • ⚡ 15 ನಿಮಿಷದಲ್ಲಿ ಪ್ಯಾಕ್ • 🛍️ ಶಗುನ್ ಸ್ಟೋರ್ ಕೌಂಟರ್‌ನಲ್ಲಿ ಪಡೆಯಿರಿ",
+    pickupHeroTitle: "ಮನೆಯಲ್ಲೇ ಕುಳಿತು ಆರ್ಡರ್ ಮಾಡಿ - ಅಂಗಡಿಯಲ್ಲಿ ಬ್ಯಾಗ್ ಪಡೆಯಿರಿ",
+    pickupHeroSub: "ತಾಜಾ ತರಕಾರಿಗಳು ಮತ್ತು ದಿನಸಿ ಸಾಮಗ್ರಿಗಳನ್ನು ಮನೆಯಲ್ಲೇ ಆಯ್ಕೆ ಮಾಡಿ ಆರ್ಡರ್ ಮಾಡಿ. ನಾವು ಸಾಮಗ್ರಿಗಳನ್ನು ಪ್ಯಾಕ್ ಮಾಡಿ ಸಿದ್ಧವಾಗಿಡುತ್ತೇವೆ, ನೀವು ಬೆಟ್ಟದಪುರದ ಶಗುನ್ ಸ್ಟೋರ್ ಕೌಂಟರ್‌ನಲ್ಲಿ ಬಂದು ಸುಲಭವಾಗಿ ಪಡೆದುಕೊಳ್ಳಿ!",
+    searchPlaceholder: "ದಿನಸಿ ಮತ್ತು ತಾಜಾ ತರಕಾರಿಗಳನ್ನು ಹುಡುಕಿ (ಟೊಮೇಟೊ, ಈರುಳ್ಳಿ, ಸಕ್ಕರೆ, ಬೇಳೆ, ಎಣ್ಣೆ...)",
     cartTitle: "ನಿಮ್ಮ ಶಾಪಿಂಗ್ ಕಾರ್ಟ್",
-    cartEmpty: "ನಿಮ್ಮ ಕಾರ್ಟ್ ಖಾಲಿಯಾಗಿದೆ. ಸಾಮಗ್ರಿಗಳನ್ನು ಸೇರಿಸಿ!",
+    cartEmpty: "ನಿಮ್ಮ ಕಾರ್ಟ್ ಖಾಲಿಯಾಗಿದೆ. ತಾಜಾ ತರಕಾರಿ ಅಥವಾ ದಿನಸಿ ಸಾಮಗ್ರಿಗಳನ್ನು ಸೇರಿಸಿ!",
     itemsSubtotal: "ಒಟ್ಟು ಸಾಮಗ್ರಿಗಳ ಮೊತ್ತ",
     bagPacking: "ಎಕ್ಸ್‌ಪ್ರೆಸ್ ಬ್ಯಾಗ್ ಪ್ಯಾಕಿಂಗ್",
     free: "ಉಚಿತ",
     taxes: "ತೆರಿಗೆ ಮತ್ತು ಜಿಎಸ್‌ಟಿ",
     totalPayable: "ಪಾವತಿಸಬೇಕಾದ ಒಟ್ಟು ಮೊತ್ತ",
     selectPaymentMode: "ಪಾವತಿ ವಿಧಾನವನ್ನು ಆಯ್ಕೆಮಾಡಿ:",
-    upiPayment: "ಯುಪಿಐ (UPI) ಪಾವತಿ",
-    upiSub: "ಫೋನ್‌ಪೇ, ಜಿಪೇ, ಪೇಟಿಎಂ ಅಥವಾ ಯಾವುದೇ ಯುಪಿಐ ಆಪ್ ಮೂಲಕ ನೇರ ಪಾವತಿ",
-    cashCounter: "ಕೌಂಟರ್‌ನಲ್ಲಿ ನಗದು ಪಾವತಿ (Cash)",
-    cashSub: "ಪ್ಯಾಕ್ ಮಾಡಿದ ಬ್ಯಾಗ್ ಪಡೆಯುವಾಗ ನಗದು ಹಣ ನೀಡಿ",
+    upiPayment: "ಯುಪಿಐ (UPI) ಆನ್‌ಲೈನ್ ಪಾವತಿ (PhonePe, GPay, Paytm)",
+    upiSub: "Axis Bank ಯುಪಿಐ ಕ್ಯೂಆರ್ ಕೋಡ್ ಅಥವಾ ಯಾವುದೇ ಯುಪಿಐ ಆಪ್ ಮೂಲಕ ನೇರ ಪಾವತಿ",
+    cashCounter: "ಕೌಂಟರ್‌ನಲ್ಲಿ ನಗದು ಪಾವತಿ (Cash on Counter Table)",
+    cashSub: "ಅಂಗಡಿಯಲ್ಲಿ ಪ್ಯಾಕ್ ಮಾಡಿದ ದಿನಸಿ ಬ್ಯಾಗ್ ಪಡೆಯುವಾಗ ಕೌಂಟರ್‌ನಲ್ಲಿ ನಗದು ಹಣ ನೀಡಿ",
     cardPayment: "ಕಾರ್ಡ್ ಪಾವತಿ / ಪಿಒಎಸ್ (POS)",
     cardSub: "ಕೌಂಟರ್‌ನಲ್ಲಿ ಡೆಬಿಟ್/ಕ್ರೆಡಿಟ್ ಕಾರ್ಡ್ ಬಳಸಿ ಪಾವತಿಸಿ",
     custName: "ನಿಮ್ಮ ಹೆಸರು",
     custPhone: "10 ಅಂಕಿಯ ಮೊಬೈಲ್ ಸಂಖ್ಯೆ (ಟೋಕನ್ ಗುರುತಿಗೆ)",
     enterMobile: "10 ಅಂಕಿಯ ಮೊಬೈಲ್ ಸಂಖ್ಯೆ ನಮೂದಿಸಿ",
-    packingNote: "ವಿಶೇಷ ಸೂಚನೆ (ಐಚ್ಛಿಕ)",
-    payAndBook: "ಯುಪಿಐ ಪಾವತಿಸಿ ಬ್ಯಾಗ್ ಬುಕ್ ಮಾಡಿ",
+    packingNote: "ವಿಶೇಷ ಸೂಚನೆ (ಉದಾಹರಣೆಗೆ: ಗಟ್ಟಿ ಪ್ಯಾಕಿಂಗ್, ತಾಜಾ ಮೆಣಸಿನಕಾಯಿ)",
+    pickupSlotTitle: "ಅಂಗಡಿಯಲ್ಲಿ ಪಡೆಯುವ ಅಂದಾಜು ಸಮಯ:",
+    slotInstant: "⚡ ಎಕ್ಸ್‌ಪ್ರೆಸ್ ಪಿಕಪ್ (15-20 ನಿಮಿಷಗಳಲ್ಲಿ ಸಿದ್ಧ)",
+    slot30Min: "🕐 30 - 45 ನಿಮಿಷಗಳಲ್ಲಿ",
+    slot1Hr: "🕑 1 - 2 ಗಂಟೆಗಳಲ್ಲಿ",
+    slotEvening: "🌆 ಸಂಜೆಯ ಸಮಯ (5:00 PM - 8:30 PM)",
+    payAndBook: "ಯುಪಿಐ ಪಾವತಿಸಿ ಪಿಕಪ್ ಬುಕ್ ಮಾಡಿ",
     placeOrder: "ಆರ್ಡರ್ ಮಾಡಿ ಟೋಕನ್ ಪಡೆಯಿರಿ",
     pickupToken: "ಶಗುನ್ ಸ್ಟೋರ್ ಪಿಕಪ್ ಟೋಕನ್",
     collectionSpot: "ಪಡೆಯುವ ಸ್ಥಳ:",
-    orderStatus1: "1. ಆರ್ಡರ್ ಸ್ವೀಕರಿಸಲಾಗಿದೆ ಮತ್ತು ದೃಢೀಕರಿಸಲಾಗಿದೆ",
-    orderStatus2: "2. ಸಾಮಗ್ರಿಗಳನ್ನು ಬ್ಯಾಗ್‌ನಲ್ಲಿ ಪ್ಯಾಕ್ ಮಾಡಲಾಗುತ್ತಿದೆ",
+    storeAddressLabel: "ಅಂಗಡಿ ವಿಳಾಸ: ಪಿ.ಹೆಚ್. ರಸ್ತೆ, ಚಾಮುಂಡಿ ಟೆಕ್ಸ್‌ಟೈಲ್ಸ್ ಹತ್ತಿರ, ಬೆಟ್ಟದಪುರ - 571102",
+    directionsBtn: "🗺️ ಗೂಗಲ್ ಮ್ಯಾಪ್‌ನಲ್ಲಿ ದಾರಿ ನೋಡಿ (Google Maps)",
+    callStoreBtn: "📞 ಶಗುನ್ ಸ್ಟೋರ್‌ಗೆ ಕರೆ ಮಾಡಿ (+91 77955 65216)",
+    orderStatus1: "1. ಮನೆಯಿಂದ ಆರ್ಡರ್ ಸ್ವೀಕರಿಸಲಾಗಿದೆ",
+    orderStatus2: "2. ಅಂಗಡಿಯಲ್ಲಿ ಸಾಮಗ್ರಿಗಳನ್ನು ಪ್ಯಾಕ್ ಮಾಡಲಾಗುತ್ತಿದೆ",
     orderStatus3: "3. ಕೌಂಟರ್‌ನಲ್ಲಿ ಪಡೆಯಲು ಸಿದ್ಧವಾಗಿದೆ",
     orderStatus4: "4. ಗ್ರಾಹಕರಿಗೆ ಹಸ್ತಾಂತರಿಸಲಾಗಿದೆ",
     staffPacking: "ಸಿಬ್ಬಂದಿ ನಿಮ್ಮ ಸಾಮಗ್ರಿಗಳನ್ನು ಪ್ಯಾಕ್ ಮಾಡುತ್ತಿದ್ದಾರೆ...",
-    orderAwaitingVerify: "ಆರ್ಡರ್ ಸಲ್ಲಿಸಲಾಗಿದೆ • ಅಂಗಡಿ ಮಾಲೀಕರ ದೃಢೀಕರಣದ ನಿರೀಕ್ಷೆ",
+    orderAwaitingVerify: "ಆರ್ಡರ್ ಸಲ್ಲಿಸಲಾಗಿದೆ • ಅಂಗಡಿ ಮಾಲೀಕರ ಯುಪಿಐ ದೃಢೀಕರಣದ ನಿರೀಕ್ಷೆ",
     orderAwaitingVerifyDesc: "ಅಂಗಡಿ ಮಾಲೀಕರು ಯುಪಿಐ ಪಾವತಿ ಪರಿಶೀಲಿಸುತ್ತಿದ್ದಾರೆ. ದೃಢಪಟ್ಟ ತಕ್ಷಣ ಪ್ಯಾಕಿಂಗ್ ಆರಂಭವಾಗುತ್ತದೆ.",
+    cashPendingNote: "💵 ದಯವಿಟ್ಟು ಅಂಗಡಿ ಕೌಂಟರ್‌ನಲ್ಲಿ ಬ್ಯಾಗ್ ಪಡೆಯುವಾಗ ₹{amount} ನಗದು ಹಣ ನೀಡಿ.",
     reopenUpi: "ಯುಪಿಐ ಆಪ್ ಮತ್ತೆ ತೆರೆಯಿರಿ",
     verifiedUpi: "🟢 ಅಂಗಡಿ ಮಾಲೀಕರಿಂದ ಯುಪಿಐ ಪಾವತಿ ದೃಢಪಟ್ಟಿದೆ",
     verifiedUpiDesc: "ಬ್ಯಾಂಕ್‌ಗೆ ಹಣ ಸಂದಾಯವಾಗಿದೆ. ಸಿಬ್ಬಂದಿ ನಿಮ್ಮ ಸಾಮಗ್ರಿಗಳನ್ನು ಪ್ಯಾಕ್ ಮಾಡುತ್ತಿದ್ದಾರೆ!",
     bagReadyTitle: "🎉 ನಿಮ್ಮ ದಿನಸಿ ಬ್ಯಾಗ್ ಸಿದ್ಧವಾಗಿದೆ!",
-    bagReadyDesc: "ದಯವಿಟ್ಟು ಕೌಂಟರ್‌ಗೆ ಹೋಗಿ ನಿಮ್ಮ ಟೋಕನ್ ತೋರಿಸಿ ಬ್ಯಾಗ್ ಪಡೆದುಕೊಳ್ಳಿ.",
+    bagReadyDesc: "ದಯವಿಟ್ಟು ಬೆಟ್ಟದಪುರದ ಶಗುನ್ ಸ್ಟೋರ್ ಕೌಂಟರ್‌ಗೆ ಬಂದು ನಿಮ್ಮ ಟೋಕನ್ ತೋರಿಸಿ ಬ್ಯಾಗ್ ಪಡೆದುಕೊಳ್ಳಿ.",
     itemsInOrder: "ಈ ಆರ್ಡರ್‌ನಲ್ಲಿರುವ ಸಾಮಗ್ರಿಗಳು",
     billSummary: "ಬಿಲ್ ವಿವರ",
     grandTotal: "ಒಟ್ಟು ಮೊತ್ತ",
     addMoreItems: "➕ ಈ ಆರ್ಡರ್‌ಗೆ ಇನ್ನಷ್ಟು ಸಾಮಗ್ರಿ ಸೇರಿಸಿ",
     orderMoreItems: "🛒 ಇನ್ನಷ್ಟು ಸಾಮಗ್ರಿ ಖರೀದಿಸಿ / ಹೊಸ ಬ್ಯಾಗ್",
-    showTokenStaff: "ಈ ಕ್ಯೂಆರ್ / ಟೋಕನ್ ಅನ್ನು ಅಂಗಡಿ ಸಿಬ್ಬಂದಿಗೆ ತೋರಿಸಿ",
+    showTokenStaff: "ಈ ಟೋಕನ್ / ಕ್ಯೂಆರ್ ಅನ್ನು ಅಂಗಡಿ ಸಿಬ್ಬಂದಿಗೆ ತೋರಿಸಿ",
     staffDashboardTitle: "👨‍🍳 ಸಿಬ್ಬಂದಿ ಪ್ಯಾಕಿಂಗ್ ಟರ್ಮಿನಲ್",
     staffDashboardSub: "ಲೈವ್ ಆರ್ಡರ್ ಲಿಸ್ಟ್ • ಪ್ಯಾಕ್ ಮಾಡಿದಂತೆ ಟಿಕ್ ಮಾಡಿ",
     newOrders: "🔴 ಹೊಸ ಆರ್ಡರ್‌ಗಳು",
@@ -246,6 +292,7 @@ export const I18N = {
     handOver: "✓ ಗ್ರಾಹಕರಿಗೆ ನೀಡಲಾಗಿದೆ",
     undoStatus: "↩ ಸ್ಥಿತಿ ಹಿಂತಿರುಗಿಸಿ",
     confirmBankReceived: "🟢 ಬ್ಯಾಂಕ್‌ನಲ್ಲಿ ಹಣ ಜಮೆಯಾಗಿದೆ (ದೃಢೀಕರಿಸಿ)",
+    confirmCashReceived: "💵 ಕೌಂಟರ್‌ನಲ್ಲಿ ನಗದು ಸ್ವೀಕರಿಸಲಾಗಿದೆ",
     awaitingBankReceipt: "⚠️ ಯುಪಿಐ ಪಾವತಿ (ಸೌಂಡ್‌ಬಾಕ್ಸ್ / SMS ಪರಿಶೀಲಿಸಿ)",
     loadMore: "ಇನ್ನಷ್ಟು ಸಾಮಗ್ರಿ ವೀಕ್ಷಿಸಿ (+36)",
     outOfStock: "ಖಾಲಿಯಾಗಿದೆ",
@@ -260,13 +307,267 @@ export const I18N = {
     phoneVerified: "✅ ಮೊಬೈಲ್ ಪರಿಶೀಲಿಸಲಾಗಿದೆ",
     sendOtpBtn: "ಒಟಿಪಿ ಕಳುಹಿಸಿ",
     enterOtpPlaceholder: "4-ಅಂಕಿಯ ಒಟಿಪಿ ನಮೂದಿಸಿ",
-    whatsAppOtpBtn: "💬 WhatsApp ನಲ್ಲಿ ಒಟಿಪಿ ಪಡೆಯಿರಿ"
+    whatsAppOtpBtn: "💬 WhatsApp ನಲ್ಲಿ ಒಟಿಪಿ ಪಡೆಯಿರಿ",
+    shareWhatsAppBtn: "💬 WhatsApp ನಲ್ಲಿ ಆರ್ಡರ್ ಹಂಚಿಕೊಳ್ಳಿ"
   }
 };
 
-// Core Staple Grocery Products with Granular Multi-Variants (250g, 500g, 1kg, 2kg, 3kg, 5kg, 10kg & 500ml, 1L, 2L, 5L, 15L)
+// Core Fresh Produce & Staple Grocery Products with Granular Multi-Variants
 const CORE_GROCERY_ITEMS = [
-  // 1. Sugar & Sweeteners
+  // ==========================================
+  // 1. FRESH FARM VEGETABLES (ताजी हरी सब्जियाँ / ತಾಜಾ ತರಕಾರಿಗಳು)
+  // ==========================================
+  {
+    id: "veg-01",
+    name: "Farm Fresh Red Onions (ताजा लाल प्याज / ತಾಜಾ ಈರುಳ್ಳಿ)",
+    category: "vegetables",
+    price: 38,
+    unit: "1 kg",
+    variants: [
+      { name: "500g Pack", price: 20 },
+      { name: "1 kg Pack", price: 38 },
+      { name: "2 kg Value Bag", price: 74 },
+      { name: "5 kg Family Sack", price: 175 }
+    ],
+    inStock: true,
+    badge: "Daily Essential",
+    description: "Crisp, pungent, farm-fresh Indian red onions essential for curries, salads, and tadka.",
+    image: "https://images.unsplash.com/photo-1508747703725-719777637510?w=500&auto=format&fit=crop&q=80"
+  },
+  {
+    id: "veg-02",
+    name: "Fresh Hybrid Country Tomatoes (ताजा देसी टमाटर / ತಾಜಾ ನಾಟಿ ಟೊಮೇಟೊ)",
+    category: "vegetables",
+    price: 32,
+    unit: "1 kg",
+    variants: [
+      { name: "500g Pack", price: 17 },
+      { name: "1 kg Pack", price: 32 },
+      { name: "2 kg Value Bag", price: 60 },
+      { name: "3 kg Saver Box", price: 88 }
+    ],
+    inStock: true,
+    badge: "Farm Fresh",
+    description: "Plump, ripe, juicy red tomatoes hand-picked for rich gravies, sambhar, and rasam.",
+    image: "https://images.unsplash.com/photo-1592924357228-91a4daadcfea?w=500&auto=format&fit=crop&q=80"
+  },
+  {
+    id: "veg-03",
+    name: "Mountain Jyoti Potatoes / Aloo (पहाड़ी आलू / ಆಲೂಗಡ್ಡೆ)",
+    category: "vegetables",
+    price: 35,
+    unit: "1 kg",
+    variants: [
+      { name: "500g Pack", price: 18 },
+      { name: "1 kg Pack", price: 35 },
+      { name: "2 kg Value Bag", price: 68 },
+      { name: "5 kg Family Sack", price: 160 }
+    ],
+    inStock: true,
+    badge: "Bestseller",
+    description: "Firm, clean, golden potatoes perfect for aloo parathas, curries, vadas, and fries.",
+    image: "https://images.unsplash.com/photo-1518977676601-b53f82aba655?w=500&auto=format&fit=crop&q=80"
+  },
+  {
+    id: "veg-04",
+    name: "Fresh Green Chillies (तीखी हरी मिर्च / ಹಸಿರು ಮೆಣಸಿನಕಾಯಿ)",
+    category: "vegetables",
+    price: 18,
+    unit: "250g",
+    variants: [
+      { name: "100g Pack", price: 8 },
+      { name: "250g Pack", price: 18 },
+      { name: "500g Value Pack", price: 34 }
+    ],
+    inStock: true,
+    badge: "Spicy & Fresh",
+    description: "Crispy, spicy green chillies to add punch to your chutneys, dals, and curries.",
+    image: "https://images.unsplash.com/photo-1588252303782-cb80119abd6d?w=500&auto=format&fit=crop&q=80"
+  },
+  {
+    id: "veg-05",
+    name: "Farm Fresh Ginger / Adrak (ताजा अदरक / ಶುಂಠಿ)",
+    category: "vegetables",
+    price: 32,
+    unit: "250g",
+    variants: [
+      { name: "100g Pack", price: 14 },
+      { name: "250g Pack", price: 32 },
+      { name: "500g Value Pack", price: 60 }
+    ],
+    inStock: true,
+    badge: "Aromatic",
+    description: "Aromatic spicy fresh ginger root for daily morning tea, gravies, and herbal remedies.",
+    image: "https://images.unsplash.com/photo-1615485290382-441e4d049cb5?w=500&auto=format&fit=crop&q=80"
+  },
+  {
+    id: "veg-06",
+    name: "Desi Whole Garlic / Lasan (देसी लहसुन / ನಾಟಿ ಬೆಳ್ಳುಳ್ಳಿ)",
+    category: "vegetables",
+    price: 45,
+    unit: "250g",
+    variants: [
+      { name: "100g Pack", price: 20 },
+      { name: "250g Pack", price: 45 },
+      { name: "500g Pack", price: 88 },
+      { name: "1 kg Pack", price: 170 }
+    ],
+    inStock: true,
+    badge: "Rich Flavour",
+    description: "Pungent, strong-flavoured whole garlic bulbs for tadka, rasam, and marinades.",
+    image: "https://images.unsplash.com/photo-1540148426945-6cf22a6b2383?w=500&auto=format&fit=crop&q=80"
+  },
+  {
+    id: "veg-07",
+    name: "Fresh Green Coriander Bunch (धनिया पत्ती / ಕೊತ್ತಂಬರಿ ಸೊಪ್ಪು)",
+    category: "vegetables",
+    price: 15,
+    unit: "1 Bunch",
+    variants: [
+      { name: "1 Big Bunch", price: 15 },
+      { name: "2 Bunches", price: 28 },
+      { name: "5 Bunches Saver", price: 65 }
+    ],
+    inStock: true,
+    badge: "Daily Fresh",
+    description: "Clean, aromatic green coriander leaves for garnishing dals, curries, and making chutneys.",
+    image: "https://images.unsplash.com/photo-1599940824399-b87987ceb72a?w=500&auto=format&fit=crop&q=80"
+  },
+  {
+    id: "veg-08",
+    name: "Fresh Green Ladyfinger / Bhindi (ताजी भिंडी / ಬೆಂಡೆಕಾಯಿ)",
+    category: "vegetables",
+    price: 28,
+    unit: "500g",
+    variants: [
+      { name: "250g Pack", price: 15 },
+      { name: "500g Pack", price: 28 },
+      { name: "1 kg Pack", price: 54 }
+    ],
+    inStock: true,
+    badge: "Tender & Crisp",
+    description: "Tender, slender green bhindi ideal for crispy fry, sambhar, and masala bhindi.",
+    image: "https://images.unsplash.com/photo-1425543103986-22abb7d7e8d2?w=500&auto=format&fit=crop&q=80"
+  },
+  {
+    id: "veg-09",
+    name: "Fresh Cauliflower Head (ताजा फूलगोभी / ಹೂಕೋಸು)",
+    category: "vegetables",
+    price: 35,
+    unit: "1 pc (~500g)",
+    variants: [
+      { name: "1 Medium Head", price: 35 },
+      { name: "2 Heads Value Pack", price: 65 }
+    ],
+    inStock: true,
+    badge: "Snow White",
+    description: "Tightly packed fresh cauliflower for Aloo Gobi, pakodas, and mixed vegetable kurma.",
+    image: "https://images.unsplash.com/photo-1568584711075-3d021a7c3ca3?w=500&auto=format&fit=crop&q=80"
+  },
+  {
+    id: "veg-10",
+    name: "Fresh Ooty Carrots (ऊटी गाजर / ಕ್ಯಾರೆಟ್)",
+    category: "vegetables",
+    price: 34,
+    unit: "500g",
+    variants: [
+      { name: "250g Pack", price: 18 },
+      { name: "500g Pack", price: 34 },
+      { name: "1 kg Pack", price: 65 }
+    ],
+    inStock: true,
+    badge: "Sweet & Crunchy",
+    description: "Sweet, crunchy Ooty carrots for salads, sambhar, vegetable pulao, and carrot halwa.",
+    image: "https://images.unsplash.com/photo-1598170845058-32b9d6a5da37?w=500&auto=format&fit=crop&q=80"
+  },
+  {
+    id: "veg-11",
+    name: "Fresh Juicy Lemons (ताजा रसीला नींबू / ನಿಂಬೆಹಣ್ಣು)",
+    category: "vegetables",
+    price: 20,
+    unit: "4 pcs",
+    variants: [
+      { name: "4 pcs Pack", price: 20 },
+      { name: "10 pcs Value Pack", price: 45 },
+      { name: "25 pcs Bulk Bag", price: 100 }
+    ],
+    inStock: true,
+    badge: "High Vitamin C",
+    description: "Thin-skinned juicy yellow lemons for lemon rice, refreshing shikanji, and salad dressing.",
+    image: "https://images.unsplash.com/photo-1533082603883-3be203578899?w=500&auto=format&fit=crop&q=80"
+  },
+
+  // ==========================================
+  // 2. FRESH FRUITS (ताजे फल / ತಾಜಾ ಹಣ್ಣುಗಳು)
+  // ==========================================
+  {
+    id: "frt-01",
+    name: "Karnataka Yelakki Bananas (ಏಲಕ್ಕಿ ಬಾಳೆಹಣ್ಣು / एलक्की केला)",
+    category: "fruits",
+    price: 45,
+    unit: "500g (~6 pcs)",
+    variants: [
+      { name: "500g (~6 pcs)", price: 45 },
+      { name: "1 kg (~12 pcs)", price: 85 },
+      { name: "2 kg Family Pack", price: 160 }
+    ],
+    inStock: true,
+    badge: "Naturally Sweet",
+    description: "Small, fragrant, extremely sweet Yelakki bananas rich in instant energy and potassium.",
+    image: "https://images.unsplash.com/photo-1571771894821-ce9b6c11b08e?w=500&auto=format&fit=crop&q=80"
+  },
+  {
+    id: "frt-02",
+    name: "Royal Gala Crisp Red Apples (सेब / ಸೇಬು)",
+    category: "fruits",
+    price: 110,
+    unit: "500g (~3 pcs)",
+    variants: [
+      { name: "500g (~3 pcs)", price: 110 },
+      { name: "1 kg (~6 pcs)", price: 210 },
+      { name: "2 kg Royal Box", price: 400 }
+    ],
+    inStock: true,
+    badge: "Crisp & Juicy",
+    description: "Crispy sweet red apples imported and fresh-stored for premium crunch and natural health.",
+    image: "https://images.unsplash.com/photo-1560806887-1e4cd0b6cbd6?w=500&auto=format&fit=crop&q=80"
+  },
+  {
+    id: "frt-03",
+    name: "Fresh Mature Coconut with Water (ತಾಜಾ ತೆಂಗಿನಕಾಯಿ / नारियल)",
+    category: "fruits",
+    price: 35,
+    unit: "1 pc",
+    variants: [
+      { name: "1 pc with Sweet Water", price: 35 },
+      { name: "2 pcs Value Pack", price: 68 },
+      { name: "5 pcs Puja Pack", price: 165 }
+    ],
+    inStock: true,
+    badge: "Puja & Cooking",
+    description: "Fresh Karnataka coconut with rich meat and sweet water for chutneys, gravies, and puja.",
+    image: "https://images.unsplash.com/photo-1544378730-8b5104b18790?w=500&auto=format&fit=crop&q=80"
+  },
+  {
+    id: "frt-04",
+    name: "Sweet Ruby Pomegranates / Anar (अनार / ದಾಳಿಂಬೆ)",
+    category: "fruits",
+    price: 130,
+    unit: "1 kg",
+    variants: [
+      { name: "500g Pack", price: 70 },
+      { name: "1 kg Pack", price: 130 },
+      { name: "2 kg Box", price: 250 }
+    ],
+    inStock: true,
+    badge: "Rich in Iron",
+    description: "Deep red juicy pomegranate pearls rich in antioxidants and refreshing sweet flavour.",
+    image: "https://images.unsplash.com/photo-1615485290382-441e4d049cb5?w=500&auto=format&fit=crop&q=80"
+  },
+
+  // ==========================================
+  // 3. SUGAR & SWEETENERS (चीनी, रवा व गुड़ / ಸಕ್ಕರೆ, ರವೆ ಮತ್ತು ಬೆಲ್ಲ)
+  // ==========================================
   {
     id: "sug-01",
     name: "Refined Crystal Sugar (सफेद चीनी / ಸಕ್ಕರೆ)",
@@ -344,7 +645,9 @@ const CORE_GROCERY_ITEMS = [
     image: "https://images.unsplash.com/photo-1627485937980-221c88ac04f9?w=500&auto=format&fit=crop&q=80"
   },
 
-  // 2. Dals, Pulses & Legumes
+  // ==========================================
+  // 4. DALS & PULSES (दालें और दलहन / ಬೇಳೆಕಾಳುಗಳು)
+  // ==========================================
   {
     id: "dal-01",
     name: "Premium Unpolished Toor Dal (अरहर दाल / ತೊಗರಿ ಬೇಳೆ)",
@@ -423,7 +726,9 @@ const CORE_GROCERY_ITEMS = [
     image: "https://images.unsplash.com/photo-1546833999-b9f581a1996d?w=500&auto=format&fit=crop&q=80"
   },
 
-  // 3. Atta, Rice & Grains
+  // ==========================================
+  // 5. ATTA, RICE & GRAINS (आटा, चावल व अनाज / ಹಿಟ್ಟು, ಅಕ್ಕಿ)
+  // ==========================================
   {
     id: "sta-01",
     name: "Aashirvaad Superior MP Sharbati Whole Wheat Atta (गेहूं आटा / ಗೋಧಿ ಹಿಟ್ಟು)",
@@ -478,7 +783,9 @@ const CORE_GROCERY_ITEMS = [
     image: "https://images.unsplash.com/photo-1536304993881-ff6e9eefa2a6?w=500&auto=format&fit=crop&q=80"
   },
 
-  // 4. Cooking Oils & Desi Ghee
+  // ==========================================
+  // 6. COOKING OILS & DESI GHEE (तेल और शुद्ध घी / ಎಣ್ಣೆ ಮತ್ತು ತುಪ್ಪ)
+  // ==========================================
   {
     id: "oil-01",
     name: "Fortune Sunlite Refined Sunflower Oil (सनफ्लावर तेल / ಸೂರ್ಯಕಾಂತಿ ಎಣ್ಣೆ)",
@@ -533,26 +840,10 @@ const CORE_GROCERY_ITEMS = [
     description: "Traditional cold pressed Kachi Ghani mustard oil with natural pungency and antioxidants.",
     image: "https://images.unsplash.com/photo-1608797178974-15b35a61dd75?w=500&auto=format&fit=crop&q=80"
   },
-  {
-    id: "oil-04",
-    name: "Pure Cold Pressed Groundnut / Peanut Oil (मूंगफली तेल / ಕಡಲೆಕಾಯಿ ಎಣ್ಣೆ)",
-    category: "oils-ghee",
-    price: 175,
-    unit: "1 Litre",
-    variants: [
-      { name: "500 ml Bottle", price: 92 },
-      { name: "1 Litre Bottle", price: 175 },
-      { name: "2 Litre Bottle", price: 345 },
-      { name: "5 Litre Can", price: 840 },
-      { name: "15 Litre Tin", price: 2450 }
-    ],
-    inStock: true,
-    badge: "Traditional Cold Pressed",
-    description: "Natural aroma cold pressed groundnut oil for healthy deep frying and traditional curries.",
-    image: "https://images.unsplash.com/photo-1474979266404-7eaacbcd87c5?w=500&auto=format&fit=crop&q=80"
-  },
 
-  // 5. Spices, Masalas & Seasonings
+  // ==========================================
+  // 7. SPICES, MASALAS & SALT (मसाले व नमक / ಮಸಾಲೆ ಪದಾರ್ಥಗಳು)
+  // ==========================================
   {
     id: "spc-01",
     name: "Everest Turmeric Powder / Haldi (हल्दी पाउडर / ಅರಿಶಿನ ಪುಡಿ)",
@@ -606,7 +897,9 @@ const CORE_GROCERY_ITEMS = [
     image: "https://images.unsplash.com/photo-1596040033229-a9821ebd058d?w=500&auto=format&fit=crop&q=80"
   },
 
-  // 6. Tea & Beverages
+  // ==========================================
+  // 8. TEA & BEVERAGES (चाय, कॉफ़ी व पेय / ಟೀ, ಕಾಫಿ)
+  // ==========================================
   {
     id: "bev-01",
     name: "Tata Tea Gold Premium CTC Leaf & Long Leaves (टाटा टी गोल्ड / ಟಾಟಾ ಟೀ)",
@@ -643,11 +936,13 @@ const CORE_GROCERY_ITEMS = [
   }
 ];
 
-// Scale to 2,050 full supermarket items with realistic multi-variants
+// Scale to 2,050 full supermarket items with realistic multi-variants and farm fresh produce
 function generateFullStoreInventory(targetCount = 2050) {
   const inventory = [...CORE_GROCERY_ITEMS];
   
   const brandsByCategory = {
+    "vegetables": ["Farm Fresh Shagun", "Bettadapura Green Farms", "Local Mandi Fresh", "Organic Karnataka"],
+    "fruits": ["Farm Fresh Shagun", "Bettadapura Orchards", "Kashmir Valley", "Ooty Fresh"],
     "staples": ["Aashirvaad", "Pillsbury", "Fortune", "Nature Fresh", "India Gate", "Daawat", "Royal Organic", "BB Royal"],
     "sugar-sweeteners": ["Madhur", "Trust Classic", "Patanjali", "Organic Tattva", "Dhampure", "24 Mantra"],
     "oils-ghee": ["Fortune", "Dhara", "Saffola", "Emami Healthy", "Gemini", "Amul", "Gowardhan", "Mother Dairy"],
@@ -661,6 +956,18 @@ function generateFullStoreInventory(targetCount = 2050) {
   };
 
   const itemTemplates = [
+    { cat: "vegetables", name: "Farm Fresh Onions (लाल प्याज / ಈರುಳ್ಳಿ)", price: 38, unit: "1 kg", v: ["500g", "1 kg", "2 kg", "5 kg"] },
+    { cat: "vegetables", name: "Fresh Hybrid Tomatoes (टमाटर / ಟೊಮೇಟೊ)", price: 32, unit: "1 kg", v: ["500g", "1 kg", "2 kg", "3 kg"] },
+    { cat: "vegetables", name: "Fresh Jyoti Potatoes (आलू / ಆಲೂಗಡ್ಡೆ)", price: 35, unit: "1 kg", v: ["500g", "1 kg", "2 kg", "5 kg"] },
+    { cat: "vegetables", name: "Spicy Green Chillies (हरी मिर्च / ಹಸಿರು ಮೆಣಸಿನಕಾಯಿ)", price: 18, unit: "250g", v: ["100g", "250g", "500g"] },
+    { cat: "vegetables", name: "Fresh Ginger Root (अदरक / ಶುಂಠಿ)", price: 32, unit: "250g", v: ["100g", "250g", "500g"] },
+    { cat: "vegetables", name: "Desi Garlic Bulbs (लहसुन / ಬೆಳ್ಳುಳ್ಳಿ)", price: 45, unit: "250g", v: ["100g", "250g", "500g", "1 kg"] },
+    { cat: "vegetables", name: "Tender Green Ladyfinger (भिंडी / ಬೆಂಡೆಕಾಯಿ)", price: 28, unit: "500g", v: ["250g", "500g", "1 kg"] },
+    { cat: "vegetables", name: "Fresh Cabbage (पत्तागोभी / ಎಲೆಕೋಸು)", price: 30, unit: "1 pc", v: ["1 pc", "2 pcs"] },
+    { cat: "fruits", name: "Yelakki Bananas (ಏಲಕ್ಕಿ ಬಾಳೆಹಣ್ಣು / केला)", price: 45, unit: "500g", v: ["500g", "1 kg", "2 kg"] },
+    { cat: "fruits", name: "Royal Gala Crisp Apples (सेब / ಸೇಬು)", price: 110, unit: "500g", v: ["500g", "1 kg", "2 kg"] },
+    { cat: "fruits", name: "Fresh Coconut with Water (ತೆಂಗಿನಕಾಯಿ / नारियल)", price: 35, unit: "1 pc", v: ["1 pc", "2 pcs", "5 pcs"] },
+    { cat: "fruits", name: "Ruby Sweet Pomegranates (अनार / ದಾಳಿಂಬೆ)", price: 130, unit: "1 kg", v: ["500g", "1 kg", "2 kg"] },
     { cat: "staples", name: "Chakki Fresh Atta (गेहूं आटा / ಗೋಧಿ ಹಿಟ್ಟು)", price: 48, unit: "1 kg", v: ["500g", "1 kg", "2 kg", "5 kg", "10 kg"] },
     { cat: "staples", name: "Premium Sona Masoori Rice (सोना मसूरी / ಅಕ್ಕಿ)", price: 58, unit: "1 kg", v: ["1 kg", "2 kg", "5 kg", "10 kg", "25 kg"] },
     { cat: "staples", name: "Thick Poha / Beaten Rice (मोटा पोहा / ಅವಲಕ್ಕಿ)", price: 45, unit: "1 kg", v: ["500g", "1 kg", "2 kg", "5 kg"] },
@@ -691,7 +998,7 @@ function generateFullStoreInventory(targetCount = 2050) {
     for (const t of itemTemplates) {
       if (inventory.length >= targetCount) break;
 
-      const brandList = brandsByCategory[t.cat] || ["Shagun Premium", "Farm Fresh", "Gold Harvest"];
+      const brandList = brandsByCategory[t.cat] || ["Shagun Farm Fresh", "Gold Harvest", "Bettadapura Fresh"];
       const brand = brandList[Math.floor(Math.random() * brandList.length)];
       const variationNum = Math.floor(inventory.length / itemTemplates.length) + 1;
       
@@ -702,11 +1009,12 @@ function generateFullStoreInventory(targetCount = 2050) {
       if (t.v && t.v.length > 0) {
         t.v.forEach(vName => {
           let factor = 1.0;
-          if (vName.includes("250g") || vName.includes("200g")) factor = 0.28;
+          if (vName.includes("100g")) factor = 0.16;
+          else if (vName.includes("250g") || vName.includes("200g")) factor = 0.28;
           else if (vName.includes("500g") || vName.includes("500 ml")) factor = 0.52;
-          else if (vName.includes("2 kg") || vName.includes("2 Litre")) factor = 1.95;
+          else if (vName.includes("2 kg") || vName.includes("2 Litre") || vName.includes("2 pcs")) factor = 1.95;
           else if (vName.includes("3 kg")) factor = 2.9;
-          else if (vName.includes("5 kg") || vName.includes("5 Litre")) factor = 4.8;
+          else if (vName.includes("5 kg") || vName.includes("5 Litre") || vName.includes("5 pcs")) factor = 4.8;
           else if (vName.includes("10 kg")) factor = 9.3;
           else if (vName.includes("15 Litre") || vName.includes("25 kg")) factor = 14.2;
           
@@ -716,6 +1024,11 @@ function generateFullStoreInventory(targetCount = 2050) {
         variants.push({ name: t.unit, price: basePrice });
       }
 
+      const isVegOrFruit = t.cat === "vegetables" || t.cat === "fruits";
+      const defaultImg = isVegOrFruit 
+        ? "https://images.unsplash.com/photo-1540420773420-3366772f4999?w=500&auto=format&fit=crop&q=80"
+        : "https://images.unsplash.com/photo-1542838132-92c53300491e?w=500&auto=format&fit=crop&q=80";
+
       inventory.push({
         id: `shagun_${t.cat}_${currentId++}`,
         name: `${brand} ${t.name} (Batch #${variationNum})`,
@@ -724,9 +1037,9 @@ function generateFullStoreInventory(targetCount = 2050) {
         unit: t.unit,
         variants,
         inStock: true,
-        badge: variationNum === 1 ? "Popular" : (Math.random() > 0.75 ? "Value Deal" : null),
-        description: `High purity hygienic grocery item packaged with store warranty at SHAGUN STORE.`,
-        image: "https://images.unsplash.com/photo-1542838132-92c53300491e?w=500&auto=format&fit=crop&q=80"
+        badge: variationNum === 1 ? (isVegOrFruit ? "Farm Fresh" : "Popular") : (Math.random() > 0.75 ? "Value Deal" : null),
+        description: `High purity hygienic fresh item packaged with store warranty at SHAGUN STORE, Bettadapura.`,
+        image: defaultImg
       });
     }
   }
