@@ -2145,97 +2145,140 @@ main {
     padding-bottom: max(24px, env(safe-area-inset-bottom));
   }
 
-  /* ---------------- Staff Terminal Mobile UX ---------------- */
-  .staff-toolbar {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 10px;
-    padding: 12px 14px;
+/* ---------------- Staff Terminal Native Mobile App UX ---------------- */
+@media (max-width: 899px) {
+  body.staff-portal-body {
+    background: #f1f5f9 !important;
+    padding: 0 !important;
+    margin: 0 !important;
+  }
+
+  body.staff-portal-body main {
+    padding: 0 0 4rem 0 !important;
+    max-width: 100% !important;
+  }
+
+  body.staff-portal-body .app-header {
+    display: none !important;
+  }
+
+  .staff-mobile-appbar {
+    position: sticky;
+    top: 0;
+    z-index: 1000;
     background: #065f46;
     color: #ffffff;
-    border-radius: 12px;
-    margin-bottom: 12px;
+    padding: 12px 16px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-shadow: 0 4px 12px rgba(6, 95, 70, 0.25);
   }
 
-  .staff-title-group h2 {
-    font-size: 1.15rem;
-    color: #ffffff;
-  }
-
-  .staff-title-group p {
-    font-size: 0.74rem;
-    color: #86efac;
-  }
-
-  .staff-mobile-tab-bar {
+  .staff-mobile-nav-tabs {
+    position: sticky;
+    top: 54px;
+    z-index: 999;
+    background: #ffffff;
     display: flex;
     overflow-x: auto;
+    padding: 8px 12px;
     gap: 8px;
-    padding: 4px 2px 10px 2px;
-    margin-bottom: 12px;
-    -webkit-overflow-scrolling: touch;
+    border-bottom: 1.5px solid #e2e8f0;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
     scrollbar-width: none;
   }
-  .staff-mobile-tab-bar::-webkit-scrollbar {
+  .staff-mobile-nav-tabs::-webkit-scrollbar {
     display: none;
   }
 
-  .staff-mobile-tab-pill {
-    flex: 0 0 auto;
+  .staff-tab-chip {
+    flex: 1 0 auto;
     padding: 10px 16px;
-    background: #ffffff;
-    border: 1.5px solid var(--border);
-    border-radius: var(--radius-full);
+    border-radius: 999px;
+    border: 1.5px solid #cbd5e1;
+    background: #f8fafc;
     font-weight: 800;
-    font-size: 0.82rem;
-    color: #0f172a;
-    cursor: pointer;
+    font-size: 0.84rem;
+    color: #1e293b;
     display: flex;
     align-items: center;
+    justify-content: center;
     gap: 6px;
-    box-shadow: var(--shadow-sm);
-    transition: all 0.2s ease;
+    cursor: pointer;
+    touch-action: manipulation;
+    white-space: nowrap;
   }
 
-  .staff-mobile-tab-pill.active {
+  .staff-tab-chip.active {
     background: #065f46;
     color: #ffffff;
     border-color: #065f46;
-    box-shadow: 0 4px 12px rgba(6, 95, 70, 0.3);
+    box-shadow: 0 4px 10px rgba(6, 95, 70, 0.3);
   }
 
-  .kanban-board {
+  .staff-mobile-orders-feed {
+    padding: 12px;
     display: flex;
     flex-direction: column;
-    gap: 16px;
+    gap: 12px;
   }
 
-  .kanban-col {
+  .staff-mobile-card {
     background: #ffffff;
-    border: 1.5px solid var(--border);
-    border-radius: 14px;
-    padding: 12px;
-    box-shadow: var(--shadow-sm);
-  }
-
-  .order-ticket {
+    border: 1.5px solid #e2e8f0;
+    border-radius: 16px;
     padding: 14px;
-    border-radius: 12px;
-    margin-bottom: 12px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
   }
 
-  .pack-checkbox {
-    width: 22px;
-    height: 22px;
+  .staff-mobile-card.is-new-order {
+    border-color: #3b82f6;
+    box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.25);
+  }
+
+  .btn-primary-mobile-pack {
+    width: 100%;
+    min-height: 48px;
+    padding: 12px;
+    border-radius: 12px;
+    font-weight: 900;
+    font-size: 0.95rem;
+    border: none;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    touch-action: manipulation;
+  }
+
+  .mobile-pack-checkbox {
+    width: 26px;
+    height: 26px;
     accent-color: #065f46;
     cursor: pointer;
   }
 
-  .btn-ticket-action {
-    min-height: 44px;
-    font-size: 0.88rem;
-    font-weight: 800;
+  .desktop-only-kanban {
+    display: none !important;
   }
+}
+
+@media (min-width: 900px) {
+  .mobile-only-staff-view {
+    display: none !important;
+  }
+  .desktop-only-kanban {
+    display: grid !important;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 16px;
+  }
+}
 
   /* ---------------- Owner Admin Mobile UX ---------------- */
   .admin-dashboard-container {
