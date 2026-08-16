@@ -72,6 +72,8 @@ try {
                         if ($reqBody) {
                             [System.IO.File]::WriteAllText($prodsFile, $reqBody, [System.Text.Encoding]::UTF8)
                         }
+                        $responseJson = '{"status":"OK","saved":true}'
+                    }
                 } elseif ($urlPath -eq "/api/staff") {
                     $staffFile = Join-Path $dir "data\staff.json"
                     if ($method -eq "GET") {
