@@ -609,6 +609,84 @@ class ShagunStoreApp {
     }
   }
 
+  startAddonOrder(orderId) {
+    this.activeAddonOrderId = orderId;
+    sounds.playTapSound();
+    const ord = this.orders.find(o => o.id === orderId);
+    this.showToastNotification(`➕ Browse items and add to Order #${ord ? ord.token : ''}!`);
+    this.render();
+  }
+
+  startFreshNewOrder() {
+    this.currentCustomerOrderId = null;
+    this.activeAddonOrderId = null;
+    this.safeRemoveItem('shagun_customer_active_order');
+    sounds.playTapSound();
+    this.render();
+  }
+
+  submitCartOrder() {
+    const modalDiv = document.getElementById('cartModal');
+    if (!modalDiv) return;
+    const nameInp = modalDiv.querySelector('#orderCustomerName');
+    const phoneInp = modalDiv.querySelector('#orderCustomerPhone');
+    const noteInp = modalDiv.querySelector('#orderPackingNote');
+    const name = nameInp ? nameInp.value : '';
+    const phone = phoneInp ? phoneInp.value : '';
+    const note = noteInp ? noteInp.value : '';
+    this.initiateOrderWithOTP(name, phone, note);
+  }
+
+  switchToCustomerView() {
+    this.currentView = 'customer';
+    sounds.playTapSound();
+    this.render();
+  }
+
+  switchToStaffView() {
+    this.currentView = 'staff';
+    sounds.playTapSound();
+    this.render();
+  }
+
+  lockAdminMode() {
+    this.adminUnlocked = false;
+    this.adminAuthenticated = false;
+    this.currentView = 'customer';
+    this.showToastNotification("🔒 Admin Mode Locked.");
+    sounds.playTapSound();
+    this.render();
+  }
+
+  toggleAudio() {
+    this.audioAlertsEnabled = !this.audioAlertsEnabled;
+    if (this.audioAlertsEnabled) sounds.playNewOrderChime();
+    this.render();
+  }
+
+  exportPaymentLedgerCSV() {
+    const headers = ["Token", "Order Date & Time", "Payment Completed Date & Time", "Customer Name", "Phone", "Amount (INR)", "Payment Mode", "Payment Status", "Order Status"];
+    const rows = this.orders.map(o => [
+      `"${o.token}"`,
+      `"${new Date(o.createdAt).toLocaleString('en-IN')}"`,
+      `"${o.paymentCompletedFormatted || (o.paymentVerified ? new Date(o.createdAt).toLocaleString('en-IN') : (o.paymentMethod === 'upi' ? 'Auto-Verified & Paid' : 'Cash at Pickup'))}"`,
+      `"${(o.customerName || '').replace(/"/g, '""')}"`,
+      `"${o.phone}"`,
+      o.totalAmount,
+      `"${o.paymentMethod === 'upi' ? 'UPI' : 'Cash'}"`,
+      `"${(o.paymentStatus || '').replace(/"/g, '""')}"`,
+      `"${o.status}"`
+    ]);
+    const csvContent = "data:text/csv;charset=utf-8," + [headers.join(','), ...rows.map(e => e.join(','))].join('\n');
+    const link = document.createElement("a");
+    link.setAttribute("href", encodeURI(csvContent));
+    link.setAttribute("download", `shagun_store_payment_ledger_${new Date().toISOString().slice(0,10)}.csv`);
+    document.body.appendChild(link);
+    link.click();
+    link.remove();
+    this.showToastNotification("📥 Payment Ledger CSV Exported!");
+  }
+
   clearCart() {
     this.cart = [];
     this.saveCart();
@@ -1825,11 +1903,11 @@ class ShagunStoreApp {
         <!-- Tracker Action Buttons -->
         <div style="display: flex; flex-direction: column; gap: 8px; margin-top: 12px;">
           ${order.status === 'NEW' ? `
-            <button class="btn-addon-to-active-order" data-order-id="${order.id}" style="width: 100%; padding: 12px; background: #1e3a8a; color: white; border: none; border-radius: var(--radius-full); font-weight: 800; font-size: 0.85rem; cursor: pointer; box-shadow: var(--shadow-sm);">
+            <button class="btn-addon-to-active-order" data-order-id="${order.id}" onclick="window.shagunApp.startAddonOrder('${order.id}')" style="width: 100%; padding: 12px; background: #1e3a8a; color: white; border: none; border-radius: var(--radius-full); font-weight: 800; font-size: 0.85rem; cursor: pointer; box-shadow: var(--shadow-sm);">
               ➕ Add More Items to Token #${order.token}
             </button>
           ` : ''}
-          <button id="btnCustomerNewOrder" style="width: 100%; padding: 12px; background: #ffffff; border: 1.5px solid var(--border); color: #0f172a; border-radius: var(--radius-full); font-weight: 800; font-size: 0.85rem; cursor: pointer;">
+          <button id="btnCustomerNewOrder" onclick="window.shagunApp.startFreshNewOrder()" style="width: 100%; padding: 12px; background: #ffffff; border: 1.5px solid var(--border); color: #0f172a; border-radius: var(--radius-full); font-weight: 800; font-size: 0.85rem; cursor: pointer;">
             🛍️ Start Fresh New Order / Browse Store
           </button>
         </div>
@@ -1853,11 +1931,14 @@ class ShagunStoreApp {
           <p>${this.t('staffDashboardSub')}</p>
         </div>
         <div style="display: flex; gap: 8px; align-items: center;">
-          <button id="btnToggleAudio" style="padding: 6px 12px; background: #ffffff; border: 1.5px solid var(--border); border-radius: var(--radius-sm); font-weight: 800; font-size: 0.78rem; cursor: pointer;">
+          <button id="btnToggleAudio" onclick="window.shagunApp.toggleAudio()" style="padding: 6px 12px; background: #ffffff; border: 1.5px solid var(--border); border-radius: var(--radius-sm); font-weight: 800; font-size: 0.78rem; cursor: pointer;">
             ${this.audioAlertsEnabled ? '🔊 Sound On' : '🔇 Muted'}
           </button>
-          <button id="btnTestChime" style="padding: 6px 12px; background: #1e3a8a; color: white; border: none; border-radius: var(--radius-sm); font-weight: 800; font-size: 0.78rem; cursor: pointer;">
+          <button id="btnTestChime" onclick="sounds.playNewOrderChime()" style="padding: 6px 12px; background: #1e3a8a; color: white; border: none; border-radius: var(--radius-sm); font-weight: 800; font-size: 0.78rem; cursor: pointer;">
             🔔 Test Chime
+          </button>
+          <button id="btnLogoutStaff" onclick="window.shagunApp.logoutStaff()" style="padding: 6px 12px; background: #dc2626; color: white; border: none; border-radius: var(--radius-sm); font-weight: 800; font-size: 0.78rem; cursor: pointer;">
+            🔒 Logout
           </button>
         </div>
       </div>
@@ -1868,7 +1949,9 @@ class ShagunStoreApp {
           <div class="kanban-col-header">
             <span>${this.t('newOrders')} (${newOrders.length})</span>
           </div>
-          ${newOrders.length === 0 ? `<div style="text-align:center; padding: 2rem; color: #64748b; font-size:0.8rem;">No new incoming orders</div>` : newOrders.map(o => this.renderStaffOrderCard(o)).join('')}
+          <div class="kanban-col-body">
+            ${newOrders.length === 0 ? `<p class="kanban-empty">${this.t('noNewOrders')}</p>` : newOrders.map(o => this.renderStaffOrderCard(o)).join('')}
+          </div>
         </div>
 
         <!-- Col 2: PACKING -->
@@ -1876,7 +1959,9 @@ class ShagunStoreApp {
           <div class="kanban-col-header">
             <span>${this.t('packingOrders')} (${packingOrders.length})</span>
           </div>
-          ${packingOrders.length === 0 ? `<div style="text-align:center; padding: 2rem; color: #64748b; font-size:0.8rem;">No orders being packed</div>` : packingOrders.map(o => this.renderStaffOrderCard(o)).join('')}
+          <div class="kanban-col-body">
+            ${packingOrders.length === 0 ? `<p class="kanban-empty">${this.t('noPackingOrders')}</p>` : packingOrders.map(o => this.renderStaffOrderCard(o)).join('')}
+          </div>
         </div>
 
         <!-- Col 3: READY -->
@@ -1884,7 +1969,9 @@ class ShagunStoreApp {
           <div class="kanban-col-header">
             <span>${this.t('readyOrders')} (${readyOrders.length})</span>
           </div>
-          ${readyOrders.length === 0 ? `<div style="text-align:center; padding: 2rem; color: #64748b; font-size:0.8rem;">No bags waiting for pickup</div>` : readyOrders.map(o => this.renderStaffOrderCard(o)).join('')}
+          <div class="kanban-col-body">
+            ${readyOrders.length === 0 ? `<p class="kanban-empty">${this.t('noReadyOrders')}</p>` : readyOrders.map(o => this.renderStaffOrderCard(o)).join('')}
+          </div>
         </div>
 
         <!-- Col 4: COMPLETED -->
@@ -1892,7 +1979,9 @@ class ShagunStoreApp {
           <div class="kanban-col-header">
             <span>${this.t('completedOrders')} (${completedOrders.length})</span>
           </div>
-          ${completedOrders.map(o => this.renderStaffOrderCard(o)).join('')}
+          <div class="kanban-col-body">
+            ${completedOrders.length === 0 ? `<p class="kanban-empty">${this.t('noCompletedOrders')}</p>` : completedOrders.map(o => this.renderStaffOrderCard(o)).join('')}
+          </div>
         </div>
       </div>
     `;
@@ -1902,8 +1991,6 @@ class ShagunStoreApp {
     const isNew = order.status === 'NEW';
     const isPacking = order.status === 'PACKING';
     const isReady = order.status === 'READY';
-    const isDone = order.status === 'COMPLETED';
-
     const orderTime = new Date(order.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
 
     return `
@@ -1942,11 +2029,11 @@ class ShagunStoreApp {
         <div style="margin: 8px 0; background: #f8fafc; padding: 8px; border-radius: 8px; border: 1px solid #e2e8f0;">
           <div style="display: flex; justify-content: space-between; font-size: 0.7rem; font-weight: 800; color: #64748b; margin-bottom: 4px;">
             <span>CHECKLIST (${order.items.filter(i=>i.packed).length}/${order.items.length}):</span>
-            ${isPacking ? `<button class="btn-pack-all" data-order-id="${order.id}" style="border:none; background:transparent; color:#1e3a8a; font-weight:900; font-size:0.72rem; cursor:pointer;">${this.t('checkAll')}</button>` : ''}
+            ${isPacking ? `<button class="btn-pack-all" data-order-id="${order.id}" onclick="window.shagunApp.packAllItems('${order.id}')" style="border:none; background:transparent; color:#1e3a8a; font-weight:900; font-size:0.72rem; cursor:pointer;">${this.t('checkAll')}</button>` : ''}
           </div>
           ${order.items.map((item, idx) => `
             <label style="display: flex; align-items: center; gap: 6px; font-size: 0.78rem; padding: 2px 0; cursor: pointer; ${item.packed ? 'text-decoration: line-through; opacity: 0.6;' : ''}">
-              <input type="checkbox" class="pack-checkbox" data-order-id="${order.id}" data-item-idx="${idx}" ${item.packed ? 'checked' : ''}>
+              <input type="checkbox" class="pack-checkbox" data-order-id="${order.id}" data-item-idx="${idx}" onchange="window.shagunApp.toggleItemPacked('${order.id}', ${idx})" ${item.packed ? 'checked' : ''}>
               <span><strong>${item.qty}x</strong> ${item.name} <em style="font-size: 0.72rem; color: #64748b;">(${item.variantName})</em></span>
             </label>
           `).join('')}
@@ -1955,21 +2042,21 @@ class ShagunStoreApp {
         <!-- Action Buttons with Status Undo -->
         <div class="ticket-actions">
           ${isNew ? `
-            <button class="btn-ticket-action btn-ticket-pack btn-change-status" data-order-id="${order.id}" data-status="PACKING">
+            <button class="btn-ticket-action btn-ticket-pack btn-change-status" data-order-id="${order.id}" data-status="PACKING" onclick="window.shagunApp.updateOrderStatus('${order.id}', 'PACKING')">
               ${this.t('startPacking')}
             </button>
           ` : isPacking ? `
-            <button class="btn-ticket-action btn-ticket-ready btn-change-status" data-order-id="${order.id}" data-status="READY">
+            <button class="btn-ticket-action btn-ticket-ready btn-change-status" data-order-id="${order.id}" data-status="READY" onclick="window.shagunApp.updateOrderStatus('${order.id}', 'READY')">
               ${this.t('markReady')}
             </button>
-            <button class="btn-undo-status" data-order-id="${order.id}" data-prev-status="NEW" title="Undo status back to NEW" style="background:#e2e8f0; border:none; padding:4px 8px; border-radius:4px; font-size:0.72rem; cursor:pointer;">
+            <button class="btn-undo-status" data-order-id="${order.id}" data-prev-status="NEW" onclick="window.shagunApp.updateOrderStatus('${order.id}', 'NEW')" title="Undo status back to NEW" style="background:#e2e8f0; border:none; padding:4px 8px; border-radius:4px; font-size:0.72rem; cursor:pointer;">
               ↩
             </button>
           ` : isReady ? `
-            <button class="btn-ticket-action btn-ticket-done btn-change-status" data-order-id="${order.id}" data-status="COMPLETED">
+            <button class="btn-ticket-action btn-ticket-done btn-change-status" data-order-id="${order.id}" data-status="COMPLETED" onclick="window.shagunApp.updateOrderStatus('${order.id}', 'COMPLETED')">
               ${this.t('handOver')}
             </button>
-            <button class="btn-undo-status" data-order-id="${order.id}" data-prev-status="PACKING" title="Undo status back to PACKING" style="background:#e2e8f0; border:none; padding:4px 8px; border-radius:4px; font-size:0.72rem; cursor:pointer;">
+            <button class="btn-undo-status" data-order-id="${order.id}" data-prev-status="PACKING" onclick="window.shagunApp.updateOrderStatus('${order.id}', 'PACKING')" title="Undo status back to PACKING" style="background:#e2e8f0; border:none; padding:4px 8px; border-radius:4px; font-size:0.72rem; cursor:pointer;">
               ↩
             </button>
           ` : `
@@ -2206,10 +2293,10 @@ class ShagunStoreApp {
                       </span>
                     </td>
                     <td style="padding: 8px; display: flex; gap: 6px;">
-                      <button class="btn-toggle-staff-access" data-staff-id="${s.id}" style="padding: 4px 8px; background: ${s.active ? '#fee2e2' : '#dcfce7'}; color: ${s.active ? '#991b1b' : '#166534'}; border: 1px solid ${s.active ? '#fca5a5' : '#86efac'}; border-radius: 4px; font-size: 0.72rem; font-weight: 800; cursor: pointer;">
+                      <button class="btn-toggle-staff-access" data-staff-id="${s.id}" onclick="window.shagunApp.toggleStaffAccess('${s.id}')" style="padding: 4px 8px; background: ${s.active ? '#fee2e2' : '#dcfce7'}; color: ${s.active ? '#991b1b' : '#166534'}; border: 1px solid ${s.active ? '#fca5a5' : '#86efac'}; border-radius: 4px; font-size: 0.72rem; font-weight: 800; cursor: pointer;">
                         ${s.active ? '🛑 Stop Access' : '🟢 Enable Access'}
                       </button>
-                      <button class="btn-delete-staff" data-staff-id="${s.id}" style="padding: 4px 8px; background: #f1f5f9; color: #dc2626; border: none; border-radius: 4px; font-size: 0.72rem; font-weight: 800; cursor: pointer;">
+                      <button class="btn-delete-staff" data-staff-id="${s.id}" onclick="window.shagunApp.deleteStaffMember('${s.id}')" style="padding: 4px 8px; background: #f1f5f9; color: #dc2626; border: none; border-radius: 4px; font-size: 0.72rem; font-weight: 800; cursor: pointer;">
                         🗑️
                       </button>
                     </td>
@@ -2224,7 +2311,7 @@ class ShagunStoreApp {
         <div style="border: 1.5px solid var(--border); border-radius: var(--radius-md); padding: 14px; background: #ffffff;">
           <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
             <h3 style="font-size: 1rem; font-weight: 900; color: #0f172a;">👥 Customer Mobile Directory (${customers.length})</h3>
-            <button id="btnExportCustomersCSV" style="padding: 6px 12px; background: #1e3a8a; color: white; border: none; border-radius: 6px; font-weight: 800; font-size: 0.75rem; cursor: pointer;">
+            <button id="btnExportCustomersCSV" onclick="window.shagunApp.exportPaymentLedgerCSV()" style="padding: 6px 12px; background: #1e3a8a; color: white; border: none; border-radius: 6px; font-weight: 800; font-size: 0.75rem; cursor: pointer;">
               ⬇️ Export Excel CSV
             </button>
           </div>
