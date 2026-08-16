@@ -1486,9 +1486,196 @@ class ShagunStoreApp {
     if (newStatus === 'READY') {
       sounds.playOrderReadyFanfare();
     } else {
-      sounds.playTapSound();
+      this.playSafeTapSound();
     }
 
+    this.render();
+  }
+
+  // ---------------- Manual Order & Item Management (Staff & Admin) ----------------
+  removeItemFromOrder(orderId, itemIndex) {
+    const order = this.orders.find(o => o.id === orderId);
+    if (!order || !order.items[itemIndex]) return;
+
+    const removedItem = order.items[itemIndex];
+    if (confirm(`Remove "${removedItem.name} (${removedItem.variantName})" from Order #${order.token}?`)) {
+      order.items.splice(itemIndex, 1);
+      
+      // Recalculate subtotal and total
+      const newSubtotal = order.items.reduce((s, i) => s + (i.price * i.qty), 0);
+      const newTax = Math.round(newSubtotal * (this.config.taxPercent / 100));
+      const newTotal = newSubtotal + newTax + (this.config.expressPackingFee || 0);
+
+      order.subtotal = newSubtotal;
+      order.tax = newTax;
+      order.totalAmount = newTotal;
+
+      const timeStr = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+      order.history.push({
+        status: order.status,
+        time: timeStr,
+        text: `Item "${removedItem.name}" was removed from order by staff/admin. New total: ₹${newTotal}`
+      });
+
+      this.saveOrders();
+      this.broadcast('ORDER_UPDATED', order);
+      updateOrderStatusInFirestore(orderId, order.status, order.history[order.history.length - 1]);
+      this.showToastNotification(`✂️ Item removed. Order #${order.token} total updated to ₹${newTotal}`);
+      this.render();
+    }
+  }
+
+  cancelOrderStaff(orderId) {
+    const order = this.orders.find(o => o.id === orderId);
+    if (!order) return;
+    if (confirm(`Are you sure you want to CANCEL Order #${order.token}?`)) {
+      order.status = 'CANCELLED';
+      order.paymentStatus = '❌ Cancelled by Store Staff';
+      const timeStr = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+      order.history.push({
+        status: 'CANCELLED',
+        time: timeStr,
+        text: 'Order was cancelled by store staff.'
+      });
+      this.saveOrders();
+      this.broadcast('ORDER_UPDATED', order);
+      updateOrderStatusInFirestore(orderId, 'CANCELLED', order.history[order.history.length - 1]);
+      this.showToastNotification(`❌ Order #${order.token} has been cancelled.`);
+      this.render();
+    }
+  }
+
+  deleteOrderStaff(orderId) {
+    const order = this.orders.find(o => o.id === orderId);
+    if (!order) return;
+    if (confirm(`Permanently DELETE Order ticket #${order.token}? This cannot be undone.`)) {
+      this.orders = this.orders.filter(o => o.id !== orderId);
+      this.saveOrders();
+      this.broadcast('ORDER_UPDATED', { id: orderId, status: 'DELETED' });
+      this.showToastNotification(`🗑️ Order #${order.token} deleted.`);
+      this.render();
+    }
+  }
+
+  cancelOrderAdmin(orderId) {
+    this.cancelOrderStaff(orderId);
+  }
+
+  deleteOrderAdmin(orderId) {
+    this.deleteOrderStaff(orderId);
+  }
+
+  markOrderPaidCash(orderId) {
+    const order = this.orders.find(o => o.id === orderId);
+    if (!order) return;
+    order.paymentVerified = true;
+    order.paymentMethod = 'counter';
+    order.paymentStatus = '💵 Cash Received at Counter';
+    const timeStr = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+    order.history.push({
+      status: order.status,
+      time: timeStr,
+      text: 'Cash payment confirmed by store owner/staff.'
+    });
+    this.saveOrders();
+    this.broadcast('ORDER_UPDATED', order);
+    updateOrderStatusInFirestore(orderId, order.status, order.history[order.history.length - 1]);
+    this.showToastNotification(`💵 Order #${order.token} marked as Cash Paid!`);
+    this.render();
+  }
+
+  markOrderRefunded(orderId) {
+    const order = this.orders.find(o => o.id === orderId);
+    if (!order) return;
+    if (confirm(`Mark Order #${order.token} as REFUNDED?`)) {
+      order.status = 'CANCELLED';
+      order.paymentStatus = '↩ Refunded to Customer';
+      const timeStr = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+      order.history.push({
+        status: 'CANCELLED',
+        time: timeStr,
+        text: 'Order amount marked as refunded.'
+      });
+      this.saveOrders();
+      this.broadcast('ORDER_UPDATED', order);
+      updateOrderStatusInFirestore(orderId, 'CANCELLED', order.history[order.history.length - 1]);
+      this.showToastNotification(`↩ Order #${order.token} marked as Refunded.`);
+      this.render();
+    }
+  }
+
+  clearCompletedOrders() {
+    const toRemove = this.orders.filter(o => o.status === 'COMPLETED' || o.status === 'CANCELLED');
+    if (toRemove.length === 0) {
+      alert("No completed or cancelled orders to clear.");
+      return;
+    }
+    if (confirm(`Clear ${toRemove.length} completed/cancelled order records from ledger? Active pending orders will remain safe.`)) {
+      this.orders = this.orders.filter(o => o.status !== 'COMPLETED' && o.status !== 'CANCELLED');
+      this.saveOrders();
+      this.showToastNotification(`🧹 Cleared ${toRemove.length} archived orders.`);
+      this.render();
+    }
+  }
+
+  // ---------------- Manual Product & Inventory Management (Owner Admin) ----------------
+  updateProductPrice(productId, newPrice) {
+    const prod = this.products.find(p => p.id === productId);
+    if (!prod) return;
+    const p = parseFloat(newPrice);
+    if (isNaN(p) || p <= 0) return;
+    prod.price = p;
+    if (prod.variants && prod.variants.length > 0) {
+      prod.variants[0].price = p;
+    }
+    this.saveProducts();
+    this.showToastNotification(`💰 Price updated: "${prod.name}" = ₹${p}`);
+    this.render();
+  }
+
+  toggleProductStock(productId) {
+    const prod = this.products.find(p => p.id === productId);
+    if (!prod) return;
+    prod.inStock = !prod.inStock;
+    this.saveProducts();
+    this.showToastNotification(`${prod.inStock ? '🟢 In Stock' : '🔴 Out of Stock'}: ${prod.name}`);
+    this.render();
+  }
+
+  deleteProduct(productId) {
+    const prod = this.products.find(p => p.id === productId);
+    if (!prod) return;
+    if (confirm(`Permanently delete "${prod.name}" from store catalog?`)) {
+      this.products = this.products.filter(p => p.id !== productId);
+      this.saveProducts();
+      this.showToastNotification(`🗑️ Product "${prod.name}" removed from catalog.`);
+      this.render();
+    }
+  }
+
+  addNewProductFromAdmin(name, category, price, unit, imageUrl) {
+    if (!name || !price) {
+      alert("Please enter both product name and base price.");
+      return;
+    }
+    const p = parseFloat(price);
+    const newProd = {
+      id: `custom_${Date.now()}`,
+      name: name.trim(),
+      category: category || 'staples',
+      price: p,
+      unit: unit || '1 kg',
+      variants: [
+        { name: unit || '1 kg', price: p }
+      ],
+      inStock: true,
+      badge: 'New Item',
+      description: `Fresh quality ${name} available at SHAGUN STORE.`,
+      image: imageUrl || 'https://images.unsplash.com/photo-1542838132-92c53300491e?w=500&auto=format&fit=crop&q=80'
+    };
+    this.products.unshift(newProd);
+    this.saveProducts();
+    this.showToastNotification(`✨ New item "${newProd.name}" added to catalog!`);
     this.render();
   }
 
@@ -2103,17 +2290,22 @@ class ShagunStoreApp {
           </span>
         </div>
 
-        <!-- Checklist -->
+        <!-- Checklist with 1-Tap Item Removal -->
         <div style="margin: 8px 0; background: #f8fafc; padding: 8px; border-radius: 8px; border: 1px solid #e2e8f0;">
           <div style="display: flex; justify-content: space-between; font-size: 0.7rem; font-weight: 800; color: #64748b; margin-bottom: 4px;">
             <span>CHECKLIST (${order.items.filter(i=>i.packed).length}/${order.items.length}):</span>
             ${isPacking ? `<button class="btn-pack-all" data-order-id="${order.id}" onclick="window.shagunApp.packAllItems('${order.id}')" style="border:none; background:transparent; color:#1e3a8a; font-weight:900; font-size:0.72rem; cursor:pointer;">${this.t('checkAll')}</button>` : ''}
           </div>
           ${order.items.map((item, idx) => `
-            <label style="display: flex; align-items: center; gap: 6px; font-size: 0.78rem; padding: 2px 0; cursor: pointer; ${item.packed ? 'text-decoration: line-through; opacity: 0.6;' : ''}">
-              <input type="checkbox" class="pack-checkbox" data-order-id="${order.id}" data-item-idx="${idx}" onchange="window.shagunApp.toggleItemPacked('${order.id}', ${idx})" ${item.packed ? 'checked' : ''}>
-              <span><strong>${item.qty}x</strong> ${item.name} <em style="font-size: 0.72rem; color: #64748b;">(${item.variantName})</em></span>
-            </label>
+            <div style="display: flex; justify-content: space-between; align-items: center; padding: 2px 0; gap: 6px;">
+              <label style="display: flex; align-items: center; gap: 6px; font-size: 0.78rem; cursor: pointer; flex: 1; ${item.packed ? 'text-decoration: line-through; opacity: 0.6;' : ''}">
+                <input type="checkbox" class="pack-checkbox" data-order-id="${order.id}" data-item-idx="${idx}" onchange="window.shagunApp.toggleItemPacked('${order.id}', ${idx})" ${item.packed ? 'checked' : ''}>
+                <span><strong>${item.qty}x</strong> ${item.name} <em style="font-size: 0.72rem; color: #64748b;">(${item.variantName})</em></span>
+              </label>
+              <button onclick="window.shagunApp.removeItemFromOrder('${order.id}', ${idx})" title="Remove item if out of stock" style="border:none; background:#fee2e2; color:#dc2626; font-size:0.68rem; font-weight:800; cursor:pointer; padding:2px 6px; border-radius:4px;">
+                ✕ Remove
+              </button>
+            </div>
           `).join('')}
         </div>
 
@@ -2145,6 +2337,25 @@ class ShagunStoreApp {
 
           <button class="btn-ticket-action btn-print-slip" data-order-id="${order.id}" style="background:#f1f5f9; color:#0f172a; flex:0 0 36px;" title="Print 80mm Bag Slip">
             🖨️
+          </button>
+        </div>
+
+        <!-- Manual Staff / Cashier Toolbar -->
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 8px; padding-top: 6px; border-top: 1px dashed #cbd5e1; font-size: 0.72rem;">
+          <div style="display: flex; gap: 4px; align-items: center;">
+            ${!order.paymentVerified ? `
+              <button onclick="window.shagunApp.markOrderPaidCash('${order.id}')" style="padding: 3px 8px; background: #dcfce7; color: #166534; border: 1px solid #86efac; border-radius: 4px; font-weight: 800; cursor: pointer;">
+                💵 Mark Paid (Cash)
+              </button>
+            ` : ''}
+            ${order.status !== 'CANCELLED' ? `
+              <button onclick="window.shagunApp.cancelOrderStaff('${order.id}')" style="padding: 3px 8px; background: #fee2e2; color: #991b1b; border: 1px solid #fca5a5; border-radius: 4px; font-weight: 800; cursor: pointer;">
+                ❌ Cancel Order
+              </button>
+            ` : ''}
+          </div>
+          <button onclick="window.shagunApp.deleteOrderStaff('${order.id}')" style="padding: 3px 6px; background: #f8fafc; color: #dc2626; border: 1px solid #e2e8f0; border-radius: 4px; font-weight: 800; cursor: pointer;" title="Permanently Delete Ticket">
+            🗑️ Delete
           </button>
         </div>
       </div>
@@ -2249,14 +2460,19 @@ class ShagunStoreApp {
 
         <!-- Store Master Orders & Payment Ledger (Admin Book) -->
         <div style="border: 1.5px solid var(--border); border-radius: var(--radius-md); padding: 14px; background: #ffffff; margin-bottom: 1.5rem;">
-          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; flex-wrap: wrap; gap: 8px;">
             <div>
               <h3 style="font-size: 1.05rem; font-weight: 900; color: #0f172a; margin: 0;">📖 Store Orders & Payment Ledger (Admin Book)</h3>
               <p style="font-size: 0.76rem; color: #64748b; margin: 2px 0 0 0;">Automatic permanent record of customer payment date, time & order status</p>
             </div>
-            <span style="font-size: 0.78rem; font-weight: 800; background: #eff6ff; color: #1e3a8a; padding: 4px 10px; border-radius: 99px;">
-              ${this.orders.length} Total Records
-            </span>
+            <div style="display: flex; gap: 6px; align-items: center;">
+              <button onclick="window.shagunApp.clearCompletedOrders()" style="padding: 5px 10px; background: #f1f5f9; color: #475569; border: 1px solid var(--border); border-radius: 6px; font-size: 0.74rem; font-weight: 800; cursor: pointer;">
+                🧹 Clear Fulfilled/Cancelled
+              </button>
+              <button onclick="window.shagunApp.exportPaymentLedgerCSV()" style="padding: 5px 10px; background: #1e3a8a; color: white; border: none; border-radius: 6px; font-weight: 800; font-size: 0.74rem; cursor: pointer;">
+                📥 Export CSV
+              </button>
+            </div>
           </div>
 
           <div style="overflow-x: auto;">
@@ -2267,9 +2483,9 @@ class ShagunStoreApp {
                   <th style="padding: 9px 8px;">Order Time</th>
                   <th style="padding: 9px 8px;">Customer</th>
                   <th style="padding: 9px 8px;">Amount</th>
-                  <th style="padding: 9px 8px;">Automated Bank Verification & Ref</th>
-                  <th style="padding: 9px 8px;">Mode</th>
-                  <th style="padding: 9px 8px;">Status</th>
+                  <th style="padding: 9px 8px;">Bank Ref / Status</th>
+                  <th style="padding: 9px 8px;">Order Status</th>
+                  <th style="padding: 9px 8px; text-align: center;">Manual Controls</th>
                 </tr>
               </thead>
               <tbody>
@@ -2287,17 +2503,36 @@ class ShagunStoreApp {
                       </td>
                       <td style="padding: 9px 8px; font-weight: 900; color: #1e3a8a;">${this.config.currency}${o.totalAmount}</td>
                       <td style="padding: 9px 8px;">
-                        <span style="font-weight: 800; font-size:0.75rem; color: ${o.paymentVerified ? '#166534' : '#92400e'}; background: ${o.paymentVerified ? '#dcfce7' : '#fef3c7'}; padding: 3px 8px; border-radius: 4px; display: inline-block;">
+                        <span style="font-weight: 800; font-size:0.72rem; color: ${o.paymentVerified ? '#166534' : '#92400e'}; background: ${o.paymentVerified ? '#dcfce7' : '#fef3c7'}; padding: 3px 8px; border-radius: 4px; display: inline-block;">
                           ${o.paymentVerified ? '✓ ' : ''}${paidStamp} ${o.transactionId ? `(${o.transactionId})` : ''}
                         </span>
                       </td>
-                      <td style="padding: 9px 8px; font-weight: 700; text-transform: uppercase; font-size: 0.72rem; color: #475569;">
-                        ${o.paymentMethod === 'upi' ? '📱 UPI' : '💵 CASH'}
-                      </td>
                       <td style="padding: 9px 8px;">
-                        <span style="padding: 3px 8px; border-radius: 99px; font-size: 0.72rem; font-weight: 800; background: ${o.status === 'COMPLETED' ? '#dcfce7' : o.status === 'READY' ? '#fef3c7' : '#eff6ff'}; color: ${o.status === 'COMPLETED' ? '#166534' : o.status === 'READY' ? '#92400e' : '#1e40af'};">
+                        <span style="padding: 3px 8px; border-radius: 99px; font-size: 0.72rem; font-weight: 800; background: ${o.status === 'COMPLETED' ? '#dcfce7' : o.status === 'CANCELLED' ? '#fee2e2' : o.status === 'READY' ? '#fef3c7' : '#eff6ff'}; color: ${o.status === 'COMPLETED' ? '#166534' : o.status === 'CANCELLED' ? '#991b1b' : o.status === 'READY' ? '#92400e' : '#1e40af'};">
                           ${o.status}
                         </span>
+                      </td>
+                      <td style="padding: 9px 8px; text-align: center;">
+                        <div style="display: flex; gap: 4px; justify-content: center; flex-wrap: wrap;">
+                          ${!o.paymentVerified && o.status !== 'CANCELLED' ? `
+                            <button onclick="window.shagunApp.markOrderPaidCash('${o.id}')" title="Mark as Cash Paid" style="padding: 3px 6px; background: #dcfce7; color: #166534; border: 1px solid #86efac; border-radius: 4px; font-weight: 800; font-size: 0.68rem; cursor: pointer;">
+                              💵 Paid
+                            </button>
+                          ` : ''}
+                          ${o.status !== 'CANCELLED' && o.status !== 'COMPLETED' ? `
+                            <button onclick="window.shagunApp.cancelOrderAdmin('${o.id}')" title="Cancel Order" style="padding: 3px 6px; background: #fee2e2; color: #991b1b; border: 1px solid #fca5a5; border-radius: 4px; font-weight: 800; font-size: 0.68rem; cursor: pointer;">
+                              ❌ Cancel
+                            </button>
+                          ` : ''}
+                          ${o.paymentVerified ? `
+                            <button onclick="window.shagunApp.markOrderRefunded('${o.id}')" title="Mark Refunded" style="padding: 3px 6px; background: #fef3c7; color: #92400e; border: 1px solid #fde68a; border-radius: 4px; font-weight: 800; font-size: 0.68rem; cursor: pointer;">
+                              ↩ Refund
+                            </button>
+                          ` : ''}
+                          <button onclick="window.shagunApp.deleteOrderAdmin('${o.id}')" title="Permanently Delete Record" style="padding: 3px 6px; background: #f8fafc; color: #dc2626; border: 1px solid #e2e8f0; border-radius: 4px; font-weight: 800; font-size: 0.68rem; cursor: pointer;">
+                            🗑️
+                          </button>
+                        </div>
                       </td>
                     </tr>
                   `;
@@ -2386,7 +2621,7 @@ class ShagunStoreApp {
         </div>
 
         <!-- Customer Mobile CRM Table -->
-        <div style="border: 1.5px solid var(--border); border-radius: var(--radius-md); padding: 14px; background: #ffffff;">
+        <div style="border: 1.5px solid var(--border); border-radius: var(--radius-md); padding: 14px; background: #ffffff; margin-bottom: 1.5rem;">
           <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
             <h3 style="font-size: 1rem; font-weight: 900; color: #0f172a;">👥 Customer Mobile Directory (${customers.length})</h3>
             <button id="btnExportCustomersCSV" onclick="window.shagunApp.exportPaymentLedgerCSV()" style="padding: 6px 12px; background: #1e3a8a; color: white; border: none; border-radius: 6px; font-weight: 800; font-size: 0.75rem; cursor: pointer;">
@@ -2415,6 +2650,94 @@ class ShagunStoreApp {
                     <td style="padding: 8px; font-weight: 800;">#${c.lastToken}</td>
                     <td style="padding: 8px;">
                       <a href="https://wa.me/91${c.rawPhone}" target="_blank" style="padding: 3px 8px; background: #dbeafe; color: #1e3a8a; text-decoration: none; border-radius: 4px; font-weight: 800; font-size: 0.72rem;">💬 WhatsApp</a>
+                    </td>
+                  </tr>
+                `).join('')}
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- Inventory, Price & Stock Controller Section -->
+        <div style="border: 1.5px solid var(--border); border-radius: var(--radius-md); padding: 16px; background: #ffffff;">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px; flex-wrap: wrap; gap: 8px;">
+            <div>
+              <h3 style="font-size: 1.05rem; font-weight: 900; color: #0f172a; margin: 0;">📦 Store Inventory, Price & Stock Controller (${this.products.length} Products)</h3>
+              <p style="font-size: 0.76rem; color: #64748b; margin: 2px 0 0 0;">Update grocery prices, toggle out-of-stock items, or add new items to the store</p>
+            </div>
+          </div>
+
+          <!-- Add Product Form -->
+          <form id="formAddNewProduct" onsubmit="event.preventDefault(); window.shagunApp.addNewProductFromAdmin(document.getElementById('newProdName').value, document.getElementById('newProdCategory').value, document.getElementById('newProdPrice').value, document.getElementById('newProdUnit').value, document.getElementById('newProdImg').value);" style="background: #f8fafc; border: 1px solid var(--border); border-radius: 10px; padding: 12px; margin-bottom: 14px; display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)) 110px; gap: 8px; align-items: end;">
+            <div>
+              <label style="font-size: 0.72rem; font-weight: 800; color: #475569; display: block; margin-bottom: 2px;">Item Name:</label>
+              <input type="text" id="newProdName" placeholder="e.g. Tata Salt (नमक)" required style="width: 100%; padding: 8px; border: 1px solid var(--border); border-radius: 6px; font-size: 0.8rem; font-weight: 700;">
+            </div>
+            <div>
+              <label style="font-size: 0.72rem; font-weight: 800; color: #475569; display: block; margin-bottom: 2px;">Category:</label>
+              <select id="newProdCategory" style="width: 100%; padding: 8px; border: 1px solid var(--border); border-radius: 6px; font-size: 0.8rem; font-weight: 700;">
+                <option value="sugar-sweeteners">Sugar & Sweeteners</option>
+                <option value="dals-pulses">Dals & Pulses</option>
+                <option value="staples">Atta, Rice & Grains</option>
+                <option value="edible-oils">Cooking Oils & Ghee</option>
+                <option value="spices-masala">Spices & Masalas</option>
+                <option value="tea-beverages">Tea, Coffee & Drinks</option>
+                <option value="puja-dryfruits">Puja & Dry Fruits</option>
+              </select>
+            </div>
+            <div>
+              <label style="font-size: 0.72rem; font-weight: 800; color: #475569; display: block; margin-bottom: 2px;">Price (₹):</label>
+              <input type="number" id="newProdPrice" placeholder="Price" min="1" required style="width: 100%; padding: 8px; border: 1px solid var(--border); border-radius: 6px; font-size: 0.8rem; font-weight: 700;">
+            </div>
+            <div>
+              <label style="font-size: 0.72rem; font-weight: 800; color: #475569; display: block; margin-bottom: 2px;">Unit:</label>
+              <input type="text" id="newProdUnit" placeholder="1 kg / 1 L" value="1 kg" style="width: 100%; padding: 8px; border: 1px solid var(--border); border-radius: 6px; font-size: 0.8rem; font-weight: 700;">
+            </div>
+            <div>
+              <label style="font-size: 0.72rem; font-weight: 800; color: #475569; display: block; margin-bottom: 2px;">Image URL (Optional):</label>
+              <input type="url" id="newProdImg" placeholder="https://..." style="width: 100%; padding: 8px; border: 1px solid var(--border); border-radius: 6px; font-size: 0.8rem; font-weight: 700;">
+            </div>
+            <div>
+              <button type="submit" style="width: 100%; padding: 9px; background: #16a34a; color: white; border: none; border-radius: 6px; font-weight: 800; font-size: 0.78rem; cursor: pointer;">
+                ➕ Add Item
+              </button>
+            </div>
+          </form>
+
+          <!-- Top Inventory Items Table (First 25 for Fast Editing) -->
+          <div style="overflow-x: auto;">
+            <table style="width: 100%; border-collapse: collapse; font-size: 0.8rem; text-align: left;">
+              <thead>
+                <tr style="background: #f8fafc; border-bottom: 1.5px solid var(--border);">
+                  <th style="padding: 8px;">Product Name</th>
+                  <th style="padding: 8px;">Category</th>
+                  <th style="padding: 8px;">Base Price (₹)</th>
+                  <th style="padding: 8px;">Stock Status</th>
+                  <th style="padding: 8px; text-align: center;">Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                ${this.products.slice(0, 30).map(p => `
+                  <tr style="border-bottom: 1px solid #f1f5f9;">
+                    <td style="padding: 8px; font-weight: 800; color: #0f172a;">
+                      ${p.name}
+                    </td>
+                    <td style="padding: 8px; font-size: 0.72rem; color: #475569; text-transform: capitalize;">${p.category.replace('-', ' ')}</td>
+                    <td style="padding: 8px;">
+                      <div style="display: flex; align-items: center; gap: 4px;">
+                        <span>₹</span>
+                        <input type="number" value="${p.price}" min="1" onchange="window.shagunApp.updateProductPrice('${p.id}', this.value)" style="width: 70px; padding: 4px 6px; border: 1px solid var(--border); border-radius: 4px; font-weight: 800; font-size: 0.8rem; color: #1e3a8a;">
+                      </div>
+                    </td>
+                    <td style="padding: 8px;">
+                      <button onclick="window.shagunApp.toggleProductStock('${p.id}')" style="padding: 4px 8px; border-radius: 4px; font-size: 0.72rem; font-weight: 800; cursor: pointer; border: 1px solid ${p.inStock ? '#86efac' : '#fca5a5'}; background: ${p.inStock ? '#dcfce7' : '#fee2e2'}; color: ${p.inStock ? '#166534' : '#991b1b'};">
+                        ${p.inStock ? '🟢 In Stock' : '🔴 Out of Stock'}
+                      </button>
+                    </td>
+                    <td style="padding: 8px; text-align: center;">
+                      <button onclick="window.shagunApp.deleteProduct('${p.id}')" title="Delete Product" style="padding: 4px 8px; background: #f8fafc; color: #dc2626; border: 1px solid #e2e8f0; border-radius: 4px; font-size: 0.72rem; font-weight: 800; cursor: pointer;">
+                        🗑️ Delete
+                      </button>
                     </td>
                   </tr>
                 `).join('')}
@@ -3014,6 +3337,20 @@ window.submitCartOrder = () => window.shagunApp?.submitCartOrder();
 window.startAddonOrder = (ordId) => window.shagunApp?.startAddonOrder(ordId);
 window.startFreshNewOrder = () => window.shagunApp?.startFreshNewOrder();
 window.setLanguage = (lang) => window.shagunApp?.setLanguage(lang);
+
+// Manual Management Window Helpers
+window.removeItemFromOrder = (ordId, idx) => window.shagunApp?.removeItemFromOrder(ordId, idx);
+window.cancelOrderStaff = (ordId) => window.shagunApp?.cancelOrderStaff(ordId);
+window.deleteOrderStaff = (ordId) => window.shagunApp?.deleteOrderStaff(ordId);
+window.cancelOrderAdmin = (ordId) => window.shagunApp?.cancelOrderAdmin(ordId);
+window.deleteOrderAdmin = (ordId) => window.shagunApp?.deleteOrderAdmin(ordId);
+window.markOrderPaidCash = (ordId) => window.shagunApp?.markOrderPaidCash(ordId);
+window.markOrderRefunded = (ordId) => window.shagunApp?.markOrderRefunded(ordId);
+window.clearCompletedOrders = () => window.shagunApp?.clearCompletedOrders();
+window.updateProductPrice = (pId, price) => window.shagunApp?.updateProductPrice(pId, price);
+window.toggleProductStock = (pId) => window.shagunApp?.toggleProductStock(pId);
+window.deleteProduct = (pId) => window.shagunApp?.deleteProduct(pId);
+window.addNewProductFromAdmin = (name, cat, price, unit, img) => window.shagunApp?.addNewProductFromAdmin(name, cat, price, unit, img);
 
 if (document.readyState === 'loading') {
   document.addEventListener('DOMContentLoaded', initShagunStoreApp);
