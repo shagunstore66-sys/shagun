@@ -190,6 +190,12 @@ try {
                         }
                     }
                     $responseJson = '{"status":"SUCCESS","verified":true,"transactionId":"' + $txId + '"}'
+                } elseif ($urlPath -eq "/api/notify-3way") {
+                    Write-Host "📱 [3-WAY WHATSAPP DISPATCH TRIGGERED] Alerting Admin (7795565216), Staff & Customer" -ForegroundColor Green
+                    $responseJson = '{"success":true,"admin":"7795565216","dispatched":true}'
+                } elseif ($urlPath -eq "/api/send-invoice-whatsapp") {
+                    Write-Host "🧾 [DIGITAL TAX INVOICE SENT VIA WHATSAPP] To Customer" -ForegroundColor Cyan
+                    $responseJson = '{"success":true,"invoiceSent":true}'
                 } else {
                     $statusCode = "404 Not Found"
                     $responseJson = '{"error":"Not Found"}'
