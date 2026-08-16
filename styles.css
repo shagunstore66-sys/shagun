@@ -480,20 +480,25 @@ main {
 .prod-img-wrap {
   position: relative;
   width: 100%;
-  height: 135px;
-  background: var(--bg-cream);
+  height: 145px;
+  background: #ffffff;
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: center;
   overflow: hidden;
+  padding: 8px;
 }
 
 .prod-img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
+  transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .product-card:hover .prod-img {
-  transform: scale(1.06);
+  transform: scale(1.08);
 }
 
 .prod-badge {
