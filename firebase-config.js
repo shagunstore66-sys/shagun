@@ -208,3 +208,7 @@ export async function syncStaffToFirestore(staffList) {
     return false;
   }
 }
+
+export function getFirebaseStatus() {
+  return { connected: isFirebaseConnected, db };
+}
