@@ -250,6 +250,8 @@ class SoundEngine {
       console.warn("Soundbox announcement error:", e);
     }
   }
+}
+
 const sounds = new SoundEngine();
 if (typeof window !== 'undefined') {
   window.sounds = sounds;
