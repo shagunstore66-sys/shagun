@@ -2361,73 +2361,102 @@ class ShagunStoreApp {
   }
 
   // ==========================================================================
-  // 3. STAFF PACKING TERMINAL (KHM & STATUS UNDO)
+  // 3. STAFF PACKING TERMINAL (KHM & MOBILE OPTIMIZED)
   // ==========================================================================
   renderStaffView() {
+    this.staffActiveMobileTab = this.staffActiveMobileTab || 'all';
     const newOrders = this.orders.filter(o => o.status === 'NEW');
     const packingOrders = this.orders.filter(o => o.status === 'PACKING');
     const readyOrders = this.orders.filter(o => o.status === 'READY');
     const completedOrders = this.orders.filter(o => o.status === 'COMPLETED').slice(0, 10);
+    const totalActive = newOrders.length + packingOrders.length + readyOrders.length;
 
     return `
       <div class="staff-toolbar">
         <div class="staff-title-group">
-          <h2>${this.t('staffDashboardTitle')}</h2>
-          <p>${this.t('staffDashboardSub')}</p>
+          <h2>👨‍🍳 ${this.t('staffDashboardTitle')}</h2>
+          <p>${this.currentLoggedInStaff ? `Staff on Duty: <strong>${this.currentLoggedInStaff.name}</strong> (${this.currentLoggedInStaff.role})` : this.t('staffDashboardSub')}</p>
         </div>
-        <div style="display: flex; gap: 8px; align-items: center;">
-          <button id="btnToggleAudio" onclick="window.shagunApp.toggleAudio()" style="padding: 6px 12px; background: #ffffff; border: 1.5px solid var(--border); border-radius: var(--radius-sm); font-weight: 800; font-size: 0.78rem; cursor: pointer;">
+        <div style="display: flex; gap: 8px; align-items: center; flex-wrap: wrap;">
+          <button id="btnToggleAudio" onclick="window.shagunApp.toggleAudio()" style="padding: 8px 14px; background: #ffffff; border: 1.5px solid var(--border); border-radius: var(--radius-sm); font-weight: 800; font-size: 0.8rem; cursor: pointer; color: #0f172a;">
             ${this.audioAlertsEnabled ? '🔊 Sound On' : '🔇 Muted'}
           </button>
-          <button id="btnTestChime" onclick="sounds.playNewOrderChime()" style="padding: 6px 12px; background: #1e3a8a; color: white; border: none; border-radius: var(--radius-sm); font-weight: 800; font-size: 0.78rem; cursor: pointer;">
-            🔔 Test Chime
+          <button id="btnTestChime" onclick="sounds.playNewOrderChime()" style="padding: 8px 14px; background: #1e3a8a; color: white; border: none; border-radius: var(--radius-sm); font-weight: 800; font-size: 0.8rem; cursor: pointer;">
+            🔔 Chime
           </button>
-          <button id="btnLogoutStaff" onclick="window.shagunApp.logoutStaff()" style="padding: 6px 12px; background: #dc2626; color: white; border: none; border-radius: var(--radius-sm); font-weight: 800; font-size: 0.78rem; cursor: pointer;">
+          <button id="btnLogoutStaff" onclick="window.shagunApp.logoutStaff()" style="padding: 8px 14px; background: #dc2626; color: white; border: none; border-radius: var(--radius-sm); font-weight: 800; font-size: 0.8rem; cursor: pointer;">
             🔒 Logout
           </button>
         </div>
       </div>
 
+      <!-- Mobile Touch Navigation Tabs (iOS & Android) -->
+      <div class="staff-mobile-tab-bar">
+        <button class="staff-mobile-tab-pill ${this.staffActiveMobileTab === 'all' ? 'active' : ''}" onclick="window.shagunApp.staffActiveMobileTab = 'all'; window.shagunApp.render();">
+          <span>📋 All Active (${totalActive})</span>
+        </button>
+        <button class="staff-mobile-tab-pill ${this.staffActiveMobileTab === 'NEW' ? 'active' : ''}" onclick="window.shagunApp.staffActiveMobileTab = 'NEW'; window.shagunApp.render();">
+          <span>⏳ New (${newOrders.length})</span>
+        </button>
+        <button class="staff-mobile-tab-pill ${this.staffActiveMobileTab === 'PACKING' ? 'active' : ''}" onclick="window.shagunApp.staffActiveMobileTab = 'PACKING'; window.shagunApp.render();">
+          <span>📦 Packing (${packingOrders.length})</span>
+        </button>
+        <button class="staff-mobile-tab-pill ${this.staffActiveMobileTab === 'READY' ? 'active' : ''}" onclick="window.shagunApp.staffActiveMobileTab = 'READY'; window.shagunApp.render();">
+          <span>🎉 Ready (${readyOrders.length})</span>
+        </button>
+        <button class="staff-mobile-tab-pill ${this.staffActiveMobileTab === 'COMPLETED' ? 'active' : ''}" onclick="window.shagunApp.staffActiveMobileTab = 'COMPLETED'; window.shagunApp.render();">
+          <span>🏁 Done (${completedOrders.length})</span>
+        </button>
+      </div>
+
       <div class="kanban-board">
         <!-- Col 1: NEW -->
-        <div class="kanban-col">
-          <div class="kanban-col-header">
-            <span>${this.t('newOrders')} (${newOrders.length})</span>
+        ${(this.staffActiveMobileTab === 'all' || this.staffActiveMobileTab === 'NEW') ? `
+          <div class="kanban-col">
+            <div class="kanban-col-header" style="background: #eff6ff; color: #1e3a8a; border-radius: 8px; padding: 8px 12px; margin-bottom: 8px; font-weight: 900;">
+              <span>⏳ ${this.t('newOrders')} (${newOrders.length})</span>
+            </div>
+            <div class="kanban-col-body">
+              ${newOrders.length === 0 ? `<p class="kanban-empty">${this.t('noNewOrders')}</p>` : newOrders.map(o => this.renderStaffOrderCard(o)).join('')}
+            </div>
           </div>
-          <div class="kanban-col-body">
-            ${newOrders.length === 0 ? `<p class="kanban-empty">${this.t('noNewOrders')}</p>` : newOrders.map(o => this.renderStaffOrderCard(o)).join('')}
-          </div>
-        </div>
+        ` : ''}
 
         <!-- Col 2: PACKING -->
-        <div class="kanban-col">
-          <div class="kanban-col-header">
-            <span>${this.t('packingOrders')} (${packingOrders.length})</span>
+        ${(this.staffActiveMobileTab === 'all' || this.staffActiveMobileTab === 'PACKING') ? `
+          <div class="kanban-col">
+            <div class="kanban-col-header" style="background: #fef3c7; color: #92400e; border-radius: 8px; padding: 8px 12px; margin-bottom: 8px; font-weight: 900;">
+              <span>📦 ${this.t('packingOrders')} (${packingOrders.length})</span>
+            </div>
+            <div class="kanban-col-body">
+              ${packingOrders.length === 0 ? `<p class="kanban-empty">${this.t('noPackingOrders')}</p>` : packingOrders.map(o => this.renderStaffOrderCard(o)).join('')}
+            </div>
           </div>
-          <div class="kanban-col-body">
-            ${packingOrders.length === 0 ? `<p class="kanban-empty">${this.t('noPackingOrders')}</p>` : packingOrders.map(o => this.renderStaffOrderCard(o)).join('')}
-          </div>
-        </div>
+        ` : ''}
 
         <!-- Col 3: READY -->
-        <div class="kanban-col">
-          <div class="kanban-col-header">
-            <span>${this.t('readyOrders')} (${readyOrders.length})</span>
+        ${(this.staffActiveMobileTab === 'all' || this.staffActiveMobileTab === 'READY') ? `
+          <div class="kanban-col">
+            <div class="kanban-col-header" style="background: #dcfce7; color: #166534; border-radius: 8px; padding: 8px 12px; margin-bottom: 8px; font-weight: 900;">
+              <span>🎉 ${this.t('readyOrders')} (${readyOrders.length})</span>
+            </div>
+            <div class="kanban-col-body">
+              ${readyOrders.length === 0 ? `<p class="kanban-empty">${this.t('noReadyOrders')}</p>` : readyOrders.map(o => this.renderStaffOrderCard(o)).join('')}
+            </div>
           </div>
-          <div class="kanban-col-body">
-            ${readyOrders.length === 0 ? `<p class="kanban-empty">${this.t('noReadyOrders')}</p>` : readyOrders.map(o => this.renderStaffOrderCard(o)).join('')}
-          </div>
-        </div>
+        ` : ''}
 
         <!-- Col 4: COMPLETED -->
-        <div class="kanban-col">
-          <div class="kanban-col-header">
-            <span>${this.t('completedOrders')} (${completedOrders.length})</span>
+        ${(this.staffActiveMobileTab === 'all' || this.staffActiveMobileTab === 'COMPLETED') ? `
+          <div class="kanban-col">
+            <div class="kanban-col-header" style="background: #f1f5f9; color: #475569; border-radius: 8px; padding: 8px 12px; margin-bottom: 8px; font-weight: 900;">
+              <span>🏁 ${this.t('completedOrders')} (${completedOrders.length})</span>
+            </div>
+            <div class="kanban-col-body">
+              ${completedOrders.length === 0 ? `<p class="kanban-empty">${this.t('noCompletedOrders')}</p>` : completedOrders.map(o => this.renderStaffOrderCard(o)).join('')}
+            </div>
           </div>
-          <div class="kanban-col-body">
-            ${completedOrders.length === 0 ? `<p class="kanban-empty">${this.t('noCompletedOrders')}</p>` : completedOrders.map(o => this.renderStaffOrderCard(o)).join('')}
-          </div>
-        </div>
+        ` : ''}
       </div>
     `;
   }
@@ -2607,41 +2636,61 @@ class ShagunStoreApp {
   }
 
   // ==========================================================================
-  // 5. SECRET OWNER ADMIN PANEL (CTRL + SHIFT + Z)
+  // 5. SECRET OWNER ADMIN PANEL (MOBILE FIRST & RESPONSIVE)
   // ==========================================================================
   renderAdminView() {
+    this.adminActiveTab = this.adminActiveTab || 'all';
     const customers = this.getUniqueCustomers();
     const totalRev = this.orders.reduce((s, o) => s + (o.totalAmount || 0), 0);
 
     return `
-      <div style="background: #ffffff; border: 1.5px solid var(--border); border-radius: var(--radius-lg); padding: 1.5rem; margin-bottom: 1.5rem;">
-        <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px; margin-bottom: 1.5rem;">
+      <div style="background: #ffffff; border: 1.5px solid var(--border); border-radius: var(--radius-lg); padding: 1.2rem; margin-bottom: 1.5rem;" class="admin-dashboard-container">
+        <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px; margin-bottom: 1.2rem;" class="admin-header-row">
           <div>
-            <h2 style="font-size: 1.3rem; font-weight: 900; color: #0f172a;">🛡️ SHAGUN STORE • Owner Master Control</h2>
-            <p style="font-size: 0.8rem; color: #475569;">Unlocked via [Ctrl + Shift + Z] • Store Analytics, CRM & Settings</p>
+            <h2 style="font-size: 1.25rem; font-weight: 900; color: #0f172a;">🛡️ SHAGUN STORE • Owner Master Control</h2>
+            <p style="font-size: 0.78rem; color: #475569;">Bettadapura Management • Store Analytics, Live Prices & Staff CRM</p>
           </div>
           <button id="btnLockAdminMode" style="padding: 8px 16px; background: #dc2626; color: white; border: none; border-radius: var(--radius-sm); font-weight: 800; font-size: 0.8rem; cursor: pointer;">
-            🔒 Lock & Hide Admin
+            🔒 Lock Admin
+          </button>
+        </div>
+
+        <!-- Mobile Touch Navigation Pills for Owner Phone (iOS & Android) -->
+        <div class="admin-mobile-nav-pills">
+          <button class="admin-nav-pill ${this.adminActiveTab === 'all' ? 'active' : ''}" onclick="window.shagunApp.adminActiveTab = 'all'; window.shagunApp.render();">
+            📊 All Sections
+          </button>
+          <button class="admin-nav-pill ${this.adminActiveTab === 'inventory' ? 'active' : ''}" onclick="window.shagunApp.adminActiveTab = 'inventory'; window.shagunApp.render();">
+            🏷️ Prices & Stock (${this.products.length})
+          </button>
+          <button class="admin-nav-pill ${this.adminActiveTab === 'orders' ? 'active' : ''}" onclick="window.shagunApp.adminActiveTab = 'orders'; window.shagunApp.render();">
+            📖 Orders (${this.orders.length})
+          </button>
+          <button class="admin-nav-pill ${this.adminActiveTab === 'staff' ? 'active' : ''}" onclick="window.shagunApp.adminActiveTab = 'staff'; window.shagunApp.render();">
+            👥 Staff (${this.staffMembers.length})
+          </button>
+          <button class="admin-nav-pill ${this.adminActiveTab === 'customers' ? 'active' : ''}" onclick="window.shagunApp.adminActiveTab = 'customers'; window.shagunApp.render();">
+            📱 CRM (${customers.length})
           </button>
         </div>
 
         <!-- Metric Cards -->
-        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 14px; margin-bottom: 1.5rem;">
-          <div style="background: #eff6ff; padding: 14px; border-radius: 12px; border: 1px solid #bfdbfe;">
-            <div style="font-size: 0.75rem; font-weight: 800; color: #1e40af;">TOTAL REVENUE</div>
-            <div style="font-size: 1.6rem; font-weight: 900; color: #1e3a8a; font-family: var(--font-display);">${this.config.currency}${totalRev.toLocaleString()}</div>
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 10px; margin-bottom: 1.2rem;" class="admin-stats-grid">
+          <div style="background: #eff6ff; padding: 12px; border-radius: 12px; border: 1px solid #bfdbfe;" class="stat-card">
+            <div style="font-size: 0.72rem; font-weight: 800; color: #1e40af;">TOTAL REVENUE</div>
+            <div style="font-size: 1.4rem; font-weight: 900; color: #1e3a8a; font-family: var(--font-display);" class="stat-val">${this.config.currency}${totalRev.toLocaleString()}</div>
           </div>
-          <div style="background: #f8fafc; padding: 14px; border-radius: 12px; border: 1px solid var(--border);">
-            <div style="font-size: 0.75rem; font-weight: 800; color: #475569;">TOTAL ORDERS</div>
-            <div style="font-size: 1.6rem; font-weight: 900; color: #0f172a; font-family: var(--font-display);">${this.orders.length}</div>
+          <div style="background: #f8fafc; padding: 12px; border-radius: 12px; border: 1px solid var(--border);" class="stat-card">
+            <div style="font-size: 0.72rem; font-weight: 800; color: #475569;">TOTAL ORDERS</div>
+            <div style="font-size: 1.4rem; font-weight: 900; color: #0f172a; font-family: var(--font-display);" class="stat-val">${this.orders.length}</div>
           </div>
-          <div style="background: #f8fafc; padding: 14px; border-radius: 12px; border: 1px solid var(--border);">
-            <div style="font-size: 0.75rem; font-weight: 800; color: #475569;">UNIQUE CUSTOMERS (CRM)</div>
-            <div style="font-size: 1.6rem; font-weight: 900; color: #0f172a; font-family: var(--font-display);">${customers.length} Mobiles</div>
+          <div style="background: #f8fafc; padding: 12px; border-radius: 12px; border: 1px solid var(--border);" class="stat-card">
+            <div style="font-size: 0.72rem; font-weight: 800; color: #475569;">CUSTOMERS</div>
+            <div style="font-size: 1.4rem; font-weight: 900; color: #0f172a; font-family: var(--font-display);" class="stat-val">${customers.length}</div>
           </div>
-          <div style="background: #f8fafc; padding: 14px; border-radius: 12px; border: 1px solid var(--border);">
-            <div style="font-size: 0.75rem; font-weight: 800; color: #475569;">MERCHANT UPI ID</div>
-            <div style="font-size: 0.95rem; font-weight: 900; color: #1e3a8a; word-break: break-all;">${this.config.upiId || '7795565216-1@okbizaxis'}</div>
+          <div style="background: #f8fafc; padding: 12px; border-radius: 12px; border: 1px solid var(--border);" class="stat-card">
+            <div style="font-size: 0.72rem; font-weight: 800; color: #475569;">MERCHANT UPI</div>
+            <div style="font-size: 0.78rem; font-weight: 900; color: #1e3a8a; word-break: break-all; margin-top: 4px;">${this.config.upiId || '7795565216-1@okbizaxis'}</div>
           </div>
         </div>
 
