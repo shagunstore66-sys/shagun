@@ -214,6 +214,11 @@ class SoundEngine {
       console.warn("Soundbox announcement error:", e);
     }
   }
+const sounds = new SoundEngine();
+if (typeof window !== 'undefined') {
+  window.sounds = sounds;
+  window.SoundEngine = SoundEngine;
 }
 
-export const sounds = new SoundEngine();
+export { sounds, SoundEngine };
+export default sounds;
