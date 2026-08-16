@@ -2495,6 +2495,54 @@ class ShagunStoreApp {
     `;
   }
 
+  openIncomingOrderModal(order) {
+    const existing = document.getElementById('incomingOrderModal');
+    if (existing) existing.remove();
+
+    sounds.startOrderAlarmLoop();
+    if (navigator.vibrate) navigator.vibrate([500, 200, 500, 200, 1000]);
+
+    const modal = document.createElement('div');
+    modal.id = 'incomingOrderModal';
+    modal.style.cssText = `
+      position: fixed; inset: 0; z-index: 999999;
+      background: rgba(15, 23, 42, 0.85);
+      backdrop-filter: blur(8px);
+      display: flex; align-items: center; justify-content: center;
+      padding: 1.25rem;
+    `;
+
+    modal.innerHTML = `
+      <div style="background: #ffffff; border-radius: 20px; padding: 1.5rem; max-width: 420px; width: 100%; text-align: center; box-shadow: 0 20px 50px rgba(0,0,0,0.5); border: 3px solid #10b981;">
+        <div style="font-size: 3.5rem; margin-bottom: 4px;">🚨</div>
+        <h2 style="font-size: 1.35rem; font-weight: 900; color: #0f172a; margin-bottom: 4px;">NEW ORDER RECEIVED!</h2>
+        <div style="font-size: 2.2rem; font-weight: 900; color: #065f46; font-family: var(--font-display); margin: 6px 0;">
+          #${order.token}
+        </div>
+        <div style="font-size: 0.88rem; font-weight: 800; color: #334155; margin-bottom: 6px;">
+          👤 ${order.customerName} (${order.phone})
+        </div>
+        <div style="background: #f0fdf4; border: 1.5px solid #86efac; border-radius: 10px; padding: 10px; margin: 12px 0;">
+          <div style="font-size: 0.95rem; font-weight: 900; color: #166534;">
+            💰 Total: ${this.config.currency}${order.totalAmount}
+          </div>
+          <div style="font-size: 0.78rem; font-weight: 700; color: #15803d; margin-top: 2px;">
+            ${order.paymentVerified ? '🟢 PAID ONLINE (Axis Bank)' : (order.paymentMethod === 'counter' ? '💵 COLLECT CASH AT PICKUP' : '⏳ PENDING')}
+          </div>
+        </div>
+        <div style="display: flex; flex-direction: column; gap: 8px;">
+          <button onclick="sounds.stopOrderAlarmLoop(); document.getElementById('incomingOrderModal')?.remove(); window.shagunApp.updateOrderStatus('${order.id}', 'PACKING');" style="width: 100%; padding: 14px; background: #065f46; color: #ffffff; border: none; border-radius: 12px; font-weight: 900; font-size: 1rem; cursor: pointer; box-shadow: 0 4px 14px rgba(6,95,70,0.4);">
+            📦 ACCEPT & START PACKING ➔
+          </button>
+          <button onclick="sounds.stopOrderAlarmLoop(); document.getElementById('incomingOrderModal')?.remove();" style="width: 100%; padding: 10px; background: transparent; border: 1.5px solid #cbd5e1; color: #475569; border-radius: 12px; font-weight: 800; font-size: 0.82rem; cursor: pointer;">
+            Dismiss Alert
+          </button>
+        </div>
+      </div>
+    `;
+    document.body.appendChild(modal);
+  }
+
   // ==========================================================================
   // 3. STAFF PACKING TERMINAL (MOBILE NATIVE APP VS DESKTOP KANBAN)
   // ==========================================================================
@@ -2537,6 +2585,17 @@ class ShagunStoreApp {
               🔒 Exit
             </button>
           </div>
+        </div>
+
+        <!-- Real-Time Loud Sound Status Strip -->
+        <div style="background: #ecfdf5; border-bottom: 1.5px solid #a7f3d0; padding: 8px 12px; display: flex; justify-content: space-between; align-items: center;">
+          <div style="display: flex; align-items: center; gap: 6px; font-size: 0.76rem; font-weight: 800; color: #065f46;">
+            <span style="font-size: 1rem;">🔔</span>
+            <span>Live Cloud Chime & Alarm: <strong>ACTIVE</strong></span>
+          </div>
+          <button onclick="sounds.playNewOrderChime()" style="padding: 4px 10px; background: #065f46; color: white; border: none; border-radius: 6px; font-size: 0.72rem; font-weight: 800; cursor: pointer;">
+            🔔 Test Ring
+          </button>
         </div>
 
         <!-- Sticky Mobile Segmented Tab Chips -->
