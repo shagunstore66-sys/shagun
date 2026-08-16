@@ -1668,7 +1668,7 @@ class ShagunStoreApp {
   // ---------------- Staff Order Status Progression & Revert/Undo ----------------
   updateOrderStatus(orderId, newStatus) {
     const order = this.orders.find(o => o.id === orderId);
-    if (!order) return;
+    if (!order || order.status === newStatus) return;
 
     order.status = newStatus;
     const timeStr = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
@@ -3498,24 +3498,6 @@ class ShagunStoreApp {
     document.querySelectorAll('.btn-pack-all').forEach(btn => {
       btn.addEventListener('click', () => {
         this.packAllItems(btn.getAttribute('data-order-id'));
-      });
-    });
-
-    // Staff Status Progression
-    document.querySelectorAll('.btn-change-status').forEach(btn => {
-      btn.addEventListener('click', () => {
-        const ordId = btn.getAttribute('data-order-id');
-        const status = btn.getAttribute('data-status');
-        this.updateOrderStatus(ordId, status);
-      });
-    });
-
-    // Staff Status Undo
-    document.querySelectorAll('.btn-undo-status').forEach(btn => {
-      btn.addEventListener('click', () => {
-        const ordId = btn.getAttribute('data-order-id');
-        const prevStatus = btn.getAttribute('data-prev-status');
-        this.updateOrderStatus(ordId, prevStatus);
       });
     });
 
