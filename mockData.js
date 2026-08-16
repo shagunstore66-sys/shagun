@@ -91,7 +91,8 @@ export const I18N = {
     reopenUpi: "Re-open UPI App",
     trackOrder: "Track Live Order",
     addMoreItems: "Add More Items to Active Token",
-    loadMore: "ðŸ“¦ Load More Products âž”"
+    loadMore: "ðŸ“¦ Load More Products âž”",
+    addBtn: "ADD +"
   },
   hi: {
     langName: "à¤¹à¤¿à¤‚à¤¦à¥€",
@@ -141,7 +142,8 @@ export const I18N = {
     reopenUpi: "à¤¯à¥‚à¤ªà¥€à¤†à¤ˆ à¤à¤ª à¤ªà¥à¤¨à¤ƒ à¤–à¥‹à¤²à¥‡à¤‚",
     trackOrder: "à¤²à¤¾à¤‡à¤µ à¤‘à¤°à¥à¤¡à¤° à¤Ÿà¥à¤°à¥ˆà¤• à¤•à¤°à¥‡à¤‚",
     addMoreItems: "à¤šà¤¾à¤²à¥‚ à¤‘à¤°à¥à¤¡à¤° à¤®à¥‡à¤‚ à¤”à¤° à¤¸à¤¾à¤®à¤¾à¤¨ à¤œà¥‹à¤¡à¤¼à¥‡à¤‚",
-    loadMore: "ðŸ“¦ à¤”à¤° à¤¸à¤¾à¤®à¤¾à¤¨ à¤¦à¥‡à¤–à¥‡à¤‚ âž”"
+    loadMore: "ðŸ“¦ à¤”à¤° à¤¸à¤¾à¤®à¤¾à¤¨ à¤¦à¥‡à¤–à¥‡à¤‚ âž”",
+    addBtn: "à¤œà¥‹à¤¡à¤¼à¥‡à¤‚ +"
   },
   kn: {
     langName: "à²•à²¨à³à²¨à²¡",
@@ -191,16 +193,17 @@ export const I18N = {
     reopenUpi: "à²¯à³à²ªà²¿à² à²†à³à²¯à²ªà³ à²®à²¤à³à²¤à³† à²¤à³†à²°à³†à²¯à²¿à²°à²¿",
     trackOrder: "à²²à³ˆà²µà³ à²†à²°à³à²¡à²°à³ à²Ÿà³à²°à³à²¯à²¾à²•à³ à²®à²¾à²¡à²¿",
     addMoreItems: "à²šà²¾à²²à³à²¤à²¿à²¯à²²à³à²²à²¿à²°à³à²µ à²Ÿà³‹à²•à²¨à³â€Œà²—à³† à²‡à²¨à³à²¨à²·à³à²Ÿà³ à²¸à²¾à²®à²—à³à²°à²¿ à²¸à³‡à²°à²¿à²¸à²¿",
-    loadMore: "ðŸ“¦ à²‡à²¨à³à²¨à²·à³à²Ÿà³ à²¸à²¾à²®à²—à³à²°à²¿à²—à²³à²¨à³à²¨à³ à²µà³€à²•à³à²·à²¿à²¸à²¿ âž”"
+    loadMore: "ðŸ“¦ à²‡à²¨à³à²¨à²·à³à²Ÿà³ à²¸à²¾à²®à²—à³à²°à²¿à²—à²³à²¨à³à²¨à³ à²µà³€à²•à³à²·à²¿à²¸à²¿ âž”",
+    addBtn: "à²¸à³‡à²°à²¿à²¸à²¿ +"
   }
 };
 
 export const INITIAL_PRODUCTS = [
     {
         "id":  "shagun_p_0001",
-        "name":  "10Rs Item",
-        "nameHindi":  "à¤•à¤¿à¤°à¤¾à¤¨à¤¾ â€¢ 10Rs Item",
-        "nameKannada":  "à²¦à²¿à²¨à²¸à²¿ â€¢ 10Rs Item",
+        "name":  "Shagun Daily Essential Grocery Pack (â‚¹10)",
+        "nameHindi":  "à¤•à¤¿à¤°à¤¾à¤¨à¤¾ â€¢ Shagun Daily Essential Grocery Pack (â‚¹10)",
+        "nameKannada":  "à²¦à²¿à²¨à²¸à²¿ â€¢ Shagun Daily Essential Grocery Pack (â‚¹10)",
         "category":  "staples",
         "price":  10,
         "mrp":  10,
@@ -215,14 +218,14 @@ export const INITIAL_PRODUCTS = [
                      ],
         "inStock":  true,
         "badge":  "",
-        "description":  "Authentic 10Rs Item from SHAGUN STORE, Bettadapura. Genuine pack \u0026 accurate billing.",
+        "description":  "Authentic Shagun Daily Essential Grocery Pack (â‚¹10) from SHAGUN STORE, Bettadapura. Genuine pack \u0026 accurate billing.",
         "image":  "https://images.openfoodfacts.org/images/products/890/600/728/0105/front_en.5.400.jpg"
     },
     {
         "id":  "shagun_p_0002",
-        "name":  "12Rs Jaggery",
-        "nameHindi":  "à¤•à¤¿à¤°à¤¾à¤¨à¤¾ â€¢ 12Rs Jaggery",
-        "nameKannada":  "à²¦à²¿à²¨à²¸à²¿ â€¢ 12Rs Jaggery",
+        "name":  "Pure Organic Jaggery Round Block (â‚¹12)",
+        "nameHindi":  "à¤•à¤¿à¤°à¤¾à¤¨à¤¾ â€¢ Pure Organic Jaggery Round Block (â‚¹12)",
+        "nameKannada":  "à²¦à²¿à²¨à²¸à²¿ â€¢ Pure Organic Jaggery Round Block (â‚¹12)",
         "category":  "sugar-sweeteners",
         "price":  12,
         "mrp":  12,
@@ -237,14 +240,14 @@ export const INITIAL_PRODUCTS = [
                      ],
         "inStock":  true,
         "badge":  "",
-        "description":  "Authentic 12Rs Jaggery from SHAGUN STORE, Bettadapura. Genuine pack \u0026 accurate billing.",
+        "description":  "Authentic Pure Organic Jaggery Round Block (â‚¹12) from SHAGUN STORE, Bettadapura. Genuine pack \u0026 accurate billing.",
         "image":  "https://images.openfoodfacts.org/images/products/890/600/728/0303/front_en.4.400.jpg"
     },
     {
         "id":  "shagun_p_0003",
-        "name":  "1to3 Noodles",
-        "nameHindi":  "à¤•à¤¿à¤°à¤¾à¤¨à¤¾ â€¢ 1to3 Noodles",
-        "nameKannada":  "à²¦à²¿à²¨à²¸à²¿ â€¢ 1to3 Noodles",
+        "name":  "1to3 Instant Masala Noodles (â‚¹5)",
+        "nameHindi":  "à¤•à¤¿à¤°à¤¾à¤¨à¤¾ â€¢ 1to3 Instant Masala Noodles (â‚¹5)",
+        "nameKannada":  "à²¦à²¿à²¨à²¸à²¿ â€¢ 1to3 Instant Masala Noodles (â‚¹5)",
         "category":  "snacks-namkeen",
         "price":  5,
         "mrp":  5,
@@ -259,14 +262,14 @@ export const INITIAL_PRODUCTS = [
                      ],
         "inStock":  true,
         "badge":  "",
-        "description":  "Authentic 1to3 Noodles from SHAGUN STORE, Bettadapura. Genuine pack \u0026 accurate billing.",
+        "description":  "Authentic 1to3 Instant Masala Noodles (â‚¹5) from SHAGUN STORE, Bettadapura. Genuine pack \u0026 accurate billing.",
         "image":  "https://images.openfoodfacts.org/images/products/890/105/885/2233/front_en.21.400.jpg"
     },
     {
         "id":  "shagun_p_0004",
-        "name":  "1to3 Noodles 10Rs",
-        "nameHindi":  "à¤•à¤¿à¤°à¤¾à¤¨à¤¾ â€¢ 1to3 Noodles 10Rs",
-        "nameKannada":  "à²¦à²¿à²¨à²¸à²¿ â€¢ 1to3 Noodles 10Rs",
+        "name":  "1to3 Instant Masala Noodles (â‚¹10)",
+        "nameHindi":  "à¤•à¤¿à¤°à¤¾à¤¨à¤¾ â€¢ 1to3 Instant Masala Noodles (â‚¹10)",
+        "nameKannada":  "à²¦à²¿à²¨à²¸à²¿ â€¢ 1to3 Instant Masala Noodles (â‚¹10)",
         "category":  "snacks-namkeen",
         "price":  10,
         "mrp":  10,
@@ -281,14 +284,14 @@ export const INITIAL_PRODUCTS = [
                      ],
         "inStock":  true,
         "badge":  "",
-        "description":  "Authentic 1to3 Noodles 10Rs from SHAGUN STORE, Bettadapura. Genuine pack \u0026 accurate billing.",
+        "description":  "Authentic 1to3 Instant Masala Noodles (â‚¹10) from SHAGUN STORE, Bettadapura. Genuine pack \u0026 accurate billing.",
         "image":  "https://images.openfoodfacts.org/images/products/890/105/885/2233/front_en.21.400.jpg"
     },
     {
         "id":  "shagun_p_0005",
-        "name":  "3 Rose 500gm",
-        "nameHindi":  "à¤•à¤¿à¤°à¤¾à¤¨à¤¾ â€¢ 3 Rose 500gm",
-        "nameKannada":  "à²¦à²¿à²¨à²¸à²¿ â€¢ 3 Rose 500gm",
+        "name":  "Brooke Bond 3 Roses 500g",
+        "nameHindi":  "à¤•à¤¿à¤°à¤¾à¤¨à¤¾ â€¢ Brooke Bond 3 Roses 500g",
+        "nameKannada":  "à²¦à²¿à²¨à²¸à²¿ â€¢ Brooke Bond 3 Roses 500g",
         "category":  "tea-beverages",
         "price":  350,
         "mrp":  360,
@@ -303,14 +306,14 @@ export const INITIAL_PRODUCTS = [
                      ],
         "inStock":  true,
         "badge":  "â‚¹10 OFF",
-        "description":  "Authentic 3 Rose 500gm from SHAGUN STORE, Bettadapura. Genuine pack \u0026 accurate billing.",
+        "description":  "Authentic Brooke Bond 3 Roses 500g from SHAGUN STORE, Bettadapura. Genuine pack \u0026 accurate billing.",
         "image":  "https://images.openfoodfacts.org/images/products/890/103/098/5843/front_en.23.400.jpg"
     },
     {
         "id":  "shagun_p_0006",
-        "name":  "3Roses",
-        "nameHindi":  "à¤•à¤¿à¤°à¤¾à¤¨à¤¾ â€¢ 3Roses",
-        "nameKannada":  "à²¦à²¿à²¨à²¸à²¿ â€¢ 3Roses",
+        "name":  "Brooke Bond 3 Roses",
+        "nameHindi":  "à¤•à¤¿à¤°à¤¾à¤¨à¤¾ â€¢ Brooke Bond 3 Roses",
+        "nameKannada":  "à²¦à²¿à²¨à²¸à²¿ â€¢ Brooke Bond 3 Roses",
         "category":  "tea-beverages",
         "price":  220,
         "mrp":  225,
@@ -325,14 +328,14 @@ export const INITIAL_PRODUCTS = [
                      ],
         "inStock":  true,
         "badge":  "â‚¹5 OFF",
-        "description":  "Authentic 3Roses from SHAGUN STORE, Bettadapura. Genuine pack \u0026 accurate billing.",
+        "description":  "Authentic Brooke Bond 3 Roses from SHAGUN STORE, Bettadapura. Genuine pack \u0026 accurate billing.",
         "image":  "https://images.openfoodfacts.org/images/products/890/103/098/5843/front_en.23.400.jpg"
     },
     {
         "id":  "shagun_p_0007",
-        "name":  "3Roses 100g",
-        "nameHindi":  "à¤•à¤¿à¤°à¤¾à¤¨à¤¾ â€¢ 3Roses 100g",
-        "nameKannada":  "à²¦à²¿à²¨à²¸à²¿ â€¢ 3Roses 100g",
+        "name":  "Brooke Bond 3 Roses 100g",
+        "nameHindi":  "à¤•à¤¿à¤°à¤¾à¤¨à¤¾ â€¢ Brooke Bond 3 Roses 100g",
+        "nameKannada":  "à²¦à²¿à²¨à²¸à²¿ â€¢ Brooke Bond 3 Roses 100g",
         "category":  "tea-beverages",
         "price":  85,
         "mrp":  90,
@@ -347,14 +350,14 @@ export const INITIAL_PRODUCTS = [
                      ],
         "inStock":  true,
         "badge":  "â‚¹5 OFF",
-        "description":  "Authentic 3Roses 100g from SHAGUN STORE, Bettadapura. Genuine pack \u0026 accurate billing.",
+        "description":  "Authentic Brooke Bond 3 Roses 100g from SHAGUN STORE, Bettadapura. Genuine pack \u0026 accurate billing.",
         "image":  "https://images.openfoodfacts.org/images/products/890/103/098/5843/front_en.23.400.jpg"
     },
     {
         "id":  "shagun_p_0008",
-        "name":  "3Roses Natural Care 100g",
-        "nameHindi":  "à¤•à¤¿à¤°à¤¾à¤¨à¤¾ â€¢ 3Roses Natural Care 100g",
-        "nameKannada":  "à²¦à²¿à²¨à²¸à²¿ â€¢ 3Roses Natural Care 100g",
+        "name":  "Brooke Bond 3 Roses Natural Care 100g",
+        "nameHindi":  "à¤•à¤¿à¤°à¤¾à¤¨à¤¾ â€¢ Brooke Bond 3 Roses Natural Care 100g",
+        "nameKannada":  "à²¦à²¿à²¨à²¸à²¿ â€¢ Brooke Bond 3 Roses Natural Care 100g",
         "category":  "tea-beverages",
         "price":  95,
         "mrp":  100,
@@ -369,14 +372,14 @@ export const INITIAL_PRODUCTS = [
                      ],
         "inStock":  true,
         "badge":  "5% OFF",
-        "description":  "Authentic 3Roses Natural Care 100g from SHAGUN STORE, Bettadapura. Genuine pack \u0026 accurate billing.",
+        "description":  "Authentic Brooke Bond 3 Roses Natural Care 100g from SHAGUN STORE, Bettadapura. Genuine pack \u0026 accurate billing.",
         "image":  "https://images.openfoodfacts.org/images/products/890/103/098/7342/front_en.14.400.jpg"
     },
     {
         "id":  "shagun_p_0009",
-        "name":  "3Roses NC",
-        "nameHindi":  "à¤•à¤¿à¤°à¤¾à¤¨à¤¾ â€¢ 3Roses NC",
-        "nameKannada":  "à²¦à²¿à²¨à²¸à²¿ â€¢ 3Roses NC",
+        "name":  "Brooke Bond 3 Roses Natural Care",
+        "nameHindi":  "à¤•à¤¿à¤°à¤¾à¤¨à¤¾ â€¢ Brooke Bond 3 Roses Natural Care",
+        "nameKannada":  "à²¦à²¿à²¨à²¸à²¿ â€¢ Brooke Bond 3 Roses Natural Care",
         "category":  "tea-beverages",
         "price":  240,
         "mrp":  245,
@@ -391,14 +394,14 @@ export const INITIAL_PRODUCTS = [
                      ],
         "inStock":  true,
         "badge":  "â‚¹5 OFF",
-        "description":  "Authentic 3Roses NC from SHAGUN STORE, Bettadapura. Genuine pack \u0026 accurate billing.",
+        "description":  "Authentic Brooke Bond 3 Roses Natural Care from SHAGUN STORE, Bettadapura. Genuine pack \u0026 accurate billing.",
         "image":  "https://images.openfoodfacts.org/images/products/890/103/098/7342/front_en.14.400.jpg"
     },
     {
         "id":  "shagun_p_0010",
-        "name":  "3Roses NC 250Gm",
-        "nameHindi":  "à¤•à¤¿à¤°à¤¾à¤¨à¤¾ â€¢ 3Roses NC 250Gm",
-        "nameKannada":  "à²¦à²¿à²¨à²¸à²¿ â€¢ 3Roses NC 250Gm",
+        "name":  "Brooke Bond 3 Roses Natural Care 250g",
+        "nameHindi":  "à¤•à¤¿à¤°à¤¾à¤¨à¤¾ â€¢ Brooke Bond 3 Roses Natural Care 250g",
+        "nameKannada":  "à²¦à²¿à²¨à²¸à²¿ â€¢ Brooke Bond 3 Roses Natural Care 250g",
         "category":  "tea-beverages",
         "price":  240,
         "mrp":  245,
@@ -413,14 +416,14 @@ export const INITIAL_PRODUCTS = [
                      ],
         "inStock":  true,
         "badge":  "â‚¹5 OFF",
-        "description":  "Authentic 3Roses NC 250Gm from SHAGUN STORE, Bettadapura. Genuine pack \u0026 accurate billing.",
+        "description":  "Authentic Brooke Bond 3 Roses Natural Care 250g from SHAGUN STORE, Bettadapura. Genuine pack \u0026 accurate billing.",
         "image":  "https://images.openfoodfacts.org/images/products/890/103/098/7342/front_en.14.400.jpg"
     },
     {
         "id":  "shagun_p_0011",
-        "name":  "50-50",
-        "nameHindi":  "à¤•à¤¿à¤°à¤¾à¤¨à¤¾ â€¢ 50-50",
-        "nameKannada":  "à²¦à²¿à²¨à²¸à²¿ â€¢ 50-50",
+        "name":  "Britannia 50-50 Maska Chaska Biscuits (â‚¹10)",
+        "nameHindi":  "à¤•à¤¿à¤°à¤¾à¤¨à¤¾ â€¢ Britannia 50-50 Maska Chaska Biscuits (â‚¹10)",
+        "nameKannada":  "à²¦à²¿à²¨à²¸à²¿ â€¢ Britannia 50-50 Maska Chaska Biscuits (â‚¹10)",
         "category":  "snacks-namkeen",
         "price":  10,
         "mrp":  10,
@@ -435,14 +438,14 @@ export const INITIAL_PRODUCTS = [
                      ],
         "inStock":  true,
         "badge":  "",
-        "description":  "Authentic 50-50 from SHAGUN STORE, Bettadapura. Genuine pack \u0026 accurate billing.",
+        "description":  "Authentic Britannia 50-50 Maska Chaska Biscuits (â‚¹10) from SHAGUN STORE, Bettadapura. Genuine pack \u0026 accurate billing.",
         "image":  "https://images.openfoodfacts.org/images/products/890/106/336/7258/front_en.3.400.jpg"
     },
     {
         "id":  "shagun_p_0012",
-        "name":  "555 Groom",
-        "nameHindi":  "à¤•à¤¿à¤°à¤¾à¤¨à¤¾ â€¢ 555 Groom",
-        "nameKannada":  "à²¦à²¿à²¨à²¸à²¿ â€¢ 555 Groom",
+        "name":  "555 Super Quality Natural Grass Broom",
+        "nameHindi":  "à¤•à¤¿à¤°à¤¾à¤¨à¤¾ â€¢ 555 Super Quality Natural Grass Broom",
+        "nameKannada":  "à²¦à²¿à²¨à²¸à²¿ â€¢ 555 Super Quality Natural Grass Broom",
         "category":  "household-clean",
         "price":  90,
         "mrp":  110,
@@ -457,14 +460,14 @@ export const INITIAL_PRODUCTS = [
                      ],
         "inStock":  true,
         "badge":  "â‚¹20 OFF",
-        "description":  "Authentic 555 Groom from SHAGUN STORE, Bettadapura. Genuine pack \u0026 accurate billing.",
+        "description":  "Authentic 555 Super Quality Natural Grass Broom from SHAGUN STORE, Bettadapura. Genuine pack \u0026 accurate billing.",
         "image":  "https://images.openfoodfacts.org/images/products/890/603/443/0146/front_en.3.400.jpg"
     },
     {
         "id":  "shagun_p_0013",
-        "name":  "555 Rice",
-        "nameHindi":  "à¤•à¤¿à¤°à¤¾à¤¨à¤¾ â€¢ 555 Rice",
-        "nameKannada":  "à²¦à²¿à²¨à²¸à²¿ â€¢ 555 Rice",
+        "name":  "555 Pure Sona Masoori Raw Rice (25kg)",
+        "nameHindi":  "à¤•à¤¿à¤°à¤¾à¤¨à¤¾ â€¢ 555 Pure Sona Masoori Raw Rice (25kg)",
+        "nameKannada":  "à²¦à²¿à²¨à²¸à²¿ â€¢ 555 Pure Sona Masoori Raw Rice (25kg)",
         "category":  "staples",
         "price":  1200,
         "mrp":  1300,
@@ -479,14 +482,14 @@ export const INITIAL_PRODUCTS = [
                      ],
         "inStock":  true,
         "badge":  "â‚¹100 OFF",
-        "description":  "Authentic 555 Rice from SHAGUN STORE, Bettadapura. Genuine pack \u0026 accurate billing.",
+        "description":  "Authentic 555 Pure Sona Masoori Raw Rice (25kg) from SHAGUN STORE, Bettadapura. Genuine pack \u0026 accurate billing.",
         "image":  "https://images.openfoodfacts.org/images/products/890/600/728/0105/front_en.5.400.jpg"
     },
     {
         "id":  "shagun_p_0014",
-        "name":  "5Rs Exo Soap",
-        "nameHindi":  "à¤•à¤¿à¤°à¤¾à¤¨à¤¾ â€¢ 5Rs Exo Soap",
-        "nameKannada":  "à²¦à²¿à²¨à²¸à²¿ â€¢ 5Rs Exo Soap",
+        "name":  "Exo Anti-Bacterial Dishwash Round Bar (â‚¹5)",
+        "nameHindi":  "à¤•à¤¿à¤°à¤¾à¤¨à¤¾ â€¢ Exo Anti-Bacterial Dishwash Round Bar (â‚¹5)",
+        "nameKannada":  "à²¦à²¿à²¨à²¸à²¿ â€¢ Exo Anti-Bacterial Dishwash Round Bar (â‚¹5)",
         "category":  "household-clean",
         "price":  5,
         "mrp":  5,
@@ -501,14 +504,14 @@ export const INITIAL_PRODUCTS = [
                      ],
         "inStock":  true,
         "badge":  "",
-        "description":  "Authentic 5Rs Exo Soap from SHAGUN STORE, Bettadapura. Genuine pack \u0026 accurate billing.",
+        "description":  "Authentic Exo Anti-Bacterial Dishwash Round Bar (â‚¹5) from SHAGUN STORE, Bettadapura. Genuine pack \u0026 accurate billing.",
         "image":  "https://images.openfoodfacts.org/images/products/890/210/216/3923/front_en.4.400.jpg"
     },
     {
         "id":  "shagun_p_0015",
-        "name":  "5Rs Soda 1 St",
-        "nameHindi":  "à¤•à¤¿à¤°à¤¾à¤¨à¤¾ â€¢ 5Rs Soda 1 St",
-        "nameKannada":  "à²¦à²¿à²¨à²¸à²¿ â€¢ 5Rs Soda 1 St",
+        "name":  "Cooking Soda / Baking Soda Pack (â‚¹30)",
+        "nameHindi":  "à¤•à¤¿à¤°à¤¾à¤¨à¤¾ â€¢ Cooking Soda / Baking Soda Pack (â‚¹30)",
+        "nameKannada":  "à²¦à²¿à²¨à²¸à²¿ â€¢ Cooking Soda / Baking Soda Pack (â‚¹30)",
         "category":  "staples",
         "price":  30,
         "mrp":  30,
@@ -523,14 +526,14 @@ export const INITIAL_PRODUCTS = [
                      ],
         "inStock":  true,
         "badge":  "",
-        "description":  "Authentic 5Rs Soda 1 St from SHAGUN STORE, Bettadapura. Genuine pack \u0026 accurate billing.",
+        "description":  "Authentic Cooking Soda / Baking Soda Pack (â‚¹30) from SHAGUN STORE, Bettadapura. Genuine pack \u0026 accurate billing.",
         "image":  "https://images.openfoodfacts.org/images/products/890/600/728/0105/front_en.5.400.jpg"
     },
     {
         "id":  "shagun_p_0016",
-        "name":  "5T Punch Groom",
-        "nameHindi":  "à¤•à¤¿à¤°à¤¾à¤¨à¤¾ â€¢ 5T Punch Groom",
-        "nameKannada":  "à²¦à²¿à²¨à²¸à²¿ â€¢ 5T Punch Groom",
+        "name":  "5T Punch Heavy Duty Grass Broom",
+        "nameHindi":  "à¤•à¤¿à¤°à¤¾à¤¨à¤¾ â€¢ 5T Punch Heavy Duty Grass Broom",
+        "nameKannada":  "à²¦à²¿à²¨à²¸à²¿ â€¢ 5T Punch Heavy Duty Grass Broom",
         "category":  "household-clean",
         "price":  160,
         "mrp":  220,
@@ -545,14 +548,14 @@ export const INITIAL_PRODUCTS = [
                      ],
         "inStock":  true,
         "badge":  "â‚¹60 OFF",
-        "description":  "Authentic 5T Punch Groom from SHAGUN STORE, Bettadapura. Genuine pack \u0026 accurate billing.",
+        "description":  "Authentic 5T Punch Heavy Duty Grass Broom from SHAGUN STORE, Bettadapura. Genuine pack \u0026 accurate billing.",
         "image":  "https://images.openfoodfacts.org/images/products/890/603/443/0146/front_en.3.400.jpg"
     },
     {
         "id":  "shagun_p_0017",
-        "name":  "777 Rice",
-        "nameHindi":  "à¤•à¤¿à¤°à¤¾à¤¨à¤¾ â€¢ 777 Rice",
-        "nameKannada":  "à²¦à²¿à²¨à²¸à²¿ â€¢ 777 Rice",
+        "name":  "777 Premium Sona Masoori Rice (25kg)",
+        "nameHindi":  "à¤•à¤¿à¤°à¤¾à¤¨à¤¾ â€¢ 777 Premium Sona Masoori Rice (25kg)",
+        "nameKannada":  "à²¦à²¿à²¨à²¸à²¿ â€¢ 777 Premium Sona Masoori Rice (25kg)",
         "category":  "staples",
         "price":  1400,
         "mrp":  1500,
@@ -567,7 +570,7 @@ export const INITIAL_PRODUCTS = [
                      ],
         "inStock":  true,
         "badge":  "â‚¹100 OFF",
-        "description":  "Authentic 777 Rice from SHAGUN STORE, Bettadapura. Genuine pack \u0026 accurate billing.",
+        "description":  "Authentic 777 Premium Sona Masoori Rice (25kg) from SHAGUN STORE, Bettadapura. Genuine pack \u0026 accurate billing.",
         "image":  "https://images.openfoodfacts.org/images/products/890/600/728/0105/front_en.5.400.jpg"
     },
     {
@@ -594,9 +597,9 @@ export const INITIAL_PRODUCTS = [
     },
     {
         "id":  "shagun_p_0019",
-        "name":  "Aachen Garam Masala 50g",
-        "nameHindi":  "à¤•à¤¿à¤°à¤¾à¤¨à¤¾ â€¢ Aachen Garam Masala 50g",
-        "nameKannada":  "à²¦à²¿à²¨à²¸à²¿ â€¢ Aachen Garam Masala 50g",
+        "name":  "Aachi Garam Masala 50g",
+        "nameHindi":  "à¤•à¤¿à¤°à¤¾à¤¨à¤¾ â€¢ Aachi Garam Masala 50g",
+        "nameKannada":  "à²¦à²¿à²¨à²¸à²¿ â€¢ Aachi Garam Masala 50g",
         "category":  "spices-masala",
         "price":  30,
         "mrp":  36,
@@ -611,14 +614,14 @@ export const INITIAL_PRODUCTS = [
                      ],
         "inStock":  true,
         "badge":  "â‚¹6 OFF",
-        "description":  "Authentic Aachen Garam Masala 50g from SHAGUN STORE, Bettadapura. Genuine pack \u0026 accurate billing.",
+        "description":  "Authentic Aachi Garam Masala 50g from SHAGUN STORE, Bettadapura. Genuine pack \u0026 accurate billing.",
         "image":  "https://images.openfoodfacts.org/images/products/890/602/112/1163/front_en.4.400.jpg"
     },
     {
         "id":  "shagun_p_0020",
-        "name":  "Aachi  C.m 50g",
-        "nameHindi":  "à¤•à¤¿à¤°à¤¾à¤¨à¤¾ â€¢ Aachi  C.m 50g",
-        "nameKannada":  "à²¦à²¿à²¨à²¸à²¿ â€¢ Aachi  C.m 50g",
+        "name":  "Aachi Chicken Masala 50g",
+        "nameHindi":  "à¤•à¤¿à¤°à¤¾à¤¨à¤¾ â€¢ Aachi Chicken Masala 50g",
+        "nameKannada":  "à²¦à²¿à²¨à²¸à²¿ â€¢ Aachi Chicken Masala 50g",
         "category":  "spices-masala",
         "price":  20,
         "mrp":  26,
@@ -633,7 +636,7 @@ export const INITIAL_PRODUCTS = [
                      ],
         "inStock":  true,
         "badge":  "â‚¹6 OFF",
-        "description":  "Authentic Aachi  C.m 50g from SHAGUN STORE, Bettadapura. Genuine pack \u0026 accurate billing.",
+        "description":  "Authentic Aachi Chicken Masala 50g from SHAGUN STORE, Bettadapura. Genuine pack \u0026 accurate billing.",
         "image":  "https://images.openfoodfacts.org/images/products/890/602/112/0463/front_en.5.400.jpg"
     },
     {
@@ -880,9 +883,9 @@ export const INITIAL_PRODUCTS = [
     },
     {
         "id":  "shagun_p_0032",
-        "name":  "Aachi Turmeric 50Gm",
-        "nameHindi":  "à¤•à¤¿à¤°à¤¾à¤¨à¤¾ â€¢ Aachi Turmeric 50Gm",
-        "nameKannada":  "à²¦à²¿à²¨à²¸à²¿ â€¢ Aachi Turmeric 50Gm",
+        "name":  "Aachi Turmeric 50g",
+        "nameHindi":  "à¤•à¤¿à¤°à¤¾à¤¨à¤¾ â€¢ Aachi Turmeric 50g",
+        "nameKannada":  "à²¦à²¿à²¨à²¸à²¿ â€¢ Aachi Turmeric 50g",
         "category":  "spices-masala",
         "price":  15,
         "mrp":  21,
@@ -897,7 +900,7 @@ export const INITIAL_PRODUCTS = [
                      ],
         "inStock":  true,
         "badge":  "â‚¹6 OFF",
-        "description":  "Authentic Aachi Turmeric 50Gm from SHAGUN STORE, Bettadapura. Genuine pack \u0026 accurate billing.",
+        "description":  "Authentic Aachi Turmeric 50g from SHAGUN STORE, Bettadapura. Genuine pack \u0026 accurate billing.",
         "image":  "https://images.openfoodfacts.org/images/products/890/602/112/3129/front_en.4.400.jpg"
     },
     {
@@ -1672,9 +1675,9 @@ export const INITIAL_PRODUCTS = [
     },
     {
         "id":  "shagun_p_0068",
-        "name":  "Anjeer 100Gm",
-        "nameHindi":  "à¤•à¤¿à¤°à¤¾à¤¨à¤¾ â€¢ Anjeer 100Gm",
-        "nameKannada":  "à²¦à²¿à²¨à²¸à²¿ â€¢ Anjeer 100Gm",
+        "name":  "Anjeer 100g",
+        "nameHindi":  "à¤•à¤¿à¤°à¤¾à¤¨à¤¾ â€¢ Anjeer 100g",
+        "nameKannada":  "à²¦à²¿à²¨à²¸à²¿ â€¢ Anjeer 100g",
         "category":  "staples",
         "price":  160,
         "mrp":  160,
@@ -1689,14 +1692,14 @@ export const INITIAL_PRODUCTS = [
                      ],
         "inStock":  true,
         "badge":  "",
-        "description":  "Authentic Anjeer 100Gm from SHAGUN STORE, Bettadapura. Genuine pack \u0026 accurate billing.",
+        "description":  "Authentic Anjeer 100g from SHAGUN STORE, Bettadapura. Genuine pack \u0026 accurate billing.",
         "image":  "https://images.openfoodfacts.org/images/products/890/600/728/0105/front_en.5.400.jpg"
     },
     {
         "id":  "shagun_p_0069",
-        "name":  "Anjeer 250Gm",
-        "nameHindi":  "à¤•à¤¿à¤°à¤¾à¤¨à¤¾ â€¢ Anjeer 250Gm",
-        "nameKannada":  "à²¦à²¿à²¨à²¸à²¿ â€¢ Anjeer 250Gm",
+        "name":  "Anjeer 250g",
+        "nameHindi":  "à¤•à¤¿à¤°à¤¾à¤¨à¤¾ â€¢ Anjeer 250g",
+        "nameKannada":  "à²¦à²¿à²¨à²¸à²¿ â€¢ Anjeer 250g",
         "category":  "staples",
         "price":  400,
         "mrp":  400,
@@ -1711,7 +1714,7 @@ export const INITIAL_PRODUCTS = [
                      ],
         "inStock":  true,
         "badge":  "",
-        "description":  "Authentic Anjeer 250Gm from SHAGUN STORE, Bettadapura. Genuine pack \u0026 accurate billing.",
+        "description":  "Authentic Anjeer 250g from SHAGUN STORE, Bettadapura. Genuine pack \u0026 accurate billing.",
         "image":  "https://images.openfoodfacts.org/images/products/890/600/728/0105/front_en.5.400.jpg"
     },
     {
@@ -2068,9 +2071,9 @@ export const INITIAL_PRODUCTS = [
     },
     {
         "id":  "shagun_p_0086",
-        "name":  "Badam 250Gm",
-        "nameHindi":  "à¤•à¤¿à¤°à¤¾à¤¨à¤¾ â€¢ Badam 250Gm",
-        "nameKannada":  "à²¦à²¿à²¨à²¸à²¿ â€¢ Badam 250Gm",
+        "name":  "Badam 250g",
+        "nameHindi":  "à¤•à¤¿à¤°à¤¾à¤¨à¤¾ â€¢ Badam 250g",
+        "nameKannada":  "à²¦à²¿à²¨à²¸à²¿ â€¢ Badam 250g",
         "category":  "staples",
         "price":  230,
         "mrp":  230,
@@ -2085,14 +2088,14 @@ export const INITIAL_PRODUCTS = [
                      ],
         "inStock":  true,
         "badge":  "",
-        "description":  "Authentic Badam 250Gm from SHAGUN STORE, Bettadapura. Genuine pack \u0026 accurate billing.",
+        "description":  "Authentic Badam 250g from SHAGUN STORE, Bettadapura. Genuine pack \u0026 accurate billing.",
         "image":  "https://images.openfoodfacts.org/images/products/890/600/728/0105/front_en.5.400.jpg"
     },
     {
         "id":  "shagun_p_0087",
-        "name":  "Badam Tail  25ml",
-        "nameHindi":  "à¤•à¤¿à¤°à¤¾à¤¨à¤¾ â€¢ Badam Tail  25ml",
-        "nameKannada":  "à²¦à²¿à²¨à²¸à²¿ â€¢ Badam Tail  25ml",
+        "name":  "Badam Tail 25ml",
+        "nameHindi":  "à¤•à¤¿à¤°à¤¾à¤¨à¤¾ â€¢ Badam Tail 25ml",
+        "nameKannada":  "à²¦à²¿à²¨à²¸à²¿ â€¢ Badam Tail 25ml",
         "category":  "staples",
         "price":  120,
         "mrp":  125,
@@ -2107,7 +2110,7 @@ export const INITIAL_PRODUCTS = [
                      ],
         "inStock":  true,
         "badge":  "â‚¹5 OFF",
-        "description":  "Authentic Badam Tail  25ml from SHAGUN STORE, Bettadapura. Genuine pack \u0026 accurate billing.",
+        "description":  "Authentic Badam Tail 25ml from SHAGUN STORE, Bettadapura. Genuine pack \u0026 accurate billing.",
         "image":  "https://images.openfoodfacts.org/images/products/890/600/728/0105/front_en.5.400.jpg"
     },
     {
@@ -2574,9 +2577,9 @@ export const INITIAL_PRODUCTS = [
     },
     {
         "id":  "shagun_p_0109",
-        "name":  "Biryani  28ml",
-        "nameHindi":  "à¤•à¤¿à¤°à¤¾à¤¨à¤¾ â€¢ Biryani  28ml",
-        "nameKannada":  "à²¦à²¿à²¨à²¸à²¿ â€¢ Biryani  28ml",
+        "name":  "Biryani 28ml",
+        "nameHindi":  "à¤•à¤¿à¤°à¤¾à¤¨à¤¾ â€¢ Biryani 28ml",
+        "nameKannada":  "à²¦à²¿à²¨à²¸à²¿ â€¢ Biryani 28ml",
         "category":  "staples",
         "price":  100,
         "mrp":  105,
@@ -2591,7 +2594,7 @@ export const INITIAL_PRODUCTS = [
                      ],
         "inStock":  true,
         "badge":  "â‚¹5 OFF",
-        "description":  "Authentic Biryani  28ml from SHAGUN STORE, Bettadapura. Genuine pack \u0026 accurate billing.",
+        "description":  "Authentic Biryani 28ml from SHAGUN STORE, Bettadapura. Genuine pack \u0026 accurate billing.",
         "image":  "https://images.openfoodfacts.org/images/products/890/600/728/0105/front_en.5.400.jpg"
     },
     {
@@ -3938,9 +3941,9 @@ export const INITIAL_PRODUCTS = [
     },
     {
         "id":  "shagun_p_0171",
-        "name":  "Clinic Plus+Smpoo  175ml",
-        "nameHindi":  "à¤•à¤¿à¤°à¤¾à¤¨à¤¾ â€¢ Clinic Plus+Smpoo  175ml",
-        "nameKannada":  "à²¦à²¿à²¨à²¸à²¿ â€¢ Clinic Plus+Smpoo  175ml",
+        "name":  "Clinic Plus+Smpoo 175ml",
+        "nameHindi":  "à¤•à¤¿à¤°à¤¾à¤¨à¤¾ â€¢ Clinic Plus+Smpoo 175ml",
+        "nameKannada":  "à²¦à²¿à²¨à²¸à²¿ â€¢ Clinic Plus+Smpoo 175ml",
         "category":  "staples",
         "price":  170,
         "mrp":  179,
@@ -3955,7 +3958,7 @@ export const INITIAL_PRODUCTS = [
                      ],
         "inStock":  true,
         "badge":  "â‚¹9 OFF",
-        "description":  "Authentic Clinic Plus+Smpoo  175ml from SHAGUN STORE, Bettadapura. Genuine pack \u0026 accurate billing.",
+        "description":  "Authentic Clinic Plus+Smpoo 175ml from SHAGUN STORE, Bettadapura. Genuine pack \u0026 accurate billing.",
         "image":  "https://images.openfoodfacts.org/images/products/890/600/728/0105/front_en.5.400.jpg"
     },
     {
@@ -3982,9 +3985,9 @@ export const INITIAL_PRODUCTS = [
     },
     {
         "id":  "shagun_p_0173",
-        "name":  "CloseUp 150Gm",
-        "nameHindi":  "à¤•à¤¿à¤°à¤¾à¤¨à¤¾ â€¢ CloseUp 150Gm",
-        "nameKannada":  "à²¦à²¿à²¨à²¸à²¿ â€¢ CloseUp 150Gm",
+        "name":  "CloseUp 150g",
+        "nameHindi":  "à¤•à¤¿à¤°à¤¾à¤¨à¤¾ â€¢ CloseUp 150g",
+        "nameKannada":  "à²¦à²¿à²¨à²¸à²¿ â€¢ CloseUp 150g",
         "category":  "staples",
         "price":  125,
         "mrp":  129,
@@ -3999,14 +4002,14 @@ export const INITIAL_PRODUCTS = [
                      ],
         "inStock":  true,
         "badge":  "â‚¹4 OFF",
-        "description":  "Authentic CloseUp 150Gm from SHAGUN STORE, Bettadapura. Genuine pack \u0026 accurate billing.",
+        "description":  "Authentic CloseUp 150g from SHAGUN STORE, Bettadapura. Genuine pack \u0026 accurate billing.",
         "image":  "https://images.openfoodfacts.org/images/products/890/600/728/0105/front_en.5.400.jpg"
     },
     {
         "id":  "shagun_p_0174",
-        "name":  "CloseUp 90Gm",
-        "nameHindi":  "à¤•à¤¿à¤°à¤¾à¤¨à¤¾ â€¢ CloseUp 90Gm",
-        "nameKannada":  "à²¦à²¿à²¨à²¸à²¿ â€¢ CloseUp 90Gm",
+        "name":  "CloseUp 90g",
+        "nameHindi":  "à¤•à¤¿à¤°à¤¾à¤¨à¤¾ â€¢ CloseUp 90g",
+        "nameKannada":  "à²¦à²¿à²¨à²¸à²¿ â€¢ CloseUp 90g",
         "category":  "staples",
         "price":  53,
         "mrp":  55,
@@ -4021,7 +4024,7 @@ export const INITIAL_PRODUCTS = [
                      ],
         "inStock":  true,
         "badge":  "â‚¹2 OFF",
-        "description":  "Authentic CloseUp 90Gm from SHAGUN STORE, Bettadapura. Genuine pack \u0026 accurate billing.",
+        "description":  "Authentic CloseUp 90g from SHAGUN STORE, Bettadapura. Genuine pack \u0026 accurate billing.",
         "image":  "https://images.openfoodfacts.org/images/products/890/600/728/0105/front_en.5.400.jpg"
     },
     {
@@ -4048,9 +4051,9 @@ export const INITIAL_PRODUCTS = [
     },
     {
         "id":  "shagun_p_0176",
-        "name":  "Colgate 100Gm",
-        "nameHindi":  "à¤•à¤¿à¤°à¤¾à¤¨à¤¾ â€¢ Colgate 100Gm",
-        "nameKannada":  "à²¦à²¿à²¨à²¸à²¿ â€¢ Colgate 100Gm",
+        "name":  "Colgate 100g",
+        "nameHindi":  "à¤•à¤¿à¤°à¤¾à¤¨à¤¾ â€¢ Colgate 100g",
+        "nameKannada":  "à²¦à²¿à²¨à²¸à²¿ â€¢ Colgate 100g",
         "category":  "household-clean",
         "price":  68,
         "mrp":  70,
@@ -4065,7 +4068,7 @@ export const INITIAL_PRODUCTS = [
                      ],
         "inStock":  true,
         "badge":  "â‚¹2 OFF",
-        "description":  "Authentic Colgate 100Gm from SHAGUN STORE, Bettadapura. Genuine pack \u0026 accurate billing.",
+        "description":  "Authentic Colgate 100g from SHAGUN STORE, Bettadapura. Genuine pack \u0026 accurate billing.",
         "image":  "https://images.openfoodfacts.org/images/products/890/131/401/0543/front_en.14.400.jpg"
     },
     {
@@ -4334,9 +4337,9 @@ export const INITIAL_PRODUCTS = [
     },
     {
         "id":  "shagun_p_0189",
-        "name":  "Colgate Salt 100Gm",
-        "nameHindi":  "à¤•à¤¿à¤°à¤¾à¤¨à¤¾ â€¢ Colgate Salt 100Gm",
-        "nameKannada":  "à²¦à²¿à²¨à²¸à²¿ â€¢ Colgate Salt 100Gm",
+        "name":  "Colgate Salt 100g",
+        "nameHindi":  "à¤•à¤¿à¤°à¤¾à¤¨à¤¾ â€¢ Colgate Salt 100g",
+        "nameKannada":  "à²¦à²¿à²¨à²¸à²¿ â€¢ Colgate Salt 100g",
         "category":  "household-clean",
         "price":  82,
         "mrp":  84,
@@ -4351,14 +4354,14 @@ export const INITIAL_PRODUCTS = [
                      ],
         "inStock":  true,
         "badge":  "â‚¹2 OFF",
-        "description":  "Authentic Colgate Salt 100Gm from SHAGUN STORE, Bettadapura. Genuine pack \u0026 accurate billing.",
+        "description":  "Authentic Colgate Salt 100g from SHAGUN STORE, Bettadapura. Genuine pack \u0026 accurate billing.",
         "image":  "https://images.openfoodfacts.org/images/products/890/131/401/0543/front_en.14.400.jpg"
     },
     {
         "id":  "shagun_p_0190",
-        "name":  "Colgate Salt 300gm",
-        "nameHindi":  "à¤•à¤¿à¤°à¤¾à¤¨à¤¾ â€¢ Colgate Salt 300gm",
-        "nameKannada":  "à²¦à²¿à²¨à²¸à²¿ â€¢ Colgate Salt 300gm",
+        "name":  "Colgate Salt 300g",
+        "nameHindi":  "à¤•à¤¿à¤°à¤¾à¤¨à¤¾ â€¢ Colgate Salt 300g",
+        "nameKannada":  "à²¦à²¿à²¨à²¸à²¿ â€¢ Colgate Salt 300g",
         "category":  "household-clean",
         "price":  225,
         "mrp":  240,
@@ -4373,7 +4376,7 @@ export const INITIAL_PRODUCTS = [
                      ],
         "inStock":  true,
         "badge":  "â‚¹15 OFF",
-        "description":  "Authentic Colgate Salt 300gm from SHAGUN STORE, Bettadapura. Genuine pack \u0026 accurate billing.",
+        "description":  "Authentic Colgate Salt 300g from SHAGUN STORE, Bettadapura. Genuine pack \u0026 accurate billing.",
         "image":  "https://images.openfoodfacts.org/images/products/890/131/401/0543/front_en.14.400.jpg"
     },
     {
@@ -5126,9 +5129,9 @@ export const INITIAL_PRODUCTS = [
     },
     {
         "id":  "shagun_p_0225",
-        "name":  "Dabur Honey 250Gm",
-        "nameHindi":  "à¤•à¤¿à¤°à¤¾à¤¨à¤¾ â€¢ Dabur Honey 250Gm",
-        "nameKannada":  "à²¦à²¿à²¨à²¸à²¿ â€¢ Dabur Honey 250Gm",
+        "name":  "Dabur Honey 250g",
+        "nameHindi":  "à¤•à¤¿à¤°à¤¾à¤¨à¤¾ â€¢ Dabur Honey 250g",
+        "nameKannada":  "à²¦à²¿à²¨à²¸à²¿ â€¢ Dabur Honey 250g",
         "category":  "staples",
         "price":  120,
         "mrp":  125,
@@ -5143,14 +5146,14 @@ export const INITIAL_PRODUCTS = [
                      ],
         "inStock":  true,
         "badge":  "â‚¹5 OFF",
-        "description":  "Authentic Dabur Honey 250Gm from SHAGUN STORE, Bettadapura. Genuine pack \u0026 accurate billing.",
+        "description":  "Authentic Dabur Honey 250g from SHAGUN STORE, Bettadapura. Genuine pack \u0026 accurate billing.",
         "image":  "https://images.openfoodfacts.org/images/products/890/600/728/0105/front_en.5.400.jpg"
     },
     {
         "id":  "shagun_p_0226",
-        "name":  "Dabur Red 100Gm",
-        "nameHindi":  "à¤•à¤¿à¤°à¤¾à¤¨à¤¾ â€¢ Dabur Red 100Gm",
-        "nameKannada":  "à²¦à²¿à²¨à²¸à²¿ â€¢ Dabur Red 100Gm",
+        "name":  "Dabur Red 100g",
+        "nameHindi":  "à¤•à¤¿à¤°à¤¾à¤¨à¤¾ â€¢ Dabur Red 100g",
+        "nameKannada":  "à²¦à²¿à²¨à²¸à²¿ â€¢ Dabur Red 100g",
         "category":  "staples",
         "price":  67,
         "mrp":  69,
@@ -5165,7 +5168,7 @@ export const INITIAL_PRODUCTS = [
                      ],
         "inStock":  true,
         "badge":  "â‚¹2 OFF",
-        "description":  "Authentic Dabur Red 100Gm from SHAGUN STORE, Bettadapura. Genuine pack \u0026 accurate billing.",
+        "description":  "Authentic Dabur Red 100g from SHAGUN STORE, Bettadapura. Genuine pack \u0026 accurate billing.",
         "image":  "https://images.openfoodfacts.org/images/products/890/600/728/0105/front_en.5.400.jpg"
     },
     {
@@ -5236,9 +5239,9 @@ export const INITIAL_PRODUCTS = [
     },
     {
         "id":  "shagun_p_0230",
-        "name":  "Dalchini 50Gm",
-        "nameHindi":  "à¤•à¤¿à¤°à¤¾à¤¨à¤¾ â€¢ Dalchini 50Gm",
-        "nameKannada":  "à²¦à²¿à²¨à²¸à²¿ â€¢ Dalchini 50Gm",
+        "name":  "Dalchini 50g",
+        "nameHindi":  "à¤•à¤¿à¤°à¤¾à¤¨à¤¾ â€¢ Dalchini 50g",
+        "nameKannada":  "à²¦à²¿à²¨à²¸à²¿ â€¢ Dalchini 50g",
         "category":  "staples",
         "price":  20,
         "mrp":  20,
@@ -5253,14 +5256,14 @@ export const INITIAL_PRODUCTS = [
                      ],
         "inStock":  true,
         "badge":  "",
-        "description":  "Authentic Dalchini 50Gm from SHAGUN STORE, Bettadapura. Genuine pack \u0026 accurate billing.",
+        "description":  "Authentic Dalchini 50g from SHAGUN STORE, Bettadapura. Genuine pack \u0026 accurate billing.",
         "image":  "https://images.openfoodfacts.org/images/products/890/600/728/0105/front_en.5.400.jpg"
     },
     {
         "id":  "shagun_p_0231",
-        "name":  "Dant Kanti 100Gm",
-        "nameHindi":  "à¤•à¤¿à¤°à¤¾à¤¨à¤¾ â€¢ Dant Kanti 100Gm",
-        "nameKannada":  "à²¦à²¿à²¨à²¸à²¿ â€¢ Dant Kanti 100Gm",
+        "name":  "Dant Kanti 100g",
+        "nameHindi":  "à¤•à¤¿à¤°à¤¾à¤¨à¤¾ â€¢ Dant Kanti 100g",
+        "nameKannada":  "à²¦à²¿à²¨à²¸à²¿ â€¢ Dant Kanti 100g",
         "category":  "staples",
         "price":  61,
         "mrp":  63,
@@ -5275,7 +5278,7 @@ export const INITIAL_PRODUCTS = [
                      ],
         "inStock":  true,
         "badge":  "â‚¹2 OFF",
-        "description":  "Authentic Dant Kanti 100Gm from SHAGUN STORE, Bettadapura. Genuine pack \u0026 accurate billing.",
+        "description":  "Authentic Dant Kanti 100g from SHAGUN STORE, Bettadapura. Genuine pack \u0026 accurate billing.",
         "image":  "https://images.openfoodfacts.org/images/products/890/600/728/0105/front_en.5.400.jpg"
     },
     {
@@ -5346,9 +5349,9 @@ export const INITIAL_PRODUCTS = [
     },
     {
         "id":  "shagun_p_0235",
-        "name":  "Dark Fantasy 345Gm",
-        "nameHindi":  "à¤•à¤¿à¤°à¤¾à¤¨à¤¾ â€¢ Dark Fantasy 345Gm",
-        "nameKannada":  "à²¦à²¿à²¨à²¸à²¿ â€¢ Dark Fantasy 345Gm",
+        "name":  "Dark Fantasy 345g",
+        "nameHindi":  "à¤•à¤¿à¤°à¤¾à¤¨à¤¾ â€¢ Dark Fantasy 345g",
+        "nameKannada":  "à²¦à²¿à²¨à²¸à²¿ â€¢ Dark Fantasy 345g",
         "category":  "staples",
         "price":  155,
         "mrp":  160,
@@ -5363,14 +5366,14 @@ export const INITIAL_PRODUCTS = [
                      ],
         "inStock":  true,
         "badge":  "â‚¹5 OFF",
-        "description":  "Authentic Dark Fantasy 345Gm from SHAGUN STORE, Bettadapura. Genuine pack \u0026 accurate billing.",
+        "description":  "Authentic Dark Fantasy 345g from SHAGUN STORE, Bettadapura. Genuine pack \u0026 accurate billing.",
         "image":  "https://images.openfoodfacts.org/images/products/890/600/728/0105/front_en.5.400.jpg"
     },
     {
         "id":  "shagun_p_0236",
-        "name":  "Dark Fantasy 69Gm",
-        "nameHindi":  "à¤•à¤¿à¤°à¤¾à¤¨à¤¾ â€¢ Dark Fantasy 69Gm",
-        "nameKannada":  "à²¦à²¿à²¨à²¸à²¿ â€¢ Dark Fantasy 69Gm",
+        "name":  "Dark Fantasy 69g",
+        "nameHindi":  "à¤•à¤¿à¤°à¤¾à¤¨à¤¾ â€¢ Dark Fantasy 69g",
+        "nameKannada":  "à²¦à²¿à²¨à²¸à²¿ â€¢ Dark Fantasy 69g",
         "category":  "staples",
         "price":  40,
         "mrp":  40,
@@ -5385,7 +5388,7 @@ export const INITIAL_PRODUCTS = [
                      ],
         "inStock":  true,
         "badge":  "",
-        "description":  "Authentic Dark Fantasy 69Gm from SHAGUN STORE, Bettadapura. Genuine pack \u0026 accurate billing.",
+        "description":  "Authentic Dark Fantasy 69g from SHAGUN STORE, Bettadapura. Genuine pack \u0026 accurate billing.",
         "image":  "https://images.openfoodfacts.org/images/products/890/600/728/0105/front_en.5.400.jpg"
     },
     {
@@ -6072,9 +6075,9 @@ export const INITIAL_PRODUCTS = [
     },
     {
         "id":  "shagun_p_0268",
-        "name":  "Drakshi 250Gm",
-        "nameHindi":  "à¤•à¤¿à¤°à¤¾à¤¨à¤¾ â€¢ Drakshi 250Gm",
-        "nameKannada":  "à²¦à²¿à²¨à²¸à²¿ â€¢ Drakshi 250Gm",
+        "name":  "Drakshi 250g",
+        "nameHindi":  "à¤•à¤¿à¤°à¤¾à¤¨à¤¾ â€¢ Drakshi 250g",
+        "nameKannada":  "à²¦à²¿à²¨à²¸à²¿ â€¢ Drakshi 250g",
         "category":  "staples",
         "price":  150,
         "mrp":  150,
@@ -6089,14 +6092,14 @@ export const INITIAL_PRODUCTS = [
                      ],
         "inStock":  true,
         "badge":  "",
-        "description":  "Authentic Drakshi 250Gm from SHAGUN STORE, Bettadapura. Genuine pack \u0026 accurate billing.",
+        "description":  "Authentic Drakshi 250g from SHAGUN STORE, Bettadapura. Genuine pack \u0026 accurate billing.",
         "image":  "https://images.openfoodfacts.org/images/products/890/600/728/0105/front_en.5.400.jpg"
     },
     {
         "id":  "shagun_p_0269",
-        "name":  "Drakshi 50Gm",
-        "nameHindi":  "à¤•à¤¿à¤°à¤¾à¤¨à¤¾ â€¢ Drakshi 50Gm",
-        "nameKannada":  "à²¦à²¿à²¨à²¸à²¿ â€¢ Drakshi 50Gm",
+        "name":  "Drakshi 50g",
+        "nameHindi":  "à¤•à¤¿à¤°à¤¾à¤¨à¤¾ â€¢ Drakshi 50g",
+        "nameKannada":  "à²¦à²¿à²¨à²¸à²¿ â€¢ Drakshi 50g",
         "category":  "staples",
         "price":  30,
         "mrp":  30,
@@ -6111,14 +6114,14 @@ export const INITIAL_PRODUCTS = [
                      ],
         "inStock":  true,
         "badge":  "",
-        "description":  "Authentic Drakshi 50Gm from SHAGUN STORE, Bettadapura. Genuine pack \u0026 accurate billing.",
+        "description":  "Authentic Drakshi 50g from SHAGUN STORE, Bettadapura. Genuine pack \u0026 accurate billing.",
         "image":  "https://images.openfoodfacts.org/images/products/890/600/728/0105/front_en.5.400.jpg"
     },
     {
         "id":  "shagun_p_0270",
-        "name":  "Dried Dates 250Gm",
-        "nameHindi":  "à¤•à¤¿à¤°à¤¾à¤¨à¤¾ â€¢ Dried Dates 250Gm",
-        "nameKannada":  "à²¦à²¿à²¨à²¸à²¿ â€¢ Dried Dates 250Gm",
+        "name":  "Dried Dates 250g",
+        "nameHindi":  "à¤•à¤¿à¤°à¤¾à¤¨à¤¾ â€¢ Dried Dates 250g",
+        "nameKannada":  "à²¦à²¿à²¨à²¸à²¿ â€¢ Dried Dates 250g",
         "category":  "staples",
         "price":  120,
         "mrp":  120,
@@ -6133,7 +6136,7 @@ export const INITIAL_PRODUCTS = [
                      ],
         "inStock":  true,
         "badge":  "",
-        "description":  "Authentic Dried Dates 250Gm from SHAGUN STORE, Bettadapura. Genuine pack \u0026 accurate billing.",
+        "description":  "Authentic Dried Dates 250g from SHAGUN STORE, Bettadapura. Genuine pack \u0026 accurate billing.",
         "image":  "https://images.openfoodfacts.org/images/products/890/600/728/0105/front_en.5.400.jpg"
     },
     {
@@ -6314,9 +6317,9 @@ export const INITIAL_PRODUCTS = [
     },
     {
         "id":  "shagun_p_0279",
-        "name":  "Eastern Kashmiri Chilli Powder 250Gm",
-        "nameHindi":  "à¤•à¤¿à¤°à¤¾à¤¨à¤¾ â€¢ Eastern Kashmiri Chilli Powder 250Gm",
-        "nameKannada":  "à²¦à²¿à²¨à²¸à²¿ â€¢ Eastern Kashmiri Chilli Powder 250Gm",
+        "name":  "Eastern Kashmiri Chilli Powder 250g",
+        "nameHindi":  "à¤•à¤¿à¤°à¤¾à¤¨à¤¾ â€¢ Eastern Kashmiri Chilli Powder 250g",
+        "nameKannada":  "à²¦à²¿à²¨à²¸à²¿ â€¢ Eastern Kashmiri Chilli Powder 250g",
         "category":  "spices-masala",
         "price":  180,
         "mrp":  270,
@@ -6331,7 +6334,7 @@ export const INITIAL_PRODUCTS = [
                      ],
         "inStock":  true,
         "badge":  "â‚¹90 OFF",
-        "description":  "Authentic Eastern Kashmiri Chilli Powder 250Gm from SHAGUN STORE, Bettadapura. Genuine pack \u0026 accurate billing.",
+        "description":  "Authentic Eastern Kashmiri Chilli Powder 250g from SHAGUN STORE, Bettadapura. Genuine pack \u0026 accurate billing.",
         "image":  "https://images.openfoodfacts.org/images/products/890/420/930/4087/front_en.3.400.jpg"
     },
     {
@@ -6820,9 +6823,9 @@ export const INITIAL_PRODUCTS = [
     },
     {
         "id":  "shagun_p_0302",
-        "name":  "Fair And Lovely 14Gm",
-        "nameHindi":  "à¤•à¤¿à¤°à¤¾à¤¨à¤¾ â€¢ Fair And Lovely 14Gm",
-        "nameKannada":  "à²¦à²¿à²¨à²¸à²¿ â€¢ Fair And Lovely 14Gm",
+        "name":  "Fair And Lovely 14g",
+        "nameHindi":  "à¤•à¤¿à¤°à¤¾à¤¨à¤¾ â€¢ Fair And Lovely 14g",
+        "nameKannada":  "à²¦à²¿à²¨à²¸à²¿ â€¢ Fair And Lovely 14g",
         "category":  "staples",
         "price":  22,
         "mrp":  22,
@@ -6837,7 +6840,7 @@ export const INITIAL_PRODUCTS = [
                      ],
         "inStock":  true,
         "badge":  "",
-        "description":  "Authentic Fair And Lovely 14Gm from SHAGUN STORE, Bettadapura. Genuine pack \u0026 accurate billing.",
+        "description":  "Authentic Fair And Lovely 14g from SHAGUN STORE, Bettadapura. Genuine pack \u0026 accurate billing.",
         "image":  "https://images.openfoodfacts.org/images/products/890/600/728/0105/front_en.5.400.jpg"
     },
     {
@@ -6974,9 +6977,9 @@ export const INITIAL_PRODUCTS = [
     },
     {
         "id":  "shagun_p_0309",
-        "name":  "Fena 500Gm",
-        "nameHindi":  "à¤•à¤¿à¤°à¤¾à¤¨à¤¾ â€¢ Fena 500Gm",
-        "nameKannada":  "à²¦à²¿à²¨à²¸à²¿ â€¢ Fena 500Gm",
+        "name":  "Fena 500g",
+        "nameHindi":  "à¤•à¤¿à¤°à¤¾à¤¨à¤¾ â€¢ Fena 500g",
+        "nameKannada":  "à²¦à²¿à²¨à²¸à²¿ â€¢ Fena 500g",
         "category":  "staples",
         "price":  34,
         "mrp":  36,
@@ -6991,7 +6994,7 @@ export const INITIAL_PRODUCTS = [
                      ],
         "inStock":  true,
         "badge":  "â‚¹2 OFF",
-        "description":  "Authentic Fena 500Gm from SHAGUN STORE, Bettadapura. Genuine pack \u0026 accurate billing.",
+        "description":  "Authentic Fena 500g from SHAGUN STORE, Bettadapura. Genuine pack \u0026 accurate billing.",
         "image":  "https://images.openfoodfacts.org/images/products/890/600/728/0105/front_en.5.400.jpg"
     },
     {
@@ -7260,9 +7263,9 @@ export const INITIAL_PRODUCTS = [
     },
     {
         "id":  "shagun_p_0322",
-        "name":  "Freedom  5L",
-        "nameHindi":  "à¤•à¤¿à¤°à¤¾à¤¨à¤¾ â€¢ Freedom  5L",
-        "nameKannada":  "à²¦à²¿à²¨à²¸à²¿ â€¢ Freedom  5L",
+        "name":  "Freedom 5L",
+        "nameHindi":  "à¤•à¤¿à¤°à¤¾à¤¨à¤¾ â€¢ Freedom 5L",
+        "nameKannada":  "à²¦à²¿à²¨à²¸à²¿ â€¢ Freedom 5L",
         "category":  "staples",
         "price":  785,
         "mrp":  950,
@@ -7277,7 +7280,7 @@ export const INITIAL_PRODUCTS = [
                      ],
         "inStock":  true,
         "badge":  "â‚¹165 OFF",
-        "description":  "Authentic Freedom  5L from SHAGUN STORE, Bettadapura. Genuine pack \u0026 accurate billing.",
+        "description":  "Authentic Freedom 5L from SHAGUN STORE, Bettadapura. Genuine pack \u0026 accurate billing.",
         "image":  "https://images.openfoodfacts.org/images/products/890/600/728/0105/front_en.5.400.jpg"
     },
     {
@@ -7458,9 +7461,9 @@ export const INITIAL_PRODUCTS = [
     },
     {
         "id":  "shagun_p_0331",
-        "name":  "Gagase 50Gm",
-        "nameHindi":  "à¤•à¤¿à¤°à¤¾à¤¨à¤¾ â€¢ Gagase 50Gm",
-        "nameKannada":  "à²¦à²¿à²¨à²¸à²¿ â€¢ Gagase 50Gm",
+        "name":  "Gagase 50g",
+        "nameHindi":  "à¤•à¤¿à¤°à¤¾à¤¨à¤¾ â€¢ Gagase 50g",
+        "nameKannada":  "à²¦à²¿à²¨à²¸à²¿ â€¢ Gagase 50g",
         "category":  "staples",
         "price":  95,
         "mrp":  95,
@@ -7475,7 +7478,7 @@ export const INITIAL_PRODUCTS = [
                      ],
         "inStock":  true,
         "badge":  "",
-        "description":  "Authentic Gagase 50Gm from SHAGUN STORE, Bettadapura. Genuine pack \u0026 accurate billing.",
+        "description":  "Authentic Gagase 50g from SHAGUN STORE, Bettadapura. Genuine pack \u0026 accurate billing.",
         "image":  "https://images.openfoodfacts.org/images/products/890/600/728/0105/front_en.5.400.jpg"
     },
     {
@@ -7568,9 +7571,9 @@ export const INITIAL_PRODUCTS = [
     },
     {
         "id":  "shagun_p_0336",
-        "name":  "Ganesha Puliogre 250Gm",
-        "nameHindi":  "à¤•à¤¿à¤°à¤¾à¤¨à¤¾ â€¢ Ganesha Puliogre 250Gm",
-        "nameKannada":  "à²¦à²¿à²¨à²¸à²¿ â€¢ Ganesha Puliogre 250Gm",
+        "name":  "Ganesha Puliogre 250g",
+        "nameHindi":  "à¤•à¤¿à¤°à¤¾à¤¨à¤¾ â€¢ Ganesha Puliogre 250g",
+        "nameKannada":  "à²¦à²¿à²¨à²¸à²¿ â€¢ Ganesha Puliogre 250g",
         "category":  "staples",
         "price":  70,
         "mrp":  80,
@@ -7585,7 +7588,7 @@ export const INITIAL_PRODUCTS = [
                      ],
         "inStock":  true,
         "badge":  "â‚¹10 OFF",
-        "description":  "Authentic Ganesha Puliogre 250Gm from SHAGUN STORE, Bettadapura. Genuine pack \u0026 accurate billing.",
+        "description":  "Authentic Ganesha Puliogre 250g from SHAGUN STORE, Bettadapura. Genuine pack \u0026 accurate billing.",
         "image":  "https://images.openfoodfacts.org/images/products/890/600/728/0105/front_en.5.400.jpg"
     },
     {
@@ -7788,9 +7791,9 @@ export const INITIAL_PRODUCTS = [
     },
     {
         "id":  "shagun_p_0346",
-        "name":  "Gayatri Coffee Filter 250gm",
-        "nameHindi":  "à¤•à¤¿à¤°à¤¾à¤¨à¤¾ â€¢ Gayatri Coffee Filter 250gm",
-        "nameKannada":  "à²¦à²¿à²¨à²¸à²¿ â€¢ Gayatri Coffee Filter 250gm",
+        "name":  "Gayatri Coffee Filter 250g",
+        "nameHindi":  "à¤•à¤¿à¤°à¤¾à¤¨à¤¾ â€¢ Gayatri Coffee Filter 250g",
+        "nameKannada":  "à²¦à²¿à²¨à²¸à²¿ â€¢ Gayatri Coffee Filter 250g",
         "category":  "tea-beverages",
         "price":  166,
         "mrp":  175,
@@ -7805,7 +7808,7 @@ export const INITIAL_PRODUCTS = [
                      ],
         "inStock":  true,
         "badge":  "5% OFF",
-        "description":  "Authentic Gayatri Coffee Filter 250gm from SHAGUN STORE, Bettadapura. Genuine pack \u0026 accurate billing.",
+        "description":  "Authentic Gayatri Coffee Filter 250g from SHAGUN STORE, Bettadapura. Genuine pack \u0026 accurate billing.",
         "image":  "https://images.openfoodfacts.org/images/products/890/103/080/7534/front_en.8.400.jpg"
     },
     {
@@ -9130,9 +9133,9 @@ export const INITIAL_PRODUCTS = [
     },
     {
         "id":  "shagun_p_0407",
-        "name":  "Gural (Uchhellu) 250Gm",
-        "nameHindi":  "à¤•à¤¿à¤°à¤¾à¤¨à¤¾ â€¢ Gural (Uchhellu) 250Gm",
-        "nameKannada":  "à²¦à²¿à²¨à²¸à²¿ â€¢ Gural (Uchhellu) 250Gm",
+        "name":  "Gural (Uchhellu) 250g",
+        "nameHindi":  "à¤•à¤¿à¤°à¤¾à¤¨à¤¾ â€¢ Gural (Uchhellu) 250g",
+        "nameKannada":  "à²¦à²¿à²¨à²¸à²¿ â€¢ Gural (Uchhellu) 250g",
         "category":  "staples",
         "price":  50,
         "mrp":  65,
@@ -9147,7 +9150,7 @@ export const INITIAL_PRODUCTS = [
                      ],
         "inStock":  true,
         "badge":  "â‚¹15 OFF",
-        "description":  "Authentic Gural (Uchhellu) 250Gm from SHAGUN STORE, Bettadapura. Genuine pack \u0026 accurate billing.",
+        "description":  "Authentic Gural (Uchhellu) 250g from SHAGUN STORE, Bettadapura. Genuine pack \u0026 accurate billing.",
         "image":  "https://images.openfoodfacts.org/images/products/890/600/728/0105/front_en.5.400.jpg"
     },
     {
@@ -9746,9 +9749,9 @@ export const INITIAL_PRODUCTS = [
     },
     {
         "id":  "shagun_p_0435",
-        "name":  "Himalaya  Baby lotion",
-        "nameHindi":  "à¤•à¤¿à¤°à¤¾à¤¨à¤¾ â€¢ Himalaya  Baby lotion",
-        "nameKannada":  "à²¦à²¿à²¨à²¸à²¿ â€¢ Himalaya  Baby lotion",
+        "name":  "Himalaya Baby lotion",
+        "nameHindi":  "à¤•à¤¿à¤°à¤¾à¤¨à¤¾ â€¢ Himalaya Baby lotion",
+        "nameKannada":  "à²¦à²¿à²¨à²¸à²¿ â€¢ Himalaya Baby lotion",
         "category":  "staples",
         "price":  160,
         "mrp":  175,
@@ -9763,14 +9766,14 @@ export const INITIAL_PRODUCTS = [
                      ],
         "inStock":  true,
         "badge":  "â‚¹15 OFF",
-        "description":  "Authentic Himalaya  Baby lotion from SHAGUN STORE, Bettadapura. Genuine pack \u0026 accurate billing.",
+        "description":  "Authentic Himalaya Baby lotion from SHAGUN STORE, Bettadapura. Genuine pack \u0026 accurate billing.",
         "image":  "https://images.openfoodfacts.org/images/products/890/600/728/0105/front_en.5.400.jpg"
     },
     {
         "id":  "shagun_p_0436",
-        "name":  "Himalaya  Gentle Daily Care 650ml",
-        "nameHindi":  "à¤•à¤¿à¤°à¤¾à¤¨à¤¾ â€¢ Himalaya  Gentle Daily Care 650ml",
-        "nameKannada":  "à²¦à²¿à²¨à²¸à²¿ â€¢ Himalaya  Gentle Daily Care 650ml",
+        "name":  "Himalaya Gentle Daily Care 650ml",
+        "nameHindi":  "à¤•à¤¿à¤°à¤¾à¤¨à¤¾ â€¢ Himalaya Gentle Daily Care 650ml",
+        "nameKannada":  "à²¦à²¿à²¨à²¸à²¿ â€¢ Himalaya Gentle Daily Care 650ml",
         "category":  "staples",
         "price":  718,
         "mrp":  749,
@@ -9785,7 +9788,7 @@ export const INITIAL_PRODUCTS = [
                      ],
         "inStock":  true,
         "badge":  "â‚¹31 OFF",
-        "description":  "Authentic Himalaya  Gentle Daily Care 650ml from SHAGUN STORE, Bettadapura. Genuine pack \u0026 accurate billing.",
+        "description":  "Authentic Himalaya Gentle Daily Care 650ml from SHAGUN STORE, Bettadapura. Genuine pack \u0026 accurate billing.",
         "image":  "https://images.openfoodfacts.org/images/products/890/600/728/0105/front_en.5.400.jpg"
     },
     {
@@ -9878,9 +9881,9 @@ export const INITIAL_PRODUCTS = [
     },
     {
         "id":  "shagun_p_0441",
-        "name":  "Himalaya baby Lotion  100ml",
-        "nameHindi":  "à¤•à¤¿à¤°à¤¾à¤¨à¤¾ â€¢ Himalaya baby Lotion  100ml",
-        "nameKannada":  "à²¦à²¿à²¨à²¸à²¿ â€¢ Himalaya baby Lotion  100ml",
+        "name":  "Himalaya baby Lotion 100ml",
+        "nameHindi":  "à¤•à¤¿à¤°à¤¾à¤¨à¤¾ â€¢ Himalaya baby Lotion 100ml",
+        "nameKannada":  "à²¦à²¿à²¨à²¸à²¿ â€¢ Himalaya baby Lotion 100ml",
         "category":  "staples",
         "price":  110,
         "mrp":  115,
@@ -9895,7 +9898,7 @@ export const INITIAL_PRODUCTS = [
                      ],
         "inStock":  true,
         "badge":  "â‚¹5 OFF",
-        "description":  "Authentic Himalaya baby Lotion  100ml from SHAGUN STORE, Bettadapura. Genuine pack \u0026 accurate billing.",
+        "description":  "Authentic Himalaya baby Lotion 100ml from SHAGUN STORE, Bettadapura. Genuine pack \u0026 accurate billing.",
         "image":  "https://images.openfoodfacts.org/images/products/890/600/728/0105/front_en.5.400.jpg"
     },
     {
@@ -11418,9 +11421,9 @@ export const INITIAL_PRODUCTS = [
     },
     {
         "id":  "shagun_p_0511",
-        "name":  "Johnson\u0027s baby Powder  100g",
-        "nameHindi":  "à¤•à¤¿à¤°à¤¾à¤¨à¤¾ â€¢ Johnson\u0027s baby Powder  100g",
-        "nameKannada":  "à²¦à²¿à²¨à²¸à²¿ â€¢ Johnson\u0027s baby Powder  100g",
+        "name":  "Johnson\u0027s baby Powder 100g",
+        "nameHindi":  "à¤•à¤¿à¤°à¤¾à¤¨à¤¾ â€¢ Johnson\u0027s baby Powder 100g",
+        "nameKannada":  "à²¦à²¿à²¨à²¸à²¿ â€¢ Johnson\u0027s baby Powder 100g",
         "category":  "staples",
         "price":  120,
         "mrp":  125,
@@ -11435,7 +11438,7 @@ export const INITIAL_PRODUCTS = [
                      ],
         "inStock":  true,
         "badge":  "â‚¹5 OFF",
-        "description":  "Authentic Johnson\u0027s baby Powder  100g from SHAGUN STORE, Bettadapura. Genuine pack \u0026 accurate billing.",
+        "description":  "Authentic Johnson\u0027s baby Powder 100g from SHAGUN STORE, Bettadapura. Genuine pack \u0026 accurate billing.",
         "image":  "https://images.openfoodfacts.org/images/products/890/600/728/0105/front_en.5.400.jpg"
     },
     {
@@ -11616,9 +11619,9 @@ export const INITIAL_PRODUCTS = [
     },
     {
         "id":  "shagun_p_0520",
-        "name":  "Kaju 250Gm",
-        "nameHindi":  "à¤•à¤¿à¤°à¤¾à¤¨à¤¾ â€¢ Kaju 250Gm",
-        "nameKannada":  "à²¦à²¿à²¨à²¸à²¿ â€¢ Kaju 250Gm",
+        "name":  "Kaju 250g",
+        "nameHindi":  "à¤•à¤¿à¤°à¤¾à¤¨à¤¾ â€¢ Kaju 250g",
+        "nameKannada":  "à²¦à²¿à²¨à²¸à²¿ â€¢ Kaju 250g",
         "category":  "staples",
         "price":  240,
         "mrp":  240,
@@ -11633,14 +11636,14 @@ export const INITIAL_PRODUCTS = [
                      ],
         "inStock":  true,
         "badge":  "",
-        "description":  "Authentic Kaju 250Gm from SHAGUN STORE, Bettadapura. Genuine pack \u0026 accurate billing.",
+        "description":  "Authentic Kaju 250g from SHAGUN STORE, Bettadapura. Genuine pack \u0026 accurate billing.",
         "image":  "https://images.openfoodfacts.org/images/products/890/600/728/0105/front_en.5.400.jpg"
     },
     {
         "id":  "shagun_p_0521",
-        "name":  "Kaju 50Gm",
-        "nameHindi":  "à¤•à¤¿à¤°à¤¾à¤¨à¤¾ â€¢ Kaju 50Gm",
-        "nameKannada":  "à²¦à²¿à²¨à²¸à²¿ â€¢ Kaju 50Gm",
+        "name":  "Kaju 50g",
+        "nameHindi":  "à¤•à¤¿à¤°à¤¾à¤¨à¤¾ â€¢ Kaju 50g",
+        "nameKannada":  "à²¦à²¿à²¨à²¸à²¿ â€¢ Kaju 50g",
         "category":  "staples",
         "price":  50,
         "mrp":  50,
@@ -11655,7 +11658,7 @@ export const INITIAL_PRODUCTS = [
                      ],
         "inStock":  true,
         "badge":  "",
-        "description":  "Authentic Kaju 50Gm from SHAGUN STORE, Bettadapura. Genuine pack \u0026 accurate billing.",
+        "description":  "Authentic Kaju 50g from SHAGUN STORE, Bettadapura. Genuine pack \u0026 accurate billing.",
         "image":  "https://images.openfoodfacts.org/images/products/890/600/728/0105/front_en.5.400.jpg"
     },
     {
@@ -11726,9 +11729,9 @@ export const INITIAL_PRODUCTS = [
     },
     {
         "id":  "shagun_p_0525",
-        "name":  "Kapoor 100Gm",
-        "nameHindi":  "à¤•à¤¿à¤°à¤¾à¤¨à¤¾ â€¢ Kapoor 100Gm",
-        "nameKannada":  "à²¦à²¿à²¨à²¸à²¿ â€¢ Kapoor 100Gm",
+        "name":  "Kapoor 100g",
+        "nameHindi":  "à¤•à¤¿à¤°à¤¾à¤¨à¤¾ â€¢ Kapoor 100g",
+        "nameKannada":  "à²¦à²¿à²¨à²¸à²¿ â€¢ Kapoor 100g",
         "category":  "staples",
         "price":  100,
         "mrp":  100,
@@ -11743,7 +11746,7 @@ export const INITIAL_PRODUCTS = [
                      ],
         "inStock":  true,
         "badge":  "",
-        "description":  "Authentic Kapoor 100Gm from SHAGUN STORE, Bettadapura. Genuine pack \u0026 accurate billing.",
+        "description":  "Authentic Kapoor 100g from SHAGUN STORE, Bettadapura. Genuine pack \u0026 accurate billing.",
         "image":  "https://images.openfoodfacts.org/images/products/890/600/728/0105/front_en.5.400.jpg"
     },
     {
@@ -11770,9 +11773,9 @@ export const INITIAL_PRODUCTS = [
     },
     {
         "id":  "shagun_p_0527",
-        "name":  "Karthika Amla \u0026 Aloe Vera 175 ml",
-        "nameHindi":  "à¤•à¤¿à¤°à¤¾à¤¨à¤¾ â€¢ Karthika Amla \u0026 Aloe Vera 175 ml",
-        "nameKannada":  "à²¦à²¿à²¨à²¸à²¿ â€¢ Karthika Amla \u0026 Aloe Vera 175 ml",
+        "name":  "Karthika Amla \u0026 Aloe Vera 175ml",
+        "nameHindi":  "à¤•à¤¿à¤°à¤¾à¤¨à¤¾ â€¢ Karthika Amla \u0026 Aloe Vera 175ml",
+        "nameKannada":  "à²¦à²¿à²¨à²¸à²¿ â€¢ Karthika Amla \u0026 Aloe Vera 175ml",
         "category":  "staples",
         "price":  110,
         "mrp":  115,
@@ -11787,7 +11790,7 @@ export const INITIAL_PRODUCTS = [
                      ],
         "inStock":  true,
         "badge":  "â‚¹5 OFF",
-        "description":  "Authentic Karthika Amla \u0026 Aloe Vera 175 ml from SHAGUN STORE, Bettadapura. Genuine pack \u0026 accurate billing.",
+        "description":  "Authentic Karthika Amla \u0026 Aloe Vera 175ml from SHAGUN STORE, Bettadapura. Genuine pack \u0026 accurate billing.",
         "image":  "https://images.openfoodfacts.org/images/products/890/600/728/0105/front_en.5.400.jpg"
     },
     {
@@ -11814,9 +11817,9 @@ export const INITIAL_PRODUCTS = [
     },
     {
         "id":  "shagun_p_0529",
-        "name":  "Karthika Herbal Powder 170Gm",
-        "nameHindi":  "à¤•à¤¿à¤°à¤¾à¤¨à¤¾ â€¢ Karthika Herbal Powder 170Gm",
-        "nameKannada":  "à²¦à²¿à²¨à²¸à²¿ â€¢ Karthika Herbal Powder 170Gm",
+        "name":  "Karthika Herbal Powder 170g",
+        "nameHindi":  "à¤•à¤¿à¤°à¤¾à¤¨à¤¾ â€¢ Karthika Herbal Powder 170g",
+        "nameKannada":  "à²¦à²¿à²¨à²¸à²¿ â€¢ Karthika Herbal Powder 170g",
         "category":  "staples",
         "price":  55,
         "mrp":  57,
@@ -11831,7 +11834,7 @@ export const INITIAL_PRODUCTS = [
                      ],
         "inStock":  true,
         "badge":  "â‚¹2 OFF",
-        "description":  "Authentic Karthika Herbal Powder 170Gm from SHAGUN STORE, Bettadapura. Genuine pack \u0026 accurate billing.",
+        "description":  "Authentic Karthika Herbal Powder 170g from SHAGUN STORE, Bettadapura. Genuine pack \u0026 accurate billing.",
         "image":  "https://images.openfoodfacts.org/images/products/890/600/728/0105/front_en.5.400.jpg"
     },
     {
@@ -12056,9 +12059,9 @@ export const INITIAL_PRODUCTS = [
     },
     {
         "id":  "shagun_p_0540",
-        "name":  "Kesar 1Gm",
-        "nameHindi":  "à¤•à¤¿à¤°à¤¾à¤¨à¤¾ â€¢ Kesar 1Gm",
-        "nameKannada":  "à²¦à²¿à²¨à²¸à²¿ â€¢ Kesar 1Gm",
+        "name":  "Kesar 1g",
+        "nameHindi":  "à¤•à¤¿à¤°à¤¾à¤¨à¤¾ â€¢ Kesar 1g",
+        "nameKannada":  "à²¦à²¿à²¨à²¸à²¿ â€¢ Kesar 1g",
         "category":  "staples",
         "price":  400,
         "mrp":  599,
@@ -12073,7 +12076,7 @@ export const INITIAL_PRODUCTS = [
                      ],
         "inStock":  true,
         "badge":  "â‚¹199 OFF",
-        "description":  "Authentic Kesar 1Gm from SHAGUN STORE, Bettadapura. Genuine pack \u0026 accurate billing.",
+        "description":  "Authentic Kesar 1g from SHAGUN STORE, Bettadapura. Genuine pack \u0026 accurate billing.",
         "image":  "https://images.openfoodfacts.org/images/products/890/600/728/0105/front_en.5.400.jpg"
     },
     {
@@ -12232,9 +12235,9 @@ export const INITIAL_PRODUCTS = [
     },
     {
         "id":  "shagun_p_0548",
-        "name":  "Kissan  Peanut Butter 100g",
-        "nameHindi":  "à¤•à¤¿à¤°à¤¾à¤¨à¤¾ â€¢ Kissan  Peanut Butter 100g",
-        "nameKannada":  "à²¦à²¿à²¨à²¸à²¿ â€¢ Kissan  Peanut Butter 100g",
+        "name":  "Kissan Peanut Butter 100g",
+        "nameHindi":  "à¤•à¤¿à¤°à¤¾à¤¨à¤¾ â€¢ Kissan Peanut Butter 100g",
+        "nameKannada":  "à²¦à²¿à²¨à²¸à²¿ â€¢ Kissan Peanut Butter 100g",
         "category":  "staples",
         "price":  50,
         "mrp":  50,
@@ -12249,7 +12252,7 @@ export const INITIAL_PRODUCTS = [
                      ],
         "inStock":  true,
         "badge":  "",
-        "description":  "Authentic Kissan  Peanut Butter 100g from SHAGUN STORE, Bettadapura. Genuine pack \u0026 accurate billing.",
+        "description":  "Authentic Kissan Peanut Butter 100g from SHAGUN STORE, Bettadapura. Genuine pack \u0026 accurate billing.",
         "image":  "https://images.openfoodfacts.org/images/products/890/600/728/0105/front_en.5.400.jpg"
     },
     {
@@ -12584,9 +12587,9 @@ export const INITIAL_PRODUCTS = [
     },
     {
         "id":  "shagun_p_0564",
-        "name":  "Krack 25Gm",
-        "nameHindi":  "à¤•à¤¿à¤°à¤¾à¤¨à¤¾ â€¢ Krack 25Gm",
-        "nameKannada":  "à²¦à²¿à²¨à²¸à²¿ â€¢ Krack 25Gm",
+        "name":  "Krack 25g",
+        "nameHindi":  "à¤•à¤¿à¤°à¤¾à¤¨à¤¾ â€¢ Krack 25g",
+        "nameKannada":  "à²¦à²¿à²¨à²¸à²¿ â€¢ Krack 25g",
         "category":  "staples",
         "price":  100,
         "mrp":  105,
@@ -12601,7 +12604,7 @@ export const INITIAL_PRODUCTS = [
                      ],
         "inStock":  true,
         "badge":  "â‚¹5 OFF",
-        "description":  "Authentic Krack 25Gm from SHAGUN STORE, Bettadapura. Genuine pack \u0026 accurate billing.",
+        "description":  "Authentic Krack 25g from SHAGUN STORE, Bettadapura. Genuine pack \u0026 accurate billing.",
         "image":  "https://images.openfoodfacts.org/images/products/890/600/728/0105/front_en.5.400.jpg"
     },
     {
@@ -12760,9 +12763,9 @@ export const INITIAL_PRODUCTS = [
     },
     {
         "id":  "shagun_p_0572",
-        "name":  "Lavanga 25Gm",
-        "nameHindi":  "à¤•à¤¿à¤°à¤¾à¤¨à¤¾ â€¢ Lavanga 25Gm",
-        "nameKannada":  "à²¦à²¿à²¨à²¸à²¿ â€¢ Lavanga 25Gm",
+        "name":  "Lavanga 25g",
+        "nameHindi":  "à¤•à¤¿à¤°à¤¾à¤¨à¤¾ â€¢ Lavanga 25g",
+        "nameKannada":  "à²¦à²¿à²¨à²¸à²¿ â€¢ Lavanga 25g",
         "category":  "staples",
         "price":  30,
         "mrp":  30,
@@ -12777,14 +12780,14 @@ export const INITIAL_PRODUCTS = [
                      ],
         "inStock":  true,
         "badge":  "",
-        "description":  "Authentic Lavanga 25Gm from SHAGUN STORE, Bettadapura. Genuine pack \u0026 accurate billing.",
+        "description":  "Authentic Lavanga 25g from SHAGUN STORE, Bettadapura. Genuine pack \u0026 accurate billing.",
         "image":  "https://images.openfoodfacts.org/images/products/890/600/728/0105/front_en.5.400.jpg"
     },
     {
         "id":  "shagun_p_0573",
-        "name":  "lavanga 50Gm",
-        "nameHindi":  "à¤•à¤¿à¤°à¤¾à¤¨à¤¾ â€¢ lavanga 50Gm",
-        "nameKannada":  "à²¦à²¿à²¨à²¸à²¿ â€¢ lavanga 50Gm",
+        "name":  "lavanga 50g",
+        "nameHindi":  "à¤•à¤¿à¤°à¤¾à¤¨à¤¾ â€¢ lavanga 50g",
+        "nameKannada":  "à²¦à²¿à²¨à²¸à²¿ â€¢ lavanga 50g",
         "category":  "staples",
         "price":  60,
         "mrp":  60,
@@ -12799,7 +12802,7 @@ export const INITIAL_PRODUCTS = [
                      ],
         "inStock":  true,
         "badge":  "",
-        "description":  "Authentic lavanga 50Gm from SHAGUN STORE, Bettadapura. Genuine pack \u0026 accurate billing.",
+        "description":  "Authentic lavanga 50g from SHAGUN STORE, Bettadapura. Genuine pack \u0026 accurate billing.",
         "image":  "https://images.openfoodfacts.org/images/products/890/600/728/0105/front_en.5.400.jpg"
     },
     {
@@ -13728,9 +13731,9 @@ export const INITIAL_PRODUCTS = [
     },
     {
         "id":  "shagun_p_0616",
-        "name":  "Makhana 250Gm",
-        "nameHindi":  "à¤•à¤¿à¤°à¤¾à¤¨à¤¾ â€¢ Makhana 250Gm",
-        "nameKannada":  "à²¦à²¿à²¨à²¸à²¿ â€¢ Makhana 250Gm",
+        "name":  "Makhana 250g",
+        "nameHindi":  "à¤•à¤¿à¤°à¤¾à¤¨à¤¾ â€¢ Makhana 250g",
+        "nameKannada":  "à²¦à²¿à²¨à²¸à²¿ â€¢ Makhana 250g",
         "category":  "staples",
         "price":  350,
         "mrp":  475,
@@ -13745,7 +13748,7 @@ export const INITIAL_PRODUCTS = [
                      ],
         "inStock":  true,
         "badge":  "â‚¹125 OFF",
-        "description":  "Authentic Makhana 250Gm from SHAGUN STORE, Bettadapura. Genuine pack \u0026 accurate billing.",
+        "description":  "Authentic Makhana 250g from SHAGUN STORE, Bettadapura. Genuine pack \u0026 accurate billing.",
         "image":  "https://images.openfoodfacts.org/images/products/890/600/728/0105/front_en.5.400.jpg"
     },
     {
@@ -13838,9 +13841,9 @@ export const INITIAL_PRODUCTS = [
     },
     {
         "id":  "shagun_p_0621",
-        "name":  "Mamypoko pants  ₹10",
-        "nameHindi":  "à¤•à¤¿à¤°à¤¾à¤¨à¤¾ â€¢ Mamypoko pants  ₹10",
-        "nameKannada":  "à²¦à²¿à²¨à²¸à²¿ â€¢ Mamypoko pants  ₹10",
+        "name":  "Mamypoko pants ₹10",
+        "nameHindi":  "à¤•à¤¿à¤°à¤¾à¤¨à¤¾ â€¢ Mamypoko pants ₹10",
+        "nameKannada":  "à²¦à²¿à²¨à²¸à²¿ â€¢ Mamypoko pants ₹10",
         "category":  "staples",
         "price":  80,
         "mrp":  100,
@@ -13855,7 +13858,7 @@ export const INITIAL_PRODUCTS = [
                      ],
         "inStock":  true,
         "badge":  "â‚¹20 OFF",
-        "description":  "Authentic Mamypoko pants  ₹10 from SHAGUN STORE, Bettadapura. Genuine pack \u0026 accurate billing.",
+        "description":  "Authentic Mamypoko pants ₹10 from SHAGUN STORE, Bettadapura. Genuine pack \u0026 accurate billing.",
         "image":  "https://images.openfoodfacts.org/images/products/890/600/728/0105/front_en.5.400.jpg"
     },
     {
@@ -14564,9 +14567,9 @@ export const INITIAL_PRODUCTS = [
     },
     {
         "id":  "shagun_p_0654",
-        "name":  "MDH T.D.C.M 100g",
-        "nameHindi":  "à¤•à¤¿à¤°à¤¾à¤¨à¤¾ â€¢ MDH T.D.C.M 100g",
-        "nameKannada":  "à²¦à²¿à²¨à²¸à²¿ â€¢ MDH T.D.C.M 100g",
+        "name":  "MDH T.D.Chicken Masala 100g",
+        "nameHindi":  "à¤•à¤¿à¤°à¤¾à¤¨à¤¾ â€¢ MDH T.D.Chicken Masala 100g",
+        "nameKannada":  "à²¦à²¿à²¨à²¸à²¿ â€¢ MDH T.D.Chicken Masala 100g",
         "category":  "spices-masala",
         "price":  90,
         "mrp":  98,
@@ -14581,7 +14584,7 @@ export const INITIAL_PRODUCTS = [
                      ],
         "inStock":  true,
         "badge":  "â‚¹8 OFF",
-        "description":  "Authentic MDH T.D.C.M 100g from SHAGUN STORE, Bettadapura. Genuine pack \u0026 accurate billing.",
+        "description":  "Authentic MDH T.D.Chicken Masala 100g from SHAGUN STORE, Bettadapura. Genuine pack \u0026 accurate billing.",
         "image":  "https://images.openfoodfacts.org/images/products/890/602/112/0463/front_en.5.400.jpg"
     },
     {
@@ -14938,9 +14941,9 @@ export const INITIAL_PRODUCTS = [
     },
     {
         "id":  "shagun_p_0671",
-        "name":  "Mera Smpoo Onion  180ml",
-        "nameHindi":  "à¤•à¤¿à¤°à¤¾à¤¨à¤¾ â€¢ Mera Smpoo Onion  180ml",
-        "nameKannada":  "à²¦à²¿à²¨à²¸à²¿ â€¢ Mera Smpoo Onion  180ml",
+        "name":  "Mera Smpoo Onion 180ml",
+        "nameHindi":  "à¤•à¤¿à¤°à¤¾à¤¨à¤¾ â€¢ Mera Smpoo Onion 180ml",
+        "nameKannada":  "à²¦à²¿à²¨à²¸à²¿ â€¢ Mera Smpoo Onion 180ml",
         "category":  "staples",
         "price":  192,
         "mrp":  205,
@@ -14955,7 +14958,7 @@ export const INITIAL_PRODUCTS = [
                      ],
         "inStock":  true,
         "badge":  "â‚¹13 OFF",
-        "description":  "Authentic Mera Smpoo Onion  180ml from SHAGUN STORE, Bettadapura. Genuine pack \u0026 accurate billing.",
+        "description":  "Authentic Mera Smpoo Onion 180ml from SHAGUN STORE, Bettadapura. Genuine pack \u0026 accurate billing.",
         "image":  "https://images.openfoodfacts.org/images/products/890/600/728/0105/front_en.5.400.jpg"
     },
     {
@@ -15114,9 +15117,9 @@ export const INITIAL_PRODUCTS = [
     },
     {
         "id":  "shagun_p_0679",
-        "name":  "Mix DryFruits 250Gm",
-        "nameHindi":  "à¤•à¤¿à¤°à¤¾à¤¨à¤¾ â€¢ Mix DryFruits 250Gm",
-        "nameKannada":  "à²¦à²¿à²¨à²¸à²¿ â€¢ Mix DryFruits 250Gm",
+        "name":  "Mix DryFruits 250g",
+        "nameHindi":  "à¤•à¤¿à¤°à¤¾à¤¨à¤¾ â€¢ Mix DryFruits 250g",
+        "nameKannada":  "à²¦à²¿à²¨à²¸à²¿ â€¢ Mix DryFruits 250g",
         "category":  "staples",
         "price":  230,
         "mrp":  230,
@@ -15131,7 +15134,7 @@ export const INITIAL_PRODUCTS = [
                      ],
         "inStock":  true,
         "badge":  "",
-        "description":  "Authentic Mix DryFruits 250Gm from SHAGUN STORE, Bettadapura. Genuine pack \u0026 accurate billing.",
+        "description":  "Authentic Mix DryFruits 250g from SHAGUN STORE, Bettadapura. Genuine pack \u0026 accurate billing.",
         "image":  "https://images.openfoodfacts.org/images/products/890/600/728/0105/front_en.5.400.jpg"
     },
     {
@@ -15334,9 +15337,9 @@ export const INITIAL_PRODUCTS = [
     },
     {
         "id":  "shagun_p_0689",
-        "name":  "Monkey 555 Wet Dry Groom",
-        "nameHindi":  "à¤•à¤¿à¤°à¤¾à¤¨à¤¾ â€¢ Monkey 555 Wet Dry Groom",
-        "nameKannada":  "à²¦à²¿à²¨à²¸à²¿ â€¢ Monkey 555 Wet Dry Groom",
+        "name":  "Monkey 555 Wet Dry Broom",
+        "nameHindi":  "à¤•à¤¿à¤°à¤¾à¤¨à¤¾ â€¢ Monkey 555 Wet Dry Broom",
+        "nameKannada":  "à²¦à²¿à²¨à²¸à²¿ â€¢ Monkey 555 Wet Dry Broom",
         "category":  "household-clean",
         "price":  160,
         "mrp":  199,
@@ -15351,7 +15354,7 @@ export const INITIAL_PRODUCTS = [
                      ],
         "inStock":  true,
         "badge":  "â‚¹39 OFF",
-        "description":  "Authentic Monkey 555 Wet Dry Groom from SHAGUN STORE, Bettadapura. Genuine pack \u0026 accurate billing.",
+        "description":  "Authentic Monkey 555 Wet Dry Broom from SHAGUN STORE, Bettadapura. Genuine pack \u0026 accurate billing.",
         "image":  "https://images.openfoodfacts.org/images/products/890/603/443/0146/front_en.3.400.jpg"
     },
     {
@@ -16258,9 +16261,9 @@ export const INITIAL_PRODUCTS = [
     },
     {
         "id":  "shagun_p_0731",
-        "name":  "Mustard 250Gm",
-        "nameHindi":  "à¤•à¤¿à¤°à¤¾à¤¨à¤¾ â€¢ Mustard 250Gm",
-        "nameKannada":  "à²¦à²¿à²¨à²¸à²¿ â€¢ Mustard 250Gm",
+        "name":  "Mustard 250g",
+        "nameHindi":  "à¤•à¤¿à¤°à¤¾à¤¨à¤¾ â€¢ Mustard 250g",
+        "nameKannada":  "à²¦à²¿à²¨à²¸à²¿ â€¢ Mustard 250g",
         "category":  "staples",
         "price":  35,
         "mrp":  50,
@@ -16275,7 +16278,7 @@ export const INITIAL_PRODUCTS = [
                      ],
         "inStock":  true,
         "badge":  "â‚¹15 OFF",
-        "description":  "Authentic Mustard 250Gm from SHAGUN STORE, Bettadapura. Genuine pack \u0026 accurate billing.",
+        "description":  "Authentic Mustard 250g from SHAGUN STORE, Bettadapura. Genuine pack \u0026 accurate billing.",
         "image":  "https://images.openfoodfacts.org/images/products/890/600/728/0105/front_en.5.400.jpg"
     },
     {
@@ -17072,9 +17075,9 @@ export const INITIAL_PRODUCTS = [
     },
     {
         "id":  "shagun_p_0768",
-        "name":  "Nutri Choice 120Gm",
-        "nameHindi":  "à¤•à¤¿à¤°à¤¾à¤¨à¤¾ â€¢ Nutri Choice 120Gm",
-        "nameKannada":  "à²¦à²¿à²¨à²¸à²¿ â€¢ Nutri Choice 120Gm",
+        "name":  "Nutri Choice 120g",
+        "nameHindi":  "à¤•à¤¿à¤°à¤¾à¤¨à¤¾ â€¢ Nutri Choice 120g",
+        "nameKannada":  "à²¦à²¿à²¨à²¸à²¿ â€¢ Nutri Choice 120g",
         "category":  "staples",
         "price":  25,
         "mrp":  25,
@@ -17089,7 +17092,7 @@ export const INITIAL_PRODUCTS = [
                      ],
         "inStock":  true,
         "badge":  "",
-        "description":  "Authentic Nutri Choice 120Gm from SHAGUN STORE, Bettadapura. Genuine pack \u0026 accurate billing.",
+        "description":  "Authentic Nutri Choice 120g from SHAGUN STORE, Bettadapura. Genuine pack \u0026 accurate billing.",
         "image":  "https://images.openfoodfacts.org/images/products/890/600/728/0105/front_en.5.400.jpg"
     },
     {
@@ -17292,9 +17295,9 @@ export const INITIAL_PRODUCTS = [
     },
     {
         "id":  "shagun_p_0778",
-        "name":  "Odonil  Air Freshener 240g",
-        "nameHindi":  "à¤•à¤¿à¤°à¤¾à¤¨à¤¾ â€¢ Odonil  Air Freshener 240g",
-        "nameKannada":  "à²¦à²¿à²¨à²¸à²¿ â€¢ Odonil  Air Freshener 240g",
+        "name":  "Odonil Air Freshener 240g",
+        "nameHindi":  "à¤•à¤¿à¤°à¤¾à¤¨à¤¾ â€¢ Odonil Air Freshener 240g",
+        "nameKannada":  "à²¦à²¿à²¨à²¸à²¿ â€¢ Odonil Air Freshener 240g",
         "category":  "staples",
         "price":  240,
         "mrp":  320,
@@ -17309,7 +17312,7 @@ export const INITIAL_PRODUCTS = [
                      ],
         "inStock":  true,
         "badge":  "â‚¹80 OFF",
-        "description":  "Authentic Odonil  Air Freshener 240g from SHAGUN STORE, Bettadapura. Genuine pack \u0026 accurate billing.",
+        "description":  "Authentic Odonil Air Freshener 240g from SHAGUN STORE, Bettadapura. Genuine pack \u0026 accurate billing.",
         "image":  "https://images.openfoodfacts.org/images/products/890/600/728/0105/front_en.5.400.jpg"
     },
     {
@@ -18150,9 +18153,9 @@ export const INITIAL_PRODUCTS = [
     },
     {
         "id":  "shagun_p_0817",
-        "name":  "Parle G 250gm",
-        "nameHindi":  "à¤•à¤¿à¤°à¤¾à¤¨à¤¾ â€¢ Parle G 250gm",
-        "nameKannada":  "à²¦à²¿à²¨à²¸à²¿ â€¢ Parle G 250gm",
+        "name":  "Parle G 250g",
+        "nameHindi":  "à¤•à¤¿à¤°à¤¾à¤¨à¤¾ â€¢ Parle G 250g",
+        "nameKannada":  "à²¦à²¿à²¨à²¸à²¿ â€¢ Parle G 250g",
         "category":  "snacks-namkeen",
         "price":  30,
         "mrp":  30,
@@ -18167,7 +18170,7 @@ export const INITIAL_PRODUCTS = [
                      ],
         "inStock":  true,
         "badge":  "",
-        "description":  "Authentic Parle G 250gm from SHAGUN STORE, Bettadapura. Genuine pack \u0026 accurate billing.",
+        "description":  "Authentic Parle G 250g from SHAGUN STORE, Bettadapura. Genuine pack \u0026 accurate billing.",
         "image":  "https://images.openfoodfacts.org/images/products/890/171/910/1037/front_en.18.400.jpg"
     },
     {
@@ -18722,9 +18725,9 @@ export const INITIAL_PRODUCTS = [
     },
     {
         "id":  "shagun_p_0843",
-        "name":  "Pepsodent 150Gm",
-        "nameHindi":  "à¤•à¤¿à¤°à¤¾à¤¨à¤¾ â€¢ Pepsodent 150Gm",
-        "nameKannada":  "à²¦à²¿à²¨à²¸à²¿ â€¢ Pepsodent 150Gm",
+        "name":  "Pepsodent 150g",
+        "nameHindi":  "à¤•à¤¿à¤°à¤¾à¤¨à¤¾ â€¢ Pepsodent 150g",
+        "nameKannada":  "à²¦à²¿à²¨à²¸à²¿ â€¢ Pepsodent 150g",
         "category":  "staples",
         "price":  120,
         "mrp":  125,
@@ -18739,7 +18742,7 @@ export const INITIAL_PRODUCTS = [
                      ],
         "inStock":  true,
         "badge":  "â‚¹5 OFF",
-        "description":  "Authentic Pepsodent 150Gm from SHAGUN STORE, Bettadapura. Genuine pack \u0026 accurate billing.",
+        "description":  "Authentic Pepsodent 150g from SHAGUN STORE, Bettadapura. Genuine pack \u0026 accurate billing.",
         "image":  "https://images.openfoodfacts.org/images/products/890/600/728/0105/front_en.5.400.jpg"
     },
     {
@@ -18788,9 +18791,9 @@ export const INITIAL_PRODUCTS = [
     },
     {
         "id":  "shagun_p_0846",
-        "name":  "Pepsodent 80Gm",
-        "nameHindi":  "à¤•à¤¿à¤°à¤¾à¤¨à¤¾ â€¢ Pepsodent 80Gm",
-        "nameKannada":  "à²¦à²¿à²¨à²¸à²¿ â€¢ Pepsodent 80Gm",
+        "name":  "Pepsodent 80g",
+        "nameHindi":  "à¤•à¤¿à¤°à¤¾à¤¨à¤¾ â€¢ Pepsodent 80g",
+        "nameKannada":  "à²¦à²¿à²¨à²¸à²¿ â€¢ Pepsodent 80g",
         "category":  "staples",
         "price":  64,
         "mrp":  66,
@@ -18805,7 +18808,7 @@ export const INITIAL_PRODUCTS = [
                      ],
         "inStock":  true,
         "badge":  "â‚¹2 OFF",
-        "description":  "Authentic Pepsodent 80Gm from SHAGUN STORE, Bettadapura. Genuine pack \u0026 accurate billing.",
+        "description":  "Authentic Pepsodent 80g from SHAGUN STORE, Bettadapura. Genuine pack \u0026 accurate billing.",
         "image":  "https://images.openfoodfacts.org/images/products/890/600/728/0105/front_en.5.400.jpg"
     },
     {
@@ -18920,9 +18923,9 @@ export const INITIAL_PRODUCTS = [
     },
     {
         "id":  "shagun_p_0852",
-        "name":  "Pistachios 250Gm",
-        "nameHindi":  "à¤•à¤¿à¤°à¤¾à¤¨à¤¾ â€¢ Pistachios 250Gm",
-        "nameKannada":  "à²¦à²¿à²¨à²¸à²¿ â€¢ Pistachios 250Gm",
+        "name":  "Pistachios 250g",
+        "nameHindi":  "à¤•à¤¿à¤°à¤¾à¤¨à¤¾ â€¢ Pistachios 250g",
+        "nameKannada":  "à²¦à²¿à²¨à²¸à²¿ â€¢ Pistachios 250g",
         "category":  "staples",
         "price":  300,
         "mrp":  585,
@@ -18937,7 +18940,7 @@ export const INITIAL_PRODUCTS = [
                      ],
         "inStock":  true,
         "badge":  "â‚¹285 OFF",
-        "description":  "Authentic Pistachios 250Gm from SHAGUN STORE, Bettadapura. Genuine pack \u0026 accurate billing.",
+        "description":  "Authentic Pistachios 250g from SHAGUN STORE, Bettadapura. Genuine pack \u0026 accurate billing.",
         "image":  "https://images.openfoodfacts.org/images/products/890/600/728/0105/front_en.5.400.jpg"
     },
     {
@@ -19382,9 +19385,9 @@ export const INITIAL_PRODUCTS = [
     },
     {
         "id":  "shagun_p_0873",
-        "name":  "Ponds Cream 23Gm",
-        "nameHindi":  "à¤•à¤¿à¤°à¤¾à¤¨à¤¾ â€¢ Ponds Cream 23Gm",
-        "nameKannada":  "à²¦à²¿à²¨à²¸à²¿ â€¢ Ponds Cream 23Gm",
+        "name":  "Ponds Cream 23g",
+        "nameHindi":  "à¤•à¤¿à¤°à¤¾à¤¨à¤¾ â€¢ Ponds Cream 23g",
+        "nameKannada":  "à²¦à²¿à²¨à²¸à²¿ â€¢ Ponds Cream 23g",
         "category":  "staples",
         "price":  100,
         "mrp":  105,
@@ -19399,7 +19402,7 @@ export const INITIAL_PRODUCTS = [
                      ],
         "inStock":  true,
         "badge":  "â‚¹5 OFF",
-        "description":  "Authentic Ponds Cream 23Gm from SHAGUN STORE, Bettadapura. Genuine pack \u0026 accurate billing.",
+        "description":  "Authentic Ponds Cream 23g from SHAGUN STORE, Bettadapura. Genuine pack \u0026 accurate billing.",
         "image":  "https://images.openfoodfacts.org/images/products/890/600/728/0105/front_en.5.400.jpg"
     },
     {
@@ -19514,9 +19517,9 @@ export const INITIAL_PRODUCTS = [
     },
     {
         "id":  "shagun_p_0879",
-        "name":  "Ponds Sandal 50Gm",
-        "nameHindi":  "à¤•à¤¿à¤°à¤¾à¤¨à¤¾ â€¢ Ponds Sandal 50Gm",
-        "nameKannada":  "à²¦à²¿à²¨à²¸à²¿ â€¢ Ponds Sandal 50Gm",
+        "name":  "Ponds Sandal 50g",
+        "nameHindi":  "à¤•à¤¿à¤°à¤¾à¤¨à¤¾ â€¢ Ponds Sandal 50g",
+        "nameKannada":  "à²¦à²¿à²¨à²¸à²¿ â€¢ Ponds Sandal 50g",
         "category":  "staples",
         "price":  75,
         "mrp":  77,
@@ -19531,7 +19534,7 @@ export const INITIAL_PRODUCTS = [
                      ],
         "inStock":  true,
         "badge":  "â‚¹2 OFF",
-        "description":  "Authentic Ponds Sandal 50Gm from SHAGUN STORE, Bettadapura. Genuine pack \u0026 accurate billing.",
+        "description":  "Authentic Ponds Sandal 50g from SHAGUN STORE, Bettadapura. Genuine pack \u0026 accurate billing.",
         "image":  "https://images.openfoodfacts.org/images/products/890/600/728/0105/front_en.5.400.jpg"
     },
     {
@@ -19844,9 +19847,9 @@ export const INITIAL_PRODUCTS = [
     },
     {
         "id":  "shagun_p_0894",
-        "name":  "Raja Coffee 100Gm",
-        "nameHindi":  "à¤•à¤¿à¤°à¤¾à¤¨à¤¾ â€¢ Raja Coffee 100Gm",
-        "nameKannada":  "à²¦à²¿à²¨à²¸à²¿ â€¢ Raja Coffee 100Gm",
+        "name":  "Raja Coffee 100g",
+        "nameHindi":  "à¤•à¤¿à¤°à¤¾à¤¨à¤¾ â€¢ Raja Coffee 100g",
+        "nameKannada":  "à²¦à²¿à²¨à²¸à²¿ â€¢ Raja Coffee 100g",
         "category":  "tea-beverages",
         "price":  65,
         "mrp":  65,
@@ -19861,7 +19864,7 @@ export const INITIAL_PRODUCTS = [
                      ],
         "inStock":  true,
         "badge":  "",
-        "description":  "Authentic Raja Coffee 100Gm from SHAGUN STORE, Bettadapura. Genuine pack \u0026 accurate billing.",
+        "description":  "Authentic Raja Coffee 100g from SHAGUN STORE, Bettadapura. Genuine pack \u0026 accurate billing.",
         "image":  "https://images.openfoodfacts.org/images/products/890/103/080/7534/front_en.8.400.jpg"
     },
     {
@@ -20108,9 +20111,9 @@ export const INITIAL_PRODUCTS = [
     },
     {
         "id":  "shagun_p_0906",
-        "name":  "Red Label NC",
-        "nameHindi":  "à¤•à¤¿à¤°à¤¾à¤¨à¤¾ â€¢ Red Label NC",
-        "nameKannada":  "à²¦à²¿à²¨à²¸à²¿ â€¢ Red Label NC",
+        "name":  "Red Label Natural Care",
+        "nameHindi":  "à¤•à¤¿à¤°à¤¾à¤¨à¤¾ â€¢ Red Label Natural Care",
+        "nameKannada":  "à²¦à²¿à²¨à²¸à²¿ â€¢ Red Label Natural Care",
         "category":  "tea-beverages",
         "price":  155,
         "mrp":  160,
@@ -20125,7 +20128,7 @@ export const INITIAL_PRODUCTS = [
                      ],
         "inStock":  true,
         "badge":  "â‚¹5 OFF",
-        "description":  "Authentic Red Label NC from SHAGUN STORE, Bettadapura. Genuine pack \u0026 accurate billing.",
+        "description":  "Authentic Red Label Natural Care from SHAGUN STORE, Bettadapura. Genuine pack \u0026 accurate billing.",
         "image":  "https://images.openfoodfacts.org/images/products/890/103/001/8800/front_en.11.400.jpg"
     },
     {
@@ -20526,9 +20529,9 @@ export const INITIAL_PRODUCTS = [
     },
     {
         "id":  "shagun_p_0925",
-        "name":  "Rin Powder 500Gm",
-        "nameHindi":  "à¤•à¤¿à¤°à¤¾à¤¨à¤¾ â€¢ Rin Powder 500Gm",
-        "nameKannada":  "à²¦à²¿à²¨à²¸à²¿ â€¢ Rin Powder 500Gm",
+        "name":  "Rin Powder 500g",
+        "nameHindi":  "à¤•à¤¿à¤°à¤¾à¤¨à¤¾ â€¢ Rin Powder 500g",
+        "nameKannada":  "à²¦à²¿à²¨à²¸à²¿ â€¢ Rin Powder 500g",
         "category":  "household-clean",
         "price":  53,
         "mrp":  56,
@@ -20543,7 +20546,7 @@ export const INITIAL_PRODUCTS = [
                      ],
         "inStock":  true,
         "badge":  "â‚¹3 OFF",
-        "description":  "Authentic Rin Powder 500Gm from SHAGUN STORE, Bettadapura. Genuine pack \u0026 accurate billing.",
+        "description":  "Authentic Rin Powder 500g from SHAGUN STORE, Bettadapura. Genuine pack \u0026 accurate billing.",
         "image":  "https://images.openfoodfacts.org/images/products/890/103/070/3300/front_en.8.400.jpg"
     },
     {
@@ -20592,9 +20595,9 @@ export const INITIAL_PRODUCTS = [
     },
     {
         "id":  "shagun_p_0928",
-        "name":  "Round Kaju 250Gm",
-        "nameHindi":  "à¤•à¤¿à¤°à¤¾à¤¨à¤¾ â€¢ Round Kaju 250Gm",
-        "nameKannada":  "à²¦à²¿à²¨à²¸à²¿ â€¢ Round Kaju 250Gm",
+        "name":  "Round Kaju 250g",
+        "nameHindi":  "à¤•à¤¿à¤°à¤¾à¤¨à¤¾ â€¢ Round Kaju 250g",
+        "nameKannada":  "à²¦à²¿à²¨à²¸à²¿ â€¢ Round Kaju 250g",
         "category":  "staples",
         "price":  280,
         "mrp":  280,
@@ -20609,7 +20612,7 @@ export const INITIAL_PRODUCTS = [
                      ],
         "inStock":  true,
         "badge":  "",
-        "description":  "Authentic Round Kaju 250Gm from SHAGUN STORE, Bettadapura. Genuine pack \u0026 accurate billing.",
+        "description":  "Authentic Round Kaju 250g from SHAGUN STORE, Bettadapura. Genuine pack \u0026 accurate billing.",
         "image":  "https://images.openfoodfacts.org/images/products/890/600/728/0105/front_en.5.400.jpg"
     },
     {
@@ -20812,9 +20815,9 @@ export const INITIAL_PRODUCTS = [
     },
     {
         "id":  "shagun_p_0938",
-        "name":  "S.R.KArapu Powder  250g",
-        "nameHindi":  "à¤•à¤¿à¤°à¤¾à¤¨à¤¾ â€¢ S.R.KArapu Powder  250g",
-        "nameKannada":  "à²¦à²¿à²¨à²¸à²¿ â€¢ S.R.KArapu Powder  250g",
+        "name":  "S.R.KArapu Powder 250g",
+        "nameHindi":  "à¤•à¤¿à¤°à¤¾à¤¨à¤¾ â€¢ S.R.KArapu Powder 250g",
+        "nameKannada":  "à²¦à²¿à²¨à²¸à²¿ â€¢ S.R.KArapu Powder 250g",
         "category":  "staples",
         "price":  25,
         "mrp":  30,
@@ -20829,7 +20832,7 @@ export const INITIAL_PRODUCTS = [
                      ],
         "inStock":  true,
         "badge":  "â‚¹5 OFF",
-        "description":  "Authentic S.R.KArapu Powder  250g from SHAGUN STORE, Bettadapura. Genuine pack \u0026 accurate billing.",
+        "description":  "Authentic S.R.KArapu Powder 250g from SHAGUN STORE, Bettadapura. Genuine pack \u0026 accurate billing.",
         "image":  "https://images.openfoodfacts.org/images/products/890/600/728/0105/front_en.5.400.jpg"
     },
     {
@@ -21076,9 +21079,9 @@ export const INITIAL_PRODUCTS = [
     },
     {
         "id":  "shagun_p_0950",
-        "name":  "Sakshi C.M 100g",
-        "nameHindi":  "à¤•à¤¿à¤°à¤¾à¤¨à¤¾ â€¢ Sakshi C.M 100g",
-        "nameKannada":  "à²¦à²¿à²¨à²¸à²¿ â€¢ Sakshi C.M 100g",
+        "name":  "Sakshi Chicken Masala 100g",
+        "nameHindi":  "à¤•à¤¿à¤°à¤¾à¤¨à¤¾ â€¢ Sakshi Chicken Masala 100g",
+        "nameKannada":  "à²¦à²¿à²¨à²¸à²¿ â€¢ Sakshi Chicken Masala 100g",
         "category":  "spices-masala",
         "price":  45,
         "mrp":  52,
@@ -21093,7 +21096,7 @@ export const INITIAL_PRODUCTS = [
                      ],
         "inStock":  true,
         "badge":  "â‚¹7 OFF",
-        "description":  "Authentic Sakshi C.M 100g from SHAGUN STORE, Bettadapura. Genuine pack \u0026 accurate billing.",
+        "description":  "Authentic Sakshi Chicken Masala 100g from SHAGUN STORE, Bettadapura. Genuine pack \u0026 accurate billing.",
         "image":  "https://images.openfoodfacts.org/images/products/890/602/112/0463/front_en.5.400.jpg"
     },
     {
@@ -21846,9 +21849,9 @@ export const INITIAL_PRODUCTS = [
     },
     {
         "id":  "shagun_p_0985",
-        "name":  "Soya 500Gm",
-        "nameHindi":  "à¤•à¤¿à¤°à¤¾à¤¨à¤¾ â€¢ Soya 500Gm",
-        "nameKannada":  "à²¦à²¿à²¨à²¸à²¿ â€¢ Soya 500Gm",
+        "name":  "Soya 500g",
+        "nameHindi":  "à¤•à¤¿à¤°à¤¾à¤¨à¤¾ â€¢ Soya 500g",
+        "nameKannada":  "à²¦à²¿à²¨à²¸à²¿ â€¢ Soya 500g",
         "category":  "staples",
         "price":  60,
         "mrp":  60,
@@ -21863,7 +21866,7 @@ export const INITIAL_PRODUCTS = [
                      ],
         "inStock":  true,
         "badge":  "",
-        "description":  "Authentic Soya 500Gm from SHAGUN STORE, Bettadapura. Genuine pack \u0026 accurate billing.",
+        "description":  "Authentic Soya 500g from SHAGUN STORE, Bettadapura. Genuine pack \u0026 accurate billing.",
         "image":  "https://images.openfoodfacts.org/images/products/890/600/728/0105/front_en.5.400.jpg"
     },
     {
@@ -22616,9 +22619,9 @@ export const INITIAL_PRODUCTS = [
     },
     {
         "id":  "shagun_p_1020",
-        "name":  "Super Gold C.M 50gm",
-        "nameHindi":  "à¤•à¤¿à¤°à¤¾à¤¨à¤¾ â€¢ Super Gold C.M 50gm",
-        "nameKannada":  "à²¦à²¿à²¨à²¸à²¿ â€¢ Super Gold C.M 50gm",
+        "name":  "Super Gold Chicken Masala 50g",
+        "nameHindi":  "à¤•à¤¿à¤°à¤¾à¤¨à¤¾ â€¢ Super Gold Chicken Masala 50g",
+        "nameKannada":  "à²¦à²¿à²¨à²¸à²¿ â€¢ Super Gold Chicken Masala 50g",
         "category":  "spices-masala",
         "price":  25,
         "mrp":  30,
@@ -22633,7 +22636,7 @@ export const INITIAL_PRODUCTS = [
                      ],
         "inStock":  true,
         "badge":  "â‚¹5 OFF",
-        "description":  "Authentic Super Gold C.M 50gm from SHAGUN STORE, Bettadapura. Genuine pack \u0026 accurate billing.",
+        "description":  "Authentic Super Gold Chicken Masala 50g from SHAGUN STORE, Bettadapura. Genuine pack \u0026 accurate billing.",
         "image":  "https://images.openfoodfacts.org/images/products/890/602/112/0463/front_en.5.400.jpg"
     },
     {
@@ -22792,9 +22795,9 @@ export const INITIAL_PRODUCTS = [
     },
     {
         "id":  "shagun_p_1028",
-        "name":  "Surf Excel 500Gm",
-        "nameHindi":  "à¤•à¤¿à¤°à¤¾à¤¨à¤¾ â€¢ Surf Excel 500Gm",
-        "nameKannada":  "à²¦à²¿à²¨à²¸à²¿ â€¢ Surf Excel 500Gm",
+        "name":  "Surf Excel 500g",
+        "nameHindi":  "à¤•à¤¿à¤°à¤¾à¤¨à¤¾ â€¢ Surf Excel 500g",
+        "nameKannada":  "à²¦à²¿à²¨à²¸à²¿ â€¢ Surf Excel 500g",
         "category":  "household-clean",
         "price":  75,
         "mrp":  76,
@@ -22809,7 +22812,7 @@ export const INITIAL_PRODUCTS = [
                      ],
         "inStock":  true,
         "badge":  "â‚¹1 OFF",
-        "description":  "Authentic Surf Excel 500Gm from SHAGUN STORE, Bettadapura. Genuine pack \u0026 accurate billing.",
+        "description":  "Authentic Surf Excel 500g from SHAGUN STORE, Bettadapura. Genuine pack \u0026 accurate billing.",
         "image":  "https://images.openfoodfacts.org/images/products/890/103/037/2865/front_en.12.400.jpg"
     },
     {
@@ -23034,9 +23037,9 @@ export const INITIAL_PRODUCTS = [
     },
     {
         "id":  "shagun_p_1039",
-        "name":  "SVS Thin Vermicelli 225Gm",
-        "nameHindi":  "à¤•à¤¿à¤°à¤¾à¤¨à¤¾ â€¢ SVS Thin Vermicelli 225Gm",
-        "nameKannada":  "à²¦à²¿à²¨à²¸à²¿ â€¢ SVS Thin Vermicelli 225Gm",
+        "name":  "SVS Thin Vermicelli 225g",
+        "nameHindi":  "à¤•à¤¿à¤°à¤¾à¤¨à¤¾ â€¢ SVS Thin Vermicelli 225g",
+        "nameKannada":  "à²¦à²¿à²¨à²¸à²¿ â€¢ SVS Thin Vermicelli 225g",
         "category":  "staples",
         "price":  25,
         "mrp":  30,
@@ -23051,7 +23054,7 @@ export const INITIAL_PRODUCTS = [
                      ],
         "inStock":  true,
         "badge":  "â‚¹5 OFF",
-        "description":  "Authentic SVS Thin Vermicelli 225Gm from SHAGUN STORE, Bettadapura. Genuine pack \u0026 accurate billing.",
+        "description":  "Authentic SVS Thin Vermicelli 225g from SHAGUN STORE, Bettadapura. Genuine pack \u0026 accurate billing.",
         "image":  "https://images.openfoodfacts.org/images/products/890/600/728/0105/front_en.5.400.jpg"
     },
     {
@@ -23760,9 +23763,9 @@ export const INITIAL_PRODUCTS = [
     },
     {
         "id":  "shagun_p_1072",
-        "name":  "Teju Chnk Mutn Biri Masala  200g",
-        "nameHindi":  "à¤•à¤¿à¤°à¤¾à¤¨à¤¾ â€¢ Teju Chnk Mutn Biri Masala  200g",
-        "nameKannada":  "à²¦à²¿à²¨à²¸à²¿ â€¢ Teju Chnk Mutn Biri Masala  200g",
+        "name":  "Teju Chnk Mutn Biri Masala 200g",
+        "nameHindi":  "à¤•à¤¿à¤°à¤¾à¤¨à¤¾ â€¢ Teju Chnk Mutn Biri Masala 200g",
+        "nameKannada":  "à²¦à²¿à²¨à²¸à²¿ â€¢ Teju Chnk Mutn Biri Masala 200g",
         "category":  "staples",
         "price":  90,
         "mrp":  120,
@@ -23777,7 +23780,7 @@ export const INITIAL_PRODUCTS = [
                      ],
         "inStock":  true,
         "badge":  "â‚¹30 OFF",
-        "description":  "Authentic Teju Chnk Mutn Biri Masala  200g from SHAGUN STORE, Bettadapura. Genuine pack \u0026 accurate billing.",
+        "description":  "Authentic Teju Chnk Mutn Biri Masala 200g from SHAGUN STORE, Bettadapura. Genuine pack \u0026 accurate billing.",
         "image":  "https://images.openfoodfacts.org/images/products/890/600/728/0105/front_en.5.400.jpg"
     },
     {
@@ -24838,9 +24841,9 @@ export const INITIAL_PRODUCTS = [
     },
     {
         "id":  "shagun_p_1121",
-        "name":  "Vaseline 20Gm",
-        "nameHindi":  "à¤•à¤¿à¤°à¤¾à¤¨à¤¾ â€¢ Vaseline 20Gm",
-        "nameKannada":  "à²¦à²¿à²¨à²¸à²¿ â€¢ Vaseline 20Gm",
+        "name":  "Vaseline 20g",
+        "nameHindi":  "à¤•à¤¿à¤°à¤¾à¤¨à¤¾ â€¢ Vaseline 20g",
+        "nameKannada":  "à²¦à²¿à²¨à²¸à²¿ â€¢ Vaseline 20g",
         "category":  "staples",
         "price":  55,
         "mrp":  57,
@@ -24855,14 +24858,14 @@ export const INITIAL_PRODUCTS = [
                      ],
         "inStock":  true,
         "badge":  "â‚¹2 OFF",
-        "description":  "Authentic Vaseline 20Gm from SHAGUN STORE, Bettadapura. Genuine pack \u0026 accurate billing.",
+        "description":  "Authentic Vaseline 20g from SHAGUN STORE, Bettadapura. Genuine pack \u0026 accurate billing.",
         "image":  "https://images.openfoodfacts.org/images/products/890/600/728/0105/front_en.5.400.jpg"
     },
     {
         "id":  "shagun_p_1122",
-        "name":  "Vaseline 40Gm",
-        "nameHindi":  "à¤•à¤¿à¤°à¤¾à¤¨à¤¾ â€¢ Vaseline 40Gm",
-        "nameKannada":  "à²¦à²¿à²¨à²¸à²¿ â€¢ Vaseline 40Gm",
+        "name":  "Vaseline 40g",
+        "nameHindi":  "à¤•à¤¿à¤°à¤¾à¤¨à¤¾ â€¢ Vaseline 40g",
+        "nameKannada":  "à²¦à²¿à²¨à²¸à²¿ â€¢ Vaseline 40g",
         "category":  "staples",
         "price":  92,
         "mrp":  95,
@@ -24877,14 +24880,14 @@ export const INITIAL_PRODUCTS = [
                      ],
         "inStock":  true,
         "badge":  "â‚¹3 OFF",
-        "description":  "Authentic Vaseline 40Gm from SHAGUN STORE, Bettadapura. Genuine pack \u0026 accurate billing.",
+        "description":  "Authentic Vaseline 40g from SHAGUN STORE, Bettadapura. Genuine pack \u0026 accurate billing.",
         "image":  "https://images.openfoodfacts.org/images/products/890/600/728/0105/front_en.5.400.jpg"
     },
     {
         "id":  "shagun_p_1123",
-        "name":  "Vaseline 85Gm",
-        "nameHindi":  "à¤•à¤¿à¤°à¤¾à¤¨à¤¾ â€¢ Vaseline 85Gm",
-        "nameKannada":  "à²¦à²¿à²¨à²¸à²¿ â€¢ Vaseline 85Gm",
+        "name":  "Vaseline 85g",
+        "nameHindi":  "à¤•à¤¿à¤°à¤¾à¤¨à¤¾ â€¢ Vaseline 85g",
+        "nameKannada":  "à²¦à²¿à²¨à²¸à²¿ â€¢ Vaseline 85g",
         "category":  "staples",
         "price":  166,
         "mrp":  174,
@@ -24899,7 +24902,7 @@ export const INITIAL_PRODUCTS = [
                      ],
         "inStock":  true,
         "badge":  "â‚¹8 OFF",
-        "description":  "Authentic Vaseline 85Gm from SHAGUN STORE, Bettadapura. Genuine pack \u0026 accurate billing.",
+        "description":  "Authentic Vaseline 85g from SHAGUN STORE, Bettadapura. Genuine pack \u0026 accurate billing.",
         "image":  "https://images.openfoodfacts.org/images/products/890/600/728/0105/front_en.5.400.jpg"
     },
     {
@@ -25366,9 +25369,9 @@ export const INITIAL_PRODUCTS = [
     },
     {
         "id":  "shagun_p_1145",
-        "name":  "Vicco Turmeric skin  cream 30g",
-        "nameHindi":  "à¤•à¤¿à¤°à¤¾à¤¨à¤¾ â€¢ Vicco Turmeric skin  cream 30g",
-        "nameKannada":  "à²¦à²¿à²¨à²¸à²¿ â€¢ Vicco Turmeric skin  cream 30g",
+        "name":  "Vicco Turmeric skin cream 30g",
+        "nameHindi":  "à¤•à¤¿à¤°à¤¾à¤¨à¤¾ â€¢ Vicco Turmeric skin cream 30g",
+        "nameKannada":  "à²¦à²¿à²¨à²¸à²¿ â€¢ Vicco Turmeric skin cream 30g",
         "category":  "spices-masala",
         "price":  142,
         "mrp":  150,
@@ -25383,7 +25386,7 @@ export const INITIAL_PRODUCTS = [
                      ],
         "inStock":  true,
         "badge":  "â‚¹8 OFF",
-        "description":  "Authentic Vicco Turmeric skin  cream 30g from SHAGUN STORE, Bettadapura. Genuine pack \u0026 accurate billing.",
+        "description":  "Authentic Vicco Turmeric skin cream 30g from SHAGUN STORE, Bettadapura. Genuine pack \u0026 accurate billing.",
         "image":  "https://images.openfoodfacts.org/images/products/890/602/112/3129/front_en.4.400.jpg"
     },
     {
@@ -25410,9 +25413,9 @@ export const INITIAL_PRODUCTS = [
     },
     {
         "id":  "shagun_p_1147",
-        "name":  "Vicks  Vapo Rub",
-        "nameHindi":  "à¤•à¤¿à¤°à¤¾à¤¨à¤¾ â€¢ Vicks  Vapo Rub",
-        "nameKannada":  "à²¦à²¿à²¨à²¸à²¿ â€¢ Vicks  Vapo Rub",
+        "name":  "Vicks Vapo Rub",
+        "nameHindi":  "à¤•à¤¿à¤°à¤¾à¤¨à¤¾ â€¢ Vicks Vapo Rub",
+        "nameKannada":  "à²¦à²¿à²¨à²¸à²¿ â€¢ Vicks Vapo Rub",
         "category":  "staples",
         "price":  100,
         "mrp":  109,
@@ -25427,7 +25430,7 @@ export const INITIAL_PRODUCTS = [
                      ],
         "inStock":  true,
         "badge":  "â‚¹9 OFF",
-        "description":  "Authentic Vicks  Vapo Rub from SHAGUN STORE, Bettadapura. Genuine pack \u0026 accurate billing.",
+        "description":  "Authentic Vicks Vapo Rub from SHAGUN STORE, Bettadapura. Genuine pack \u0026 accurate billing.",
         "image":  "https://images.openfoodfacts.org/images/products/890/600/728/0105/front_en.5.400.jpg"
     },
     {
@@ -25850,9 +25853,9 @@ export const INITIAL_PRODUCTS = [
     },
     {
         "id":  "shagun_p_1167",
-        "name":  "W.T. Face Powder 70gm",
-        "nameHindi":  "à¤•à¤¿à¤°à¤¾à¤¨à¤¾ â€¢ W.T. Face Powder 70gm",
-        "nameKannada":  "à²¦à²¿à²¨à²¸à²¿ â€¢ W.T. Face Powder 70gm",
+        "name":  "W.T. Face Powder 70g",
+        "nameHindi":  "à¤•à¤¿à¤°à¤¾à¤¨à¤¾ â€¢ W.T. Face Powder 70g",
+        "nameKannada":  "à²¦à²¿à²¨à²¸à²¿ â€¢ W.T. Face Powder 70g",
         "category":  "staples",
         "price":  110,
         "mrp":  115,
@@ -25867,7 +25870,7 @@ export const INITIAL_PRODUCTS = [
                      ],
         "inStock":  true,
         "badge":  "â‚¹5 OFF",
-        "description":  "Authentic W.T. Face Powder 70gm from SHAGUN STORE, Bettadapura. Genuine pack \u0026 accurate billing.",
+        "description":  "Authentic W.T. Face Powder 70g from SHAGUN STORE, Bettadapura. Genuine pack \u0026 accurate billing.",
         "image":  "https://images.openfoodfacts.org/images/products/890/600/728/0105/front_en.5.400.jpg"
     },
     {
@@ -25894,9 +25897,9 @@ export const INITIAL_PRODUCTS = [
     },
     {
         "id":  "shagun_p_1169",
-        "name":  "Walnut 100Gm",
-        "nameHindi":  "à¤•à¤¿à¤°à¤¾à¤¨à¤¾ â€¢ Walnut 100Gm",
-        "nameKannada":  "à²¦à²¿à²¨à²¸à²¿ â€¢ Walnut 100Gm",
+        "name":  "Walnut 100g",
+        "nameHindi":  "à¤•à¤¿à¤°à¤¾à¤¨à¤¾ â€¢ Walnut 100g",
+        "nameKannada":  "à²¦à²¿à²¨à²¸à²¿ â€¢ Walnut 100g",
         "category":  "staples",
         "price":  160,
         "mrp":  225,
@@ -25911,14 +25914,14 @@ export const INITIAL_PRODUCTS = [
                      ],
         "inStock":  true,
         "badge":  "â‚¹65 OFF",
-        "description":  "Authentic Walnut 100Gm from SHAGUN STORE, Bettadapura. Genuine pack \u0026 accurate billing.",
+        "description":  "Authentic Walnut 100g from SHAGUN STORE, Bettadapura. Genuine pack \u0026 accurate billing.",
         "image":  "https://images.openfoodfacts.org/images/products/890/600/728/0105/front_en.5.400.jpg"
     },
     {
         "id":  "shagun_p_1170",
-        "name":  "Walnut 200Gm",
-        "nameHindi":  "à¤•à¤¿à¤°à¤¾à¤¨à¤¾ â€¢ Walnut 200Gm",
-        "nameKannada":  "à²¦à²¿à²¨à²¸à²¿ â€¢ Walnut 200Gm",
+        "name":  "Walnut 200g",
+        "nameHindi":  "à¤•à¤¿à¤°à¤¾à¤¨à¤¾ â€¢ Walnut 200g",
+        "nameKannada":  "à²¦à²¿à²¨à²¸à²¿ â€¢ Walnut 200g",
         "category":  "staples",
         "price":  300,
         "mrp":  415,
@@ -25933,7 +25936,7 @@ export const INITIAL_PRODUCTS = [
                      ],
         "inStock":  true,
         "badge":  "â‚¹115 OFF",
-        "description":  "Authentic Walnut 200Gm from SHAGUN STORE, Bettadapura. Genuine pack \u0026 accurate billing.",
+        "description":  "Authentic Walnut 200g from SHAGUN STORE, Bettadapura. Genuine pack \u0026 accurate billing.",
         "image":  "https://images.openfoodfacts.org/images/products/890/600/728/0105/front_en.5.400.jpg"
     },
     {
@@ -26026,9 +26029,9 @@ export const INITIAL_PRODUCTS = [
     },
     {
         "id":  "shagun_p_1175",
-        "name":  "Wheel Powder 500Gm",
-        "nameHindi":  "à¤•à¤¿à¤°à¤¾à¤¨à¤¾ â€¢ Wheel Powder 500Gm",
-        "nameKannada":  "à²¦à²¿à²¨à²¸à²¿ â€¢ Wheel Powder 500Gm",
+        "name":  "Wheel Powder 500g",
+        "nameHindi":  "à¤•à¤¿à¤°à¤¾à¤¨à¤¾ â€¢ Wheel Powder 500g",
+        "nameKannada":  "à²¦à²¿à²¨à²¸à²¿ â€¢ Wheel Powder 500g",
         "category":  "staples",
         "price":  38,
         "mrp":  39,
@@ -26043,7 +26046,7 @@ export const INITIAL_PRODUCTS = [
                      ],
         "inStock":  true,
         "badge":  "â‚¹1 OFF",
-        "description":  "Authentic Wheel Powder 500Gm from SHAGUN STORE, Bettadapura. Genuine pack \u0026 accurate billing.",
+        "description":  "Authentic Wheel Powder 500g from SHAGUN STORE, Bettadapura. Genuine pack \u0026 accurate billing.",
         "image":  "https://images.openfoodfacts.org/images/products/890/600/728/0105/front_en.5.400.jpg"
     },
     {
