@@ -652,6 +652,38 @@ class ShagunStoreApp {
     if (langParam && ['en', 'hi', 'kn'].includes(langParam)) {
       this.currentLang = langParam;
     }
+
+    // 1-Click WhatsApp Staff Approval Direct Handler
+    const actionParam = urlParams.get('action');
+    if (actionParam === 'approve_staff') {
+      const phoneParam = urlParams.get('phone');
+      const nameParam = urlParams.get('name') || 'Staff';
+      const pinParam = urlParams.get('pin') || '1234';
+      if (phoneParam) {
+        const cleanP = phoneParam.replace(/\D/g, '').slice(-10);
+        let existing = this.staffMembers.find(s => (s.phone || '').replace(/\D/g, '').endsWith(cleanP));
+        if (existing) {
+          existing.active = true;
+          existing.pin = pinParam;
+        } else {
+          this.staffMembers.push({
+            id: `st_${Date.now()}`,
+            name: decodeURIComponent(nameParam),
+            phone: cleanP,
+            role: 'Packing Specialist',
+            pin: pinParam,
+            active: true
+          });
+        }
+        this.saveStaffMembers();
+        this.currentView = 'admin';
+        this.adminUnlocked = true;
+        this.adminActiveTab = 'staff';
+        setTimeout(() => {
+          this.showToastNotification(`🟢 Staff (+91 ${cleanP}) Approved & Activated via WhatsApp!`);
+        }, 300);
+      }
+    }
   }
 
   loadConfig() {
@@ -1931,6 +1963,22 @@ class ShagunStoreApp {
     this.attachPostRenderEvents();
   }
 
+  requestStaffAccessViaWhatsApp() {
+    const phoneInput = document.getElementById('inputStaffPhone');
+    const phone = phoneInput ? phoneInput.value.replace(/\D/g, '').slice(-10) : '';
+    const pinInput = document.getElementById('inputStaffPin');
+    const pin = pinInput ? pinInput.value.trim() : '1234';
+    
+    const staffObj = {
+      name: phone ? `Staff (+91 ${phone})` : 'New Staff Member',
+      phone: phone || 'Staff Mobile',
+      role: 'Packing Specialist',
+      pin: pin || '1234'
+    };
+    const link = whatsAppEngine.getWhatsAppDeepLink(ADMIN_PHONE, whatsAppEngine.formatStaffApprovalRequestMessage(staffObj));
+    window.open(link, '_blank');
+  }
+
   renderStaffLoginScreen() {
     return `
       <div class="staff-login-wrapper" style="min-height: 80vh; display: flex; align-items: center; justify-content: center; padding: 1.5rem;">
@@ -1957,9 +2005,9 @@ class ShagunStoreApp {
           </form>
 
           <div style="margin-top: 14px; padding-top: 12px; border-top: 1px dashed var(--border); display: flex; flex-direction: column; gap: 8px;">
-            <a href="https://wa.me/917795565216?text=Namaste%20Owner!%20Please%20approve%20my%20staff%20packing%20terminal%20access." target="_blank" style="display: flex; align-items: center; justify-content: center; gap: 6px; padding: 9px; background: #f0fdf4; color: #166534; border: 1px solid #86efac; border-radius: 8px; font-size: 0.76rem; font-weight: 800; text-decoration: none;">
-              💬 Request Owner Permission on WhatsApp
-            </a>
+            <button onclick="window.shagunApp.requestStaffAccessViaWhatsApp()" style="display: flex; align-items: center; justify-content: center; gap: 6px; padding: 10px; background: #f0fdf4; color: #166534; border: 1px solid #86efac; border-radius: 8px; font-size: 0.78rem; font-weight: 800; cursor: pointer; width: 100%;">
+              💬 Request 1-Click Owner Approval on WhatsApp
+            </button>
             <button onclick="window.shagunApp.switchToCustomerView()" style="background: transparent; border: 1px solid var(--border); color: #475569; padding: 8px 16px; border-radius: 8px; font-weight: 700; font-size: 0.78rem; cursor: pointer;">
               ← Back to Customer Store
             </button>
