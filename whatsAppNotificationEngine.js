@@ -1,9 +1,13 @@
 /**
- * SHAGUN STORE - Real-Time 3-Way WhatsApp Notification Engine
- * Automatically Formats and Dispatches Live WhatsApp Messages to:
+ * SHAGUN STORE - Real-Time 3-Way Notification Engine (WhatsApp & SMS)
+ * Automatically Formats and Dispatches Live Alerts to:
  * 1. Store Owner / Admin: +91 77955 65216
  * 2. Store Packing Staff: Active Staff on Duty
- * 3. Customer: Customer Mobile Number (Order confirmation + Digital Tax Invoice + Store Pickup Map)
+ * 3. Customer: Live SMS & WhatsApp for:
+ *    - Order Confirmation
+ *    - UPI Payment Verified & Bank UTR Receipt
+ *    - Status Upgradations (NEW ➔ PACKING ➔ READY FOR PICKUP ➔ COMPLETED)
+ *    - Complete Digital Tax Invoice
  */
 
 export const ADMIN_PHONE = "7795565216"; // Master Owner WhatsApp Number
@@ -30,6 +34,13 @@ export class WhatsAppNotificationEngine {
     return `https://api.whatsapp.com/send?phone=91${clean}&text=${text}`;
   }
 
+  // Generate URL encoded SMS deep link for instant native messaging
+  getSmsDeepLink(phone, message) {
+    const clean = this.cleanPhone(phone);
+    const text = encodeURIComponent(message);
+    return `sms:+91${clean}?body=${text}`;
+  }
+
   // 1. Message for Admin / Store Owner (+91 77955 65216)
   formatAdminNewOrderMessage(order) {
     const itemsList = order.items.map((i, idx) => `  ${idx + 1}. ${i.qty}x ${i.name} (${i.variantName}) - ₹${i.price * i.qty}`).join('\n');
@@ -54,7 +65,7 @@ ${itemsList}
 
 ${order.packingNote ? `📝 *Packing Note*: "${order.packingNote}"\n` : ''}
 🔗 *Admin Dashboard*:
-https://shagunstore66-sys.github.io/shagun/?view=admin`;
+https://shagunstore66-sys.github.io/shagun/admin.html`;
   }
 
   // 2. Message for Store Packing Staff
@@ -71,14 +82,14 @@ ${order.packingNote ? `📝 *Note*: ${order.packingNote}\n` : ''}
 ${checklist}
 
 🔗 *Staff Terminal*:
-https://shagunstore66-sys.github.io/shagun/?view=staff`;
+https://shagunstore66-sys.github.io/shagun/staff.html`;
   }
 
   // 3. Message for Customer: Order Confirmation & Live Tracking
   formatCustomerConfirmationMessage(order) {
     const paymentLine = order.paymentVerified
       ? '🟢 Paid via UPI'
-      : (order.paymentMethod === 'counter' ? '💵 Pay ₹' + order.totalAmount + ' Cash at Counter Table' : '⏳ Awaiting UPI Verification');
+      : (order.paymentMethod === 'counter' ? '💵 Pay ₹' + order.totalAmount + ' Cash at Counter' : '⏳ Awaiting UPI Verification');
 
     return `🛍️ *${this.storeName}, Bettadapura*
 ---------------------------------------
@@ -98,7 +109,58 @@ https://shagunstore66-sys.github.io/shagun/?token=${order.token}&orderId=${order
 🙏 Dhanyawad / ಧನ್ಯವಾದಗಳು!`;
   }
 
-  // 4. Message for Customer: Complete Itemized Digital Tax Invoice (Sent when Order is Ready/Completed)
+  // 4. Message for Customer: UPI Payment Success Notification & Bank UTR
+  formatCustomerPaymentSuccessMessage(order, transactionId) {
+    return `💳 *${this.storeName} - PAYMENT RECEIVED & CONFIRMED!*
+---------------------------------------
+Namaste *${order.customerName}*!
+Aapka UPI payment successfully verify ho gaya hai.
+
+🔖 *Token Number*: *#${order.token}*
+💰 *Amount Paid*: ₹${order.totalAmount}
+🏦 *Bank Reference (UTR)*: ${transactionId}
+🟢 *Payment Status*: VERIFIED & CREDITED (Axis Bank)
+📦 *Order Status*: Forwarded to Store Packing Team
+
+📍 *Pickup Point*: ${this.storeAddress}
+🔗 *Track Live Order*:
+https://shagunstore66-sys.github.io/shagun/?token=${order.token}&orderId=${order.id}`;
+  }
+
+  // 5. Message for Customer: Live Order Status Upgradation (NEW -> PACKING -> READY -> COMPLETED)
+  formatCustomerStatusUpgradationMessage(order, newStatus) {
+    if (newStatus === 'PACKING') {
+      return `📦 *${this.storeName} - ORDER PACKING IN PROGRESS*
+---------------------------------------
+Namaste *${order.customerName}*!
+Aapka order (Token *#${order.token}*) hamare Bettadapura staff dwara pack kiya ja raha hai.
+
+⏱️ *Pickup Slot*: ${order.pickupSlot || 'Express (15-20 mins)'}
+📍 *Counter*: ${order.location || 'Main Counter (Bettadapura)'}
+🔗 *Track*: https://shagunstore66-sys.github.io/shagun/?token=${order.token}&orderId=${order.id}`;
+    }
+
+    if (newStatus === 'READY') {
+      return `🎉 *${this.storeName} - ORDER READY FOR PICKUP!*
+---------------------------------------
+Namaste *${order.customerName}*!
+Aapka grocery bag (Token *#${order.token}*) ready ho chuka hai!
+
+📍 *Collection Point*: ${this.storeAddress}
+💰 *Total Amount*: ₹${order.totalAmount} (${order.paymentVerified ? '✅ Paid Online' : '💵 Pay Cash at Counter'})
+${order.transactionId ? `🏛️ *Bank Ref*: ${order.transactionId}\n` : ''}
+Kripya store counter par akar apna token *#${order.token}* dikhakar parcel collect karein.
+🗺️ *Map*: ${this.mapsUrl}`;
+    }
+
+    if (newStatus === 'COMPLETED') {
+      return this.formatCustomerInvoiceMessage(order);
+    }
+
+    return this.formatCustomerConfirmationMessage(order);
+  }
+
+  // 6. Message for Customer: Complete Itemized Digital Tax Invoice
   formatCustomerInvoiceMessage(order) {
     const timeStr = new Date(order.createdAt || Date.now()).toLocaleString('en-IN', { hour: '2-digit', minute: '2-digit', hour12: true, day: '2-digit', month: 'short', year: 'numeric' });
     const itemsTable = order.items.map((i, idx) => `${idx + 1}. ${i.name} (${i.variantName})\n   Qty: ${i.qty} × ₹${i.price} = ₹${i.qty * i.price}`).join('\n');
@@ -127,7 +189,7 @@ ${order.transactionId ? `Bank UTR / Ref: ${order.transactionId}\n` : ''}*Status*
 Visit again: https://shagunstore66-sys.github.io/shagun/`;
   }
 
-  // 5. Message for Staff Access Request to Admin (+91 77955 65216)
+  // 7. Message for Staff Access Request to Admin (+91 77955 65216)
   formatStaffApprovalRequestMessage(staff) {
     return `🔐 *${this.storeName} - STAFF ACCESS REQUEST*
 ------------------------------------------
@@ -138,7 +200,7 @@ Visit again: https://shagunstore66-sys.github.io/shagun/`;
 
 Owner Action:
 To approve or manage staff permissions, open Admin Panel:
-🔗 https://shagunstore66-sys.github.io/shagun/?view=admin`;
+🔗 https://shagunstore66-sys.github.io/shagun/admin.html`;
   }
 
   // Dispatch 3-Way Notifications
@@ -156,17 +218,63 @@ To approve or manage staff permissions, open Admin Panel:
       }).catch(() => {});
     } catch (e) {}
 
-    // 2. Prepare Direct Click-to-WhatsApp links
+    // 2. Prepare Direct Click-to-WhatsApp and Click-to-SMS links
     const adminLink = this.getWhatsAppDeepLink(this.adminPhone, this.formatAdminNewOrderMessage(order));
     const customerLink = this.getWhatsAppDeepLink(order.phone, this.formatCustomerConfirmationMessage(order));
+    const customerSmsLink = this.getSmsDeepLink(order.phone, `SHAGUN STORE: Order #${order.token} placed for Rs.${order.totalAmount}. Track: https://shagunstore66-sys.github.io/shagun/?token=${order.token}`);
     
     return {
       adminLink,
       customerLink,
+      customerSmsLink,
       adminMessage: this.formatAdminNewOrderMessage(order),
       customerMessage: this.formatCustomerConfirmationMessage(order),
       staffMessage: this.formatStaffPackingTicketMessage(order),
       invoiceMessage: this.formatCustomerInvoiceMessage(order)
+    };
+  }
+
+  // Dispatch Payment Success SMS & WhatsApp
+  dispatchPaymentSuccessAlerts(order, transactionId) {
+    try {
+      fetch('/api/notify-3way', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          type: 'PAYMENT_VERIFIED',
+          order,
+          transactionId,
+          customerPhone: order.phone
+        })
+      }).catch(() => {});
+    } catch (e) {}
+
+    const message = this.formatCustomerPaymentSuccessMessage(order, transactionId);
+    return {
+      customerLink: this.getWhatsAppDeepLink(order.phone, message),
+      customerSmsLink: this.getSmsDeepLink(order.phone, `SHAGUN STORE: Payment of Rs.${order.totalAmount} verified for Order #${order.token}! Ref: ${transactionId}. Track: https://shagunstore66-sys.github.io/shagun/?token=${order.token}`)
+    };
+  }
+
+  // Dispatch Status Upgradation Alerts (NEW -> PACKING -> READY -> COMPLETED)
+  dispatchStatusUpgradationAlerts(order, newStatus) {
+    try {
+      fetch('/api/notify-3way', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          type: 'STATUS_UPDATE',
+          status: newStatus,
+          order,
+          customerPhone: order.phone
+        })
+      }).catch(() => {});
+    } catch (e) {}
+
+    const message = this.formatCustomerStatusUpgradationMessage(order, newStatus);
+    return {
+      customerLink: this.getWhatsAppDeepLink(order.phone, message),
+      customerSmsLink: this.getSmsDeepLink(order.phone, `SHAGUN STORE: Order #${order.token} is now ${newStatus}! Track: https://shagunstore66-sys.github.io/shagun/?token=${order.token}`)
     };
   }
 }
