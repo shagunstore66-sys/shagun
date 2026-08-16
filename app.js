@@ -903,8 +903,23 @@ class ShagunStoreApp {
 
   toggleAudio() {
     this.audioAlertsEnabled = !this.audioAlertsEnabled;
-    if (this.audioAlertsEnabled) sounds.playNewOrderChime();
+    if (this.audioAlertsEnabled) this.playTestSound();
     this.render();
+  }
+
+  playTestSound() {
+    try {
+      if (typeof sounds !== 'undefined' && sounds) {
+        sounds.init();
+        sounds.playNewOrderChime();
+      } else if (window.sounds) {
+        window.sounds.init();
+        window.sounds.playNewOrderChime();
+      }
+      this.showToastNotification("🔔 Test Chime Ringing Loudly!");
+    } catch (e) {
+      console.warn("Test sound error:", e);
+    }
   }
 
   exportPaymentLedgerCSV() {
@@ -2593,7 +2608,7 @@ class ShagunStoreApp {
             <span style="font-size: 1rem;">🔔</span>
             <span>Live Cloud Chime & Alarm: <strong>ACTIVE</strong></span>
           </div>
-          <button onclick="sounds.playNewOrderChime()" style="padding: 4px 10px; background: #065f46; color: white; border: none; border-radius: 6px; font-size: 0.72rem; font-weight: 800; cursor: pointer;">
+          <button onclick="window.shagunApp.playTestSound()" style="padding: 6px 14px; background: #065f46; color: white; border: none; border-radius: 8px; font-size: 0.78rem; font-weight: 800; cursor: pointer; box-shadow: 0 2px 6px rgba(6,95,70,0.3);">
             🔔 Test Ring
           </button>
         </div>
@@ -3869,6 +3884,7 @@ window.deleteProduct = (pId) => window.shagunApp?.deleteProduct(pId);
 window.addNewProductFromAdmin = (name, cat, price, unit, img) => window.shagunApp?.addNewProductFromAdmin(name, cat, price, unit, img);
 window.verifyStaffLogin = (phone, pin) => window.shagunApp?.verifyStaffLogin(phone, pin);
 window.verifyStaffPin = (pin) => window.shagunApp?.verifyStaffPin(pin);
+window.playTestSound = () => window.shagunApp?.playTestSound();
 
 if (document.readyState === 'loading') {
   document.addEventListener('DOMContentLoaded', initShagunStoreApp);
