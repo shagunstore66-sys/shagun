@@ -4,6 +4,12 @@
 // ==============================================================================
 
 (function() {
+  // STRICT PRIVACY: Only activate if explicitly in dev/test mode via URL param (?dev=true or ?test=true)
+  const isDevMode = window.location.search.includes('dev=true') || window.location.search.includes('test=true') || window.location.hash.includes('dev');
+  if (!isDevMode) {
+    return; // Complete exit - zero UI elements injected for normal customers
+  }
+
   const logs = [];
   const networkLogs = [];
 
