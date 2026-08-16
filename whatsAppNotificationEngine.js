@@ -189,18 +189,27 @@ ${order.transactionId ? `Bank UTR / Ref: ${order.transactionId}\n` : ''}*Status*
 Visit again: https://shagunstore66-sys.github.io/shagun/`;
   }
 
-  // 7. Message for Staff Access Request to Admin (+91 77955 65216)
+  // 7. Message for Staff Access Request to Admin (+91 77955 65216) with 1-Tap Instant Approval Link
   formatStaffApprovalRequestMessage(staff) {
-    return `🔐 *${this.storeName} - STAFF ACCESS REQUEST*
-------------------------------------------
-👨‍🍳 *Staff Name*: ${staff.name}
-📞 *Mobile*: +91 ${this.cleanPhone(staff.phone)}
-🏷️ *Assigned Role*: ${staff.role || 'Packing Specialist'}
-🔑 *Requested PIN*: ${staff.pin}
+    const cleanP = this.cleanPhone(staff.phone);
+    const pin = staff.pin || '1234';
+    const name = encodeURIComponent(staff.name || 'Staff');
+    const directApproveUrl = `https://shagunstore66-sys.github.io/shagun/admin.html?action=approve_staff&phone=${cleanP}&name=${name}&pin=${pin}`;
 
-Owner Action:
-To approve or manage staff permissions, open Admin Panel:
-🔗 https://shagunstore66-sys.github.io/shagun/admin.html`;
+    return `🔐 *${this.storeName} - STAFF ACCESS APPROVAL REQUEST*
+------------------------------------------
+Namaste Owner Sir!
+
+👨‍🍳 *Staff Name*: ${staff.name}
+📞 *Mobile Number*: +91 ${cleanP}
+🏷️ *Assigned Role*: ${staff.role || 'Packing Specialist'}
+🔑 *PIN*: ${pin}
+
+👉 *1-TAP APPROVAL LINK FOR OWNER:*
+Tap this link to instantly approve and activate staff access:
+🔗 ${directApproveUrl}
+
+(Or manage in Admin Panel: https://shagunstore66-sys.github.io/shagun/admin.html)`;
   }
 
   // Dispatch 3-Way Notifications
