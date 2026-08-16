@@ -14,32 +14,41 @@ class SoundEngine {
   setupGlobalUnlockListener() {
     const unlock = () => {
       this.init();
-      if (this.ctx && this.ctx.state === 'running') {
-        this.unlocked = true;
-        ['touchstart', 'touchend', 'mousedown', 'keydown', 'click'].forEach(evt => {
-          document.removeEventListener(evt, unlock);
-        });
-      }
+      try {
+        if (this.ctx && this.ctx.state === 'running') {
+          // Play silent pulse to warm up mobile hardware audio DAC
+          const osc = this.ctx.createOscillator();
+          const gain = this.ctx.createGain();
+          gain.gain.value = 0.001;
+          osc.connect(gain);
+          gain.connect(this.ctx.destination);
+          osc.start(0);
+          osc.stop(0.01);
+          this.unlocked = true;
+        }
+      } catch (e) {}
     };
 
-    ['touchstart', 'touchend', 'mousedown', 'keydown', 'click'].forEach(evt => {
-      document.addEventListener(evt, unlock, { once: false, passive: true });
+    ['touchstart', 'touchend', 'pointerdown', 'mousedown', 'keydown', 'click'].forEach(evt => {
+      window.addEventListener(evt, unlock, { once: false, passive: true });
     });
   }
 
   init() {
-    if (!this.ctx) {
-      const AudioCtx = window.AudioContext || window.webkitAudioContext;
-      if (AudioCtx) {
-        this.ctx = new AudioCtx();
+    try {
+      if (!this.ctx) {
+        const AudioCtx = window.AudioContext || window.webkitAudioContext;
+        if (AudioCtx) {
+          this.ctx = new AudioCtx({ latencyHint: 'interactive' });
+        }
       }
-    }
-    if (this.ctx && this.ctx.state === 'suspended') {
-      this.ctx.resume().catch(() => {});
-    }
+      if (this.ctx && this.ctx.state === 'suspended') {
+        this.ctx.resume().catch(() => {});
+      }
+    } catch (e) {}
   }
 
-  // Loud, distinctive double chime for Staff when a new order arrives
+  // Loud, distinctive triple chime for Staff when a new order arrives
   playNewOrderChime() {
     try {
       this.init();
