@@ -2481,57 +2481,99 @@ class ShagunStoreApp {
   }
 
   // ==========================================================================
-  // 3. STAFF PACKING TERMINAL (KHM & MOBILE OPTIMIZED)
+  // 3. STAFF PACKING TERMINAL (MOBILE NATIVE APP VS DESKTOP KANBAN)
   // ==========================================================================
   renderStaffView() {
-    this.staffActiveMobileTab = this.staffActiveMobileTab || 'all';
     const newOrders = this.orders.filter(o => o.status === 'NEW');
     const packingOrders = this.orders.filter(o => o.status === 'PACKING');
     const readyOrders = this.orders.filter(o => o.status === 'READY');
-    const completedOrders = this.orders.filter(o => o.status === 'COMPLETED').slice(0, 10);
-    const totalActive = newOrders.length + packingOrders.length + readyOrders.length;
+    const completedOrders = this.orders.filter(o => o.status === 'COMPLETED').slice(0, 15);
+    
+    // Auto-select tab with active work for smartphone
+    if (!this.staffActiveMobileTab) {
+      if (newOrders.length > 0) this.staffActiveMobileTab = 'NEW';
+      else if (packingOrders.length > 0) this.staffActiveMobileTab = 'PACKING';
+      else if (readyOrders.length > 0) this.staffActiveMobileTab = 'READY';
+      else this.staffActiveMobileTab = 'NEW';
+    }
+
+    const currentMobileOrders = this.staffActiveMobileTab === 'NEW' 
+      ? newOrders 
+      : this.staffActiveMobileTab === 'PACKING' 
+      ? packingOrders 
+      : this.staffActiveMobileTab === 'READY' 
+      ? readyOrders 
+      : completedOrders;
 
     return `
-      <div class="staff-toolbar">
-        <div class="staff-title-group">
-          <h2>👨‍🍳 ${this.t('staffDashboardTitle')}</h2>
-          <p>${this.currentLoggedInStaff ? `Staff on Duty: <strong>${this.currentLoggedInStaff.name}</strong> (${this.currentLoggedInStaff.role})` : this.t('staffDashboardSub')}</p>
+      <!-- ================= 1. NATIVE MOBILE STAFF APP (Smartphones) ================= -->
+      <div class="mobile-only-staff-view">
+        <!-- Native App Bar -->
+        <div class="staff-mobile-appbar">
+          <div>
+            <div style="font-size: 1.05rem; font-weight: 900; letter-spacing: 0.02em;">👨‍🍳 SHAGUN STAFF</div>
+            <div style="font-size: 0.74rem; opacity: 0.95; font-weight: 600;">🟢 ${this.currentLoggedInStaff?.name || 'Duty Staff'} (${this.currentLoggedInStaff?.role || 'Packing'})</div>
+          </div>
+          <div style="display: flex; gap: 6px; align-items: center;">
+            <button onclick="window.shagunApp.toggleAudio()" style="padding: 6px 10px; background: rgba(255,255,255,0.2); border: 1px solid rgba(255,255,255,0.3); color: white; border-radius: 8px; font-weight: 800; font-size: 0.76rem; cursor: pointer;">
+              ${this.audioAlertsEnabled ? '🔊 Sound' : '🔇 Muted'}
+            </button>
+            <button onclick="window.shagunApp.logoutStaff()" style="padding: 6px 10px; background: #dc2626; color: white; border: none; border-radius: 8px; font-weight: 800; font-size: 0.76rem; cursor: pointer;">
+              🔒 Exit
+            </button>
+          </div>
         </div>
-        <div style="display: flex; gap: 8px; align-items: center; flex-wrap: wrap;">
-          <button id="btnToggleAudio" onclick="window.shagunApp.toggleAudio()" style="padding: 8px 14px; background: #ffffff; border: 1.5px solid var(--border); border-radius: var(--radius-sm); font-weight: 800; font-size: 0.8rem; cursor: pointer; color: #0f172a;">
-            ${this.audioAlertsEnabled ? '🔊 Sound On' : '🔇 Muted'}
+
+        <!-- Sticky Mobile Segmented Tab Chips -->
+        <div class="staff-mobile-nav-tabs">
+          <button class="staff-tab-chip ${this.staffActiveMobileTab === 'NEW' ? 'active' : ''}" onclick="window.shagunApp.staffActiveMobileTab = 'NEW'; window.shagunApp.render();">
+            <span>⏳ New (${newOrders.length})</span>
           </button>
-          <button id="btnTestChime" onclick="sounds.playNewOrderChime()" style="padding: 8px 14px; background: #1e3a8a; color: white; border: none; border-radius: var(--radius-sm); font-weight: 800; font-size: 0.8rem; cursor: pointer;">
-            🔔 Chime
+          <button class="staff-tab-chip ${this.staffActiveMobileTab === 'PACKING' ? 'active' : ''}" onclick="window.shagunApp.staffActiveMobileTab = 'PACKING'; window.shagunApp.render();">
+            <span>📦 Packing (${packingOrders.length})</span>
           </button>
-          <button id="btnLogoutStaff" onclick="window.shagunApp.logoutStaff()" style="padding: 8px 14px; background: #dc2626; color: white; border: none; border-radius: var(--radius-sm); font-weight: 800; font-size: 0.8rem; cursor: pointer;">
-            🔒 Logout
+          <button class="staff-tab-chip ${this.staffActiveMobileTab === 'READY' ? 'active' : ''}" onclick="window.shagunApp.staffActiveMobileTab = 'READY'; window.shagunApp.render();">
+            <span>🎉 Ready (${readyOrders.length})</span>
           </button>
+          <button class="staff-tab-chip ${this.staffActiveMobileTab === 'COMPLETED' ? 'active' : ''}" onclick="window.shagunApp.staffActiveMobileTab = 'COMPLETED'; window.shagunApp.render();">
+            <span>🏁 Done (${completedOrders.length})</span>
+          </button>
+        </div>
+
+        <!-- Mobile Single-Column Orders Feed -->
+        <div class="staff-mobile-orders-feed">
+          ${currentMobileOrders.length === 0 ? `
+            <div style="background: #ffffff; border: 1.5px dashed #cbd5e1; border-radius: 16px; padding: 2.5rem 1.5rem; text-align: center; margin-top: 10px;">
+              <div style="font-size: 3rem; margin-bottom: 8px;">✨</div>
+              <h3 style="font-size: 1.1rem; font-weight: 900; color: #0f172a; margin-bottom: 4px;">No ${this.staffActiveMobileTab} Orders</h3>
+              <p style="font-size: 0.8rem; color: #64748b; margin: 0;">Phone will chime with sound notification when a customer places an order.</p>
+            </div>
+          ` : currentMobileOrders.map(o => this.renderStaffOrderCard(o)).join('')}
         </div>
       </div>
 
-      <!-- Mobile Touch Navigation Tabs (iOS & Android) -->
-      <div class="staff-mobile-tab-bar">
-        <button class="staff-mobile-tab-pill ${this.staffActiveMobileTab === 'all' ? 'active' : ''}" onclick="window.shagunApp.staffActiveMobileTab = 'all'; window.shagunApp.render();">
-          <span>📋 All Active (${totalActive})</span>
-        </button>
-        <button class="staff-mobile-tab-pill ${this.staffActiveMobileTab === 'NEW' ? 'active' : ''}" onclick="window.shagunApp.staffActiveMobileTab = 'NEW'; window.shagunApp.render();">
-          <span>⏳ New (${newOrders.length})</span>
-        </button>
-        <button class="staff-mobile-tab-pill ${this.staffActiveMobileTab === 'PACKING' ? 'active' : ''}" onclick="window.shagunApp.staffActiveMobileTab = 'PACKING'; window.shagunApp.render();">
-          <span>📦 Packing (${packingOrders.length})</span>
-        </button>
-        <button class="staff-mobile-tab-pill ${this.staffActiveMobileTab === 'READY' ? 'active' : ''}" onclick="window.shagunApp.staffActiveMobileTab = 'READY'; window.shagunApp.render();">
-          <span>🎉 Ready (${readyOrders.length})</span>
-        </button>
-        <button class="staff-mobile-tab-pill ${this.staffActiveMobileTab === 'COMPLETED' ? 'active' : ''}" onclick="window.shagunApp.staffActiveMobileTab = 'COMPLETED'; window.shagunApp.render();">
-          <span>🏁 Done (${completedOrders.length})</span>
-        </button>
-      </div>
+      <!-- ================= 2. WIDESCREEN DESKTOP KANBAN (Laptops/Monitors) ================= -->
+      <div class="desktop-only-kanban-wrapper" style="padding: 1.5rem;">
+        <div class="staff-toolbar">
+          <div class="staff-title-group">
+            <h2>👨‍🍳 ${this.t('staffDashboardTitle')}</h2>
+            <p>${this.currentLoggedInStaff ? `Staff on Duty: <strong>${this.currentLoggedInStaff.name}</strong> (${this.currentLoggedInStaff.role})` : this.t('staffDashboardSub')}</p>
+          </div>
+          <div style="display: flex; gap: 8px; align-items: center;">
+            <button id="btnToggleAudio" onclick="window.shagunApp.toggleAudio()" style="padding: 8px 14px; background: #ffffff; border: 1.5px solid var(--border); border-radius: var(--radius-sm); font-weight: 800; font-size: 0.8rem; cursor: pointer; color: #0f172a;">
+              ${this.audioAlertsEnabled ? '🔊 Sound On' : '🔇 Muted'}
+            </button>
+            <button id="btnTestChime" onclick="sounds.playNewOrderChime()" style="padding: 8px 14px; background: #1e3a8a; color: white; border: none; border-radius: var(--radius-sm); font-weight: 800; font-size: 0.8rem; cursor: pointer;">
+              🔔 Chime
+            </button>
+            <button id="btnLogoutStaff" onclick="window.shagunApp.logoutStaff()" style="padding: 8px 14px; background: #dc2626; color: white; border: none; border-radius: var(--radius-sm); font-weight: 800; font-size: 0.8rem; cursor: pointer;">
+              🔒 Logout
+            </button>
+          </div>
+        </div>
 
-      <div class="kanban-board">
-        <!-- Col 1: NEW -->
-        ${(this.staffActiveMobileTab === 'all' || this.staffActiveMobileTab === 'NEW') ? `
+        <div class="desktop-only-kanban">
+          <!-- Col 1: NEW -->
           <div class="kanban-col">
             <div class="kanban-col-header" style="background: #eff6ff; color: #1e3a8a; border-radius: 8px; padding: 8px 12px; margin-bottom: 8px; font-weight: 900;">
               <span>⏳ ${this.t('newOrders')} (${newOrders.length})</span>
@@ -2540,10 +2582,8 @@ class ShagunStoreApp {
               ${newOrders.length === 0 ? `<p class="kanban-empty">${this.t('noNewOrders')}</p>` : newOrders.map(o => this.renderStaffOrderCard(o)).join('')}
             </div>
           </div>
-        ` : ''}
 
-        <!-- Col 2: PACKING -->
-        ${(this.staffActiveMobileTab === 'all' || this.staffActiveMobileTab === 'PACKING') ? `
+          <!-- Col 2: PACKING -->
           <div class="kanban-col">
             <div class="kanban-col-header" style="background: #fef3c7; color: #92400e; border-radius: 8px; padding: 8px 12px; margin-bottom: 8px; font-weight: 900;">
               <span>📦 ${this.t('packingOrders')} (${packingOrders.length})</span>
@@ -2552,10 +2592,8 @@ class ShagunStoreApp {
               ${packingOrders.length === 0 ? `<p class="kanban-empty">${this.t('noPackingOrders')}</p>` : packingOrders.map(o => this.renderStaffOrderCard(o)).join('')}
             </div>
           </div>
-        ` : ''}
 
-        <!-- Col 3: READY -->
-        ${(this.staffActiveMobileTab === 'all' || this.staffActiveMobileTab === 'READY') ? `
+          <!-- Col 3: READY -->
           <div class="kanban-col">
             <div class="kanban-col-header" style="background: #dcfce7; color: #166534; border-radius: 8px; padding: 8px 12px; margin-bottom: 8px; font-weight: 900;">
               <span>🎉 ${this.t('readyOrders')} (${readyOrders.length})</span>
@@ -2564,10 +2602,8 @@ class ShagunStoreApp {
               ${readyOrders.length === 0 ? `<p class="kanban-empty">${this.t('noReadyOrders')}</p>` : readyOrders.map(o => this.renderStaffOrderCard(o)).join('')}
             </div>
           </div>
-        ` : ''}
 
-        <!-- Col 4: COMPLETED -->
-        ${(this.staffActiveMobileTab === 'all' || this.staffActiveMobileTab === 'COMPLETED') ? `
+          <!-- Col 4: COMPLETED -->
           <div class="kanban-col">
             <div class="kanban-col-header" style="background: #f1f5f9; color: #475569; border-radius: 8px; padding: 8px 12px; margin-bottom: 8px; font-weight: 900;">
               <span>🏁 ${this.t('completedOrders')} (${completedOrders.length})</span>
@@ -2576,7 +2612,7 @@ class ShagunStoreApp {
               ${completedOrders.length === 0 ? `<p class="kanban-empty">${this.t('noCompletedOrders')}</p>` : completedOrders.map(o => this.renderStaffOrderCard(o)).join('')}
             </div>
           </div>
-        ` : ''}
+        </div>
       </div>
     `;
   }
@@ -2586,113 +2622,123 @@ class ShagunStoreApp {
     const isPacking = order.status === 'PACKING';
     const isReady = order.status === 'READY';
     const orderTime = new Date(order.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+    const cleanPhone = (order.phone || '').replace(/\D/g, '').slice(-10);
 
     return `
-      <div class="order-ticket ${isNew ? 'new-highlight' : ''}" data-order-id="${order.id}">
-        <div class="ticket-header">
+      <div class="staff-mobile-card ${isNew ? 'is-new-order' : ''}" data-order-id="${order.id}">
+        <!-- Top Token Header -->
+        <div style="display: flex; justify-content: space-between; align-items: flex-start; border-bottom: 1px dashed #e2e8f0; padding-bottom: 8px;">
           <div>
-            <div class="ticket-token">#${order.token}</div>
-            <div style="font-size: 0.72rem; color: #64748b; font-weight: 700;">⏰ ${orderTime} • 📍 ${order.location}</div>
+            <div style="font-size: 1.35rem; font-weight: 900; color: #0f172a; font-family: var(--font-display); line-height: 1;">#${order.token}</div>
+            <div style="font-size: 0.72rem; color: #64748b; font-weight: 700; margin-top: 3px;">⏰ ${orderTime} • 📍 ${order.location || 'Counter'} • ⏳ ${order.pickupSlot || 'Express'}</div>
           </div>
-          <span style="font-size: 0.72rem; font-weight: 800; padding: 2px 8px; border-radius: 99px; background: #eff6ff; color: #1e3a8a;">
-            ${order.paymentStatus}
+          <span style="font-size: 0.72rem; font-weight: 900; padding: 4px 10px; border-radius: 99px; background: ${order.paymentVerified ? '#dcfce7' : '#eff6ff'}; color: ${order.paymentVerified ? '#166534' : '#1e3a8a'};">
+            ${order.paymentVerified ? '✓ PAID' : (order.paymentMethod === 'counter' ? '💵 CASH' : '⏳ PENDING')}
           </span>
         </div>
 
-        <div style="font-size: 0.8rem; margin: 6px 0; color: #0f172a;">
-          <span>👤 <strong>${order.customerName}</strong></span> • 
-          <span style="color: #1e3a8a; font-weight: 800;">📞 ${order.phone}</span>
+        <!-- Customer Contacts Bar (1-Tap Call & WhatsApp) -->
+        <div style="display: flex; justify-content: space-between; align-items: center; background: #f8fafc; padding: 8px 10px; border-radius: 10px; font-size: 0.8rem;">
+          <span style="font-weight: 800; color: #0f172a;">👤 ${order.customerName}</span>
+          <div style="display: flex; gap: 6px;">
+            <a href="tel:${cleanPhone}" style="display: inline-flex; align-items: center; gap: 3px; padding: 4px 8px; background: #eff6ff; color: #1e40af; border-radius: 6px; font-weight: 800; font-size: 0.74rem; text-decoration: none; border: 1px solid #bfdbfe;">
+              📞 Call
+            </a>
+            <a href="https://wa.me/91${cleanPhone}" target="_blank" style="display: inline-flex; align-items: center; gap: 3px; padding: 4px 8px; background: #dcfce7; color: #166534; border-radius: 6px; font-weight: 800; font-size: 0.74rem; text-decoration: none; border: 1px solid #86efac;">
+              💬 WA
+            </a>
+          </div>
         </div>
 
-        <!-- Automated Bank Payment Status Badge (Blinkit/Swiggy standard) -->
-        <div style="background: ${order.paymentVerified ? '#f0fdf4' : '#f8fafc'}; border: 1.5px solid ${order.paymentVerified ? '#86efac' : '#e2e8f0'}; border-radius: 8px; padding: 8px 10px; margin: 8px 0; display: flex; justify-content: space-between; align-items: center;">
+        <!-- Payment & Bank UTR Badge -->
+        <div style="background: ${order.paymentVerified ? '#f0fdf4' : '#fffbeb'}; border: 1.5px solid ${order.paymentVerified ? '#86efac' : '#fde68a'}; border-radius: 10px; padding: 8px 12px; display: flex; justify-content: space-between; align-items: center;">
           <div>
-            <div style="font-size: 0.76rem; font-weight: 900; color: ${order.paymentVerified ? '#166534' : '#0f172a'};">
-              ${order.paymentVerified ? '🟢 PAID & AUTO-VERIFIED' : (order.paymentMethod === 'counter' ? '💵 CASH AT COUNTER' : '⏳ ONLINE PAYMENT')}
+            <div style="font-size: 0.78rem; font-weight: 900; color: ${order.paymentVerified ? '#166534' : '#92400e'};">
+              ${order.paymentVerified ? '🟢 PAID ONLINE (Axis Bank)' : (order.paymentMethod === 'counter' ? '💵 COLLECT CASH AT COUNTER' : '⏳ AWAITING ONLINE PAYMENT')}
             </div>
             <div style="font-size: 0.7rem; color: #64748b; font-weight: 600;">
-              ${order.transactionId ? `Ref: ${order.transactionId}` : `${this.config.currency}${order.totalAmount} • ${order.paymentMethod === 'upi' ? 'UPI' : 'Cash'}`}
+              ${order.transactionId ? `Ref: ${order.transactionId}` : `${this.config.currency}${order.totalAmount} Total`}
             </div>
           </div>
-          <span style="font-size: 0.85rem; font-weight: 900; color: ${order.paymentVerified ? '#166534' : '#1e3a8a'};">
+          <span style="font-size: 1.1rem; font-weight: 900; color: ${order.paymentVerified ? '#166534' : '#1e3a8a'}; font-family: var(--font-display);">
             ${this.config.currency}${order.totalAmount}
           </span>
         </div>
 
-        <!-- Checklist with 1-Tap Item Removal -->
-        <div style="margin: 8px 0; background: #f8fafc; padding: 8px; border-radius: 8px; border: 1px solid #e2e8f0;">
-          <div style="display: flex; justify-content: space-between; font-size: 0.7rem; font-weight: 800; color: #64748b; margin-bottom: 4px;">
+        <!-- Touch Checklist with 1-Tap Item Removal -->
+        <div style="background: #f8fafc; padding: 10px; border-radius: 10px; border: 1px solid #e2e8f0;">
+          <div style="display: flex; justify-content: space-between; align-items: center; font-size: 0.74rem; font-weight: 800; color: #475569; margin-bottom: 6px;">
             <span>CHECKLIST (${order.items.filter(i=>i.packed).length}/${order.items.length}):</span>
-            ${isPacking ? `<button class="btn-pack-all" data-order-id="${order.id}" onclick="window.shagunApp.packAllItems('${order.id}')" style="border:none; background:transparent; color:#1e3a8a; font-weight:900; font-size:0.72rem; cursor:pointer;">${this.t('checkAll')}</button>` : ''}
+            ${isPacking ? `<button class="btn-pack-all" data-order-id="${order.id}" onclick="window.shagunApp.packAllItems('${order.id}')" style="border:none; background:transparent; color:#065f46; font-weight:900; font-size:0.75rem; cursor:pointer;">⚡ Check All</button>` : ''}
           </div>
-          ${order.items.map((item, idx) => `
-            <div style="display: flex; justify-content: space-between; align-items: center; padding: 2px 0; gap: 6px;">
-              <label style="display: flex; align-items: center; gap: 6px; font-size: 0.78rem; cursor: pointer; flex: 1; ${item.packed ? 'text-decoration: line-through; opacity: 0.6;' : ''}">
-                <input type="checkbox" class="pack-checkbox" data-order-id="${order.id}" data-item-idx="${idx}" onchange="window.shagunApp.toggleItemPacked('${order.id}', ${idx})" ${item.packed ? 'checked' : ''}>
-                <span><strong>${item.qty}x</strong> ${item.name} <em style="font-size: 0.72rem; color: #64748b;">(${item.variantName})</em></span>
-              </label>
-              <button onclick="window.shagunApp.removeItemFromOrder('${order.id}', ${idx})" title="Remove item if out of stock" style="border:none; background:#fee2e2; color:#dc2626; font-size:0.68rem; font-weight:800; cursor:pointer; padding:2px 6px; border-radius:4px;">
-                ✕ Remove
-              </button>
-            </div>
-          `).join('')}
+          <div style="display: flex; flex-direction: column; gap: 6px;">
+            ${order.items.map((item, idx) => `
+              <div style="display: flex; justify-content: space-between; align-items: center; padding: 4px 0; border-bottom: 1px solid #f1f5f9; gap: 8px;">
+                <label style="display: flex; align-items: center; gap: 8px; font-size: 0.85rem; cursor: pointer; flex: 1; ${item.packed ? 'text-decoration: line-through; opacity: 0.55;' : 'font-weight: 700; color: #0f172a;'}">
+                  <input type="checkbox" class="mobile-pack-checkbox" data-order-id="${order.id}" data-item-idx="${idx}" onchange="window.shagunApp.toggleItemPacked('${order.id}', ${idx})" ${item.packed ? 'checked' : ''}>
+                  <span><strong>${item.qty}x</strong> ${item.name} <em style="font-size: 0.74rem; color: #64748b; font-weight: 600;">(${item.variantName})</em></span>
+                </label>
+                <button onclick="window.shagunApp.removeItemFromOrder('${order.id}', ${idx})" title="Remove item if out of stock" style="border:none; background:#fee2e2; color:#dc2626; font-size:0.72rem; font-weight:800; cursor:pointer; padding:4px 8px; border-radius:6px;">
+                  ✕ Remove
+                </button>
+              </div>
+            `).join('')}
+          </div>
         </div>
 
-        <!-- Action Buttons with Status Undo -->
-        <div class="ticket-actions">
+        <!-- Big Touch Primary Action Button -->
+        <div>
           ${isNew ? `
-            <button class="btn-ticket-action btn-ticket-pack btn-change-status" data-order-id="${order.id}" data-status="PACKING" onclick="window.shagunApp.updateOrderStatus('${order.id}', 'PACKING')">
-              ${this.t('startPacking')}
+            <button class="btn-primary-mobile-pack btn-change-status" data-order-id="${order.id}" data-status="PACKING" onclick="window.shagunApp.updateOrderStatus('${order.id}', 'PACKING')" style="background: #065f46; color: #ffffff;">
+              📦 START PACKING (Token #${order.token}) ➔
             </button>
           ` : isPacking ? `
-            <button class="btn-ticket-action btn-ticket-ready btn-change-status" data-order-id="${order.id}" data-status="READY" onclick="window.shagunApp.updateOrderStatus('${order.id}', 'READY')">
-              ${this.t('markReady')}
-            </button>
-            <button class="btn-undo-status" data-order-id="${order.id}" data-prev-status="NEW" onclick="window.shagunApp.updateOrderStatus('${order.id}', 'NEW')" title="Undo status back to NEW" style="background:#e2e8f0; border:none; padding:4px 8px; border-radius:4px; font-size:0.72rem; cursor:pointer;">
-              ↩
-            </button>
+            <div style="display: flex; gap: 6px;">
+              <button class="btn-primary-mobile-pack btn-change-status" data-order-id="${order.id}" data-status="READY" onclick="window.shagunApp.updateOrderStatus('${order.id}', 'READY')" style="background: #059669; color: #ffffff; flex: 1;">
+                🎉 MARK READY FOR PICKUP ➔
+              </button>
+              <button class="btn-undo-status" data-order-id="${order.id}" data-prev-status="NEW" onclick="window.shagunApp.updateOrderStatus('${order.id}', 'NEW')" title="Undo status back to NEW" style="background:#e2e8f0; border:none; padding:10px 14px; border-radius:12px; font-weight:900; font-size:0.9rem; cursor:pointer;">
+                ↩
+              </button>
+            </div>
           ` : isReady ? `
-            <button class="btn-ticket-action btn-ticket-done btn-change-status" data-order-id="${order.id}" data-status="COMPLETED" onclick="window.shagunApp.updateOrderStatus('${order.id}', 'COMPLETED')">
-              ${this.t('handOver')}
-            </button>
-            <button class="btn-undo-status" data-order-id="${order.id}" data-prev-status="PACKING" onclick="window.shagunApp.updateOrderStatus('${order.id}', 'PACKING')" title="Undo status back to PACKING" style="background:#e2e8f0; border:none; padding:4px 8px; border-radius:4px; font-size:0.72rem; cursor:pointer;">
-              ↩
-            </button>
+            <div style="display: flex; gap: 6px;">
+              <button class="btn-primary-mobile-pack btn-change-status" data-order-id="${order.id}" data-status="COMPLETED" onclick="window.shagunApp.updateOrderStatus('${order.id}', 'COMPLETED')" style="background: #1e3a8a; color: #ffffff; flex: 1;">
+                🤝 HAND OVER TO CUSTOMER ➔
+              </button>
+              <button class="btn-undo-status" data-order-id="${order.id}" data-prev-status="PACKING" onclick="window.shagunApp.updateOrderStatus('${order.id}', 'PACKING')" title="Undo status back to PACKING" style="background:#e2e8f0; border:none; padding:10px 14px; border-radius:12px; font-weight:900; font-size:0.9rem; cursor:pointer;">
+                ↩
+              </button>
+            </div>
           ` : `
-            <span style="font-size: 0.75rem; color: #16a34a; font-weight: 800; text-align: center; width: 100%;">
-              ✓ Fulfilled
-            </span>
+            <div style="padding: 10px; background: #dcfce7; color: #166534; font-weight: 800; font-size: 0.85rem; text-align: center; border-radius: 10px;">
+              ✓ Order Fulfilled & Delivered
+            </div>
           `}
-
-          <button class="btn-ticket-action btn-print-slip" data-order-id="${order.id}" style="background:#f1f5f9; color:#0f172a; flex:0 0 36px;" title="Print 80mm Bag Slip">
-            🖨️
-          </button>
         </div>
 
-        <!-- 3-Way WhatsApp Fast Actions -->
-        <div style="margin-top: 8px; display: flex; flex-direction: column; gap: 4px;">
-          <a href="${whatsAppEngine.getWhatsAppDeepLink(order.phone, whatsAppEngine.formatCustomerInvoiceMessage(order))}" target="_blank" style="display: flex; align-items: center; justify-content: center; gap: 6px; width: 100%; padding: 7px 10px; background: #25D366; color: #ffffff; border-radius: 6px; font-weight: 800; font-size: 0.74rem; text-decoration: none; box-shadow: 0 2px 6px rgba(37,211,102,0.2);">
-            🧾 Send Digital Tax Invoice to Customer (+91 ${order.phone})
-          </a>
-        </div>
+        <!-- 1-Tap Customer WhatsApp Tax Invoice -->
+        <a href="${whatsAppEngine.getWhatsAppDeepLink(order.phone, whatsAppEngine.formatCustomerInvoiceMessage(order))}" target="_blank" style="display: flex; align-items: center; justify-content: center; gap: 6px; width: 100%; padding: 9px; background: #25D366; color: #ffffff; border-radius: 8px; font-weight: 800; font-size: 0.78rem; text-decoration: none; box-shadow: 0 2px 6px rgba(37,211,102,0.25);">
+          🧾 Send Digital Tax Invoice to Customer (+91 ${cleanPhone})
+        </a>
 
-        <!-- Manual Staff / Cashier Toolbar -->
-        <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 8px; padding-top: 6px; border-top: 1px dashed #cbd5e1; font-size: 0.72rem;">
-          <div style="display: flex; gap: 4px; align-items: center;">
+        <!-- Secondary Staff Controls Toolbar -->
+        <div style="display: flex; justify-content: space-between; align-items: center; padding-top: 8px; border-top: 1px dashed #cbd5e1; font-size: 0.74rem;">
+          <div style="display: flex; gap: 6px; align-items: center;">
             ${!order.paymentVerified ? `
-              <button onclick="window.shagunApp.markOrderPaidCash('${order.id}')" style="padding: 3px 8px; background: #dcfce7; color: #166534; border: 1px solid #86efac; border-radius: 4px; font-weight: 800; cursor: pointer;">
+              <button onclick="window.shagunApp.markOrderPaidCash('${order.id}')" style="padding: 5px 10px; background: #dcfce7; color: #166534; border: 1px solid #86efac; border-radius: 6px; font-weight: 800; cursor: pointer;">
                 💵 Mark Paid (Cash)
               </button>
             ` : ''}
-            ${order.status !== 'CANCELLED' ? `
-              <button onclick="window.shagunApp.cancelOrderStaff('${order.id}')" style="padding: 3px 8px; background: #fee2e2; color: #991b1b; border: 1px solid #fca5a5; border-radius: 4px; font-weight: 800; cursor: pointer;">
-                ❌ Cancel Order
-              </button>
-            ` : ''}
+            <button class="btn-print-slip" data-order-id="${order.id}" onclick="window.shagunApp.printThermalSlip('${order.id}')" style="padding: 5px 8px; background: #f1f5f9; color: #0f172a; border: 1px solid #cbd5e1; border-radius: 6px; font-weight: 800; cursor: pointer;">
+              🖨️ Slip
+            </button>
           </div>
-          <button onclick="window.shagunApp.deleteOrderStaff('${order.id}')" style="padding: 3px 6px; background: #f8fafc; color: #dc2626; border: 1px solid #e2e8f0; border-radius: 4px; font-weight: 800; cursor: pointer;" title="Permanently Delete Ticket">
-            🗑️ Delete
-          </button>
+          ${order.status !== 'CANCELLED' ? `
+            <button onclick="window.shagunApp.cancelOrderStaff('${order.id}')" style="padding: 5px 8px; background: #fee2e2; color: #991b1b; border: 1px solid #fca5a5; border-radius: 6px; font-weight: 800; cursor: pointer;">
+              ❌ Cancel
+            </button>
+          ` : ''}
         </div>
       </div>
     `;
