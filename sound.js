@@ -62,7 +62,7 @@ class SoundEngine {
       osc1.type = 'sine';
       osc1.frequency.setValueAtTime(880, now); // A5
       osc1.frequency.exponentialRampToValueAtTime(1046.5, now + 0.08); // C6
-      gain1.gain.setValueAtTime(0.75, now);
+      gain1.gain.setValueAtTime(0.9, now);
       gain1.gain.exponentialRampToValueAtTime(0.001, now + 0.5);
       osc1.connect(gain1);
       gain1.connect(this.ctx.destination);
@@ -75,7 +75,7 @@ class SoundEngine {
       osc2.type = 'sine';
       osc2.frequency.setValueAtTime(1318.51, now + 0.18); // E6
       gain2.gain.setValueAtTime(0, now);
-      gain2.gain.setValueAtTime(0.85, now + 0.18);
+      gain2.gain.setValueAtTime(0.95, now + 0.18);
       gain2.gain.exponentialRampToValueAtTime(0.001, now + 0.8);
       osc2.connect(gain2);
       gain2.connect(this.ctx.destination);
@@ -88,7 +88,7 @@ class SoundEngine {
       osc3.type = 'triangle';
       osc3.frequency.setValueAtTime(1760, now + 0.35); // A6
       gain3.gain.setValueAtTime(0, now);
-      gain3.gain.setValueAtTime(0.8, now + 0.35);
+      gain3.gain.setValueAtTime(0.9, now + 0.35);
       gain3.gain.exponentialRampToValueAtTime(0.001, now + 1.1);
       osc3.connect(gain3);
       gain3.connect(this.ctx.destination);
@@ -96,6 +96,22 @@ class SoundEngine {
       osc3.stop(now + 1.15);
     } catch (e) {
       console.warn("Audio chime error:", e);
+    }
+  }
+
+  // Continuous Swiggy/Zomato style ringing alarm for Staff until accepted
+  startOrderAlarmLoop() {
+    this.stopOrderAlarmLoop();
+    this.playNewOrderChime();
+    this.alarmInterval = setInterval(() => {
+      this.playNewOrderChime();
+    }, 3500);
+  }
+
+  stopOrderAlarmLoop() {
+    if (this.alarmInterval) {
+      clearInterval(this.alarmInterval);
+      this.alarmInterval = null;
     }
   }
 
