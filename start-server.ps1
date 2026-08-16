@@ -100,7 +100,7 @@ try {
                                 Write-Host "Error parsing order: $_" -ForegroundColor Red
                             }
                         }
-                        $responseJson = '{"status":"SUCCESS","created":true}'
+                        $responseJson = '{"status":"SUCCESS","created":true,"order":' + $reqBody + '}'
                     } elseif ($method -eq "PUT") {
                         $reqBody = ($request -split "`r`n`r`n", 2)[1]
                         if ($reqBody) {
@@ -116,6 +116,7 @@ try {
                         try {
                             $parsedBody = $reqBody | ConvertFrom-Json
                             if ($parsedBody.orderId) { $targetOrderId = $parsedBody.orderId }
+                            if ($parsedBody.transactionId) { $txId = $parsedBody.transactionId }
                         } catch {}
                     }
                     $ordersFile = Join-Path $dir "data\orders.json"
