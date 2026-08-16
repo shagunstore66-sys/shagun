@@ -1179,11 +1179,12 @@ class ShagunStoreApp {
     const cleanNote = `Order${order.token.replace(/[^A-Za-z0-9]/g, '')}`;
     const amount = order.totalAmount;
 
-    // Standard NPCI Compliant URIs
-    const standardUpiUri = `upi://pay?pa=${encodeURIComponent(upiId)}&pn=${encodeURIComponent(storeName)}&am=${amount}&cu=INR&tn=${encodeURIComponent(cleanNote)}&mc=5411`;
-    const gpayUri = `tez://upi/pay?pa=${encodeURIComponent(upiId)}&pn=${encodeURIComponent(storeName)}&am=${amount}&cu=INR&tn=${encodeURIComponent(cleanNote)}&mc=5411`;
-    const phonepeUri = `phonepe://pay?pa=${encodeURIComponent(upiId)}&pn=${encodeURIComponent(storeName)}&am=${amount}&cu=INR&tn=${encodeURIComponent(cleanNote)}&mc=5411`;
-    const paytmUri = `paytmmp://pay?pa=${encodeURIComponent(upiId)}&pn=${encodeURIComponent(storeName)}&am=${amount}&cu=INR&tn=${encodeURIComponent(cleanNote)}&mc=5411`;
+    // Clean Universal NPCI Compliant URIs (Removes forced mc conflict that triggers bank risk blocks)
+    const baseUpiParams = `pa=${encodeURIComponent(upiId)}&pn=${encodeURIComponent(storeName)}&am=${amount}&cu=INR&tn=${encodeURIComponent(cleanNote)}`;
+    const standardUpiUri = `upi://pay?${baseUpiParams}`;
+    const gpayUri = `upi://pay?${baseUpiParams}`;
+    const phonepeUri = `phonepe://pay?${baseUpiParams}`;
+    const paytmUri = `paytmmp://pay?${baseUpiParams}`;
 
     let qrSvgHtml = '';
     if (window.QRCodeLib) {
@@ -1225,7 +1226,7 @@ class ShagunStoreApp {
           </div>
 
           <p style="font-size: 0.78rem; color: #475569; margin: 0 0 10px 0; font-weight: 600;">
-            Pay with your UPI app. System automatically confirms bank credit:
+            Pay with your preferred UPI app or scan the dynamic QR code:
           </p>
 
           <!-- 1-Tap Direct UPI App Grid -->
@@ -1257,6 +1258,16 @@ class ShagunStoreApp {
               <span class="upi-id-text" id="merchantUpiIdText">${upiId}</span>
             </div>
             <button class="btn-copy-vpa" id="btnCopyUpiId">📋 Copy</button>
+          </div>
+
+          <!-- Cash at Counter Fallback Option -->
+          <div style="margin-top: 12px; padding-top: 10px; border-top: 1px dashed #cbd5e1; text-align: center;">
+            <button id="btnSwitchToCashPayment" onclick="window.shagunApp.switchOrderToCash('${order.id}')" style="width: 100%; padding: 9px 14px; background: #f8fafc; border: 1.5px solid #cbd5e1; color: #334155; border-radius: 8px; font-weight: 800; font-size: 0.78rem; cursor: pointer;">
+              💵 Or Pay Cash at Store Pickup Counter
+            </button>
+            <p style="font-size: 0.68rem; color: #64748b; margin: 6px 0 0 0;">
+              🛡️ <em>UPI Safety Rule:</em> Self-transfers from the merchant's own bank account are restricted by banks. Pay from a customer UPI account.
+            </p>
           </div>
         </div>
       </div>
@@ -1374,6 +1385,23 @@ class ShagunStoreApp {
 
     window.addEventListener('focus', onWindowFocus);
     document.addEventListener('visibilitychange', onVisibilityChange);
+  }
+
+  switchOrderToCash(orderId) {
+    const modal = document.getElementById('upiPaymentModal');
+    if (modal) modal.remove();
+
+    const order = this.orders.find(o => o.id === orderId);
+    if (order) {
+      order.paymentMethod = 'cash';
+      order.paymentStatus = 'Cash at Pickup Counter';
+      order.paymentVerified = false;
+      this.saveOrders();
+      this.currentCustomerOrderId = order.id;
+      this.safeSetItem('shagun_customer_active_order', order.id);
+      this.showToastNotification(`💵 Order #${order.token} set to Pay Cash at Counter!`);
+      this.render();
+    }
   }
 
   // Append new groceries to an existing order before packing
