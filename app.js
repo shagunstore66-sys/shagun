@@ -43,6 +43,7 @@ class ShagunStoreApp {
     this.searchQuery = '';
     this.visibleProductsLimit = 40;
     this.currentCustomerOrderId = this.safeGetItem('shagun_customer_active_order', null);
+    this.showTrackingOnly = false;
     this.selectedPaymentMethod = 'upi';
     this.audioAlertsEnabled = true;
     this.activeLocation = 'Counter';
@@ -1471,6 +1472,7 @@ class ShagunStoreApp {
 
     this.currentCustomerOrderId = newOrder.id;
     this.safeSetItem('shagun_customer_active_order', newOrder.id);
+    this.showTrackingOnly = true;
 
     // 🚀 Dispatch 3-Way WhatsApp Alerts (Owner: 7795565216 + Staff + Customer)
     try {
@@ -1928,7 +1930,7 @@ class ShagunStoreApp {
   // ==========================================================================
   renderCustomerView() {
     const activeOrder = this.orders.find(o => o.id === this.currentCustomerOrderId && o.status !== 'COMPLETED');
-    if (activeOrder && !this.activeAddonOrderId) {
+    if (this.showTrackingOnly && activeOrder && !this.activeAddonOrderId) {
       return this.renderCustomerTracker(activeOrder);
     }
 
@@ -1951,6 +1953,19 @@ class ShagunStoreApp {
     const storeAddress = this.currentLang === 'hi' ? (this.config.addressHindi || this.config.address || this.config.taglineHindi || this.config.tagline) : this.currentLang === 'kn' ? (this.config.addressKannada || this.config.address || this.config.taglineKannada || this.config.tagline) : (this.config.address || this.config.tagline);
 
     return `
+      ${activeOrder ? `
+        <!-- Active Order Floating Banner (1-Tap Tracker) -->
+        <div style="background: linear-gradient(135deg, #1e3a8a, #0f172a); color: white; border-radius: 12px; padding: 10px 14px; margin-bottom: 0.8rem; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 4px 12px rgba(30,58,138,0.25);">
+          <div>
+            <div style="font-size: 0.68rem; font-weight: 800; color: #93c5fd;">ACTIVE ORDER IN PROGRESS</div>
+            <div style="font-size: 0.85rem; font-weight: 900;">Token #${activeOrder.token} • ${activeOrder.status}</div>
+          </div>
+          <button onclick="window.shagunApp.showTrackingOnly = true; window.shagunApp.render();" style="background: #22c55e; color: white; border: none; padding: 6px 12px; border-radius: 99px; font-weight: 900; font-size: 0.76rem; cursor: pointer;">
+            Track ➔
+          </button>
+        </div>
+      ` : ''}
+
       <!-- Top Banner -->
       <div class="store-hero-banner">
         <div class="store-badge-row">
@@ -2097,6 +2112,11 @@ class ShagunStoreApp {
 
     return `
       <div class="order-tracker-card">
+        <!-- Back to Store Navigation -->
+        <button onclick="window.shagunApp.showTrackingOnly = false; window.shagunApp.render();" style="width: 100%; padding: 11px 16px; background: #ffffff; border: 1.5px solid var(--border); border-radius: var(--radius-full); font-weight: 800; font-size: 0.82rem; margin-bottom: 12px; cursor: pointer; color: #0f172a; display: flex; align-items: center; justify-content: center; gap: 6px; box-shadow: var(--shadow-sm);">
+          <span>←</span> 🛍️ Back to Store / Browse All Groceries
+        </button>
+
         <!-- Token Header -->
         <div class="tracker-token-box">
           <div class="token-label">${this.t('pickupToken')}</div>
