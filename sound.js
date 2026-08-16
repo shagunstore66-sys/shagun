@@ -48,7 +48,7 @@ class SoundEngine {
     } catch (e) {}
   }
 
-  // Loud, distinctive triple chime for Staff when a new order arrives
+  // Commercial Merchant Siren (Blinkit / Swiggy / Zomato Partner Terminal Style)
   playNewOrderChime() {
     try {
       this.init();
@@ -56,56 +56,92 @@ class SoundEngine {
 
       const now = this.ctx.currentTime;
 
-      // Note 1 (High bell)
-      const osc1 = this.ctx.createOscillator();
-      const gain1 = this.ctx.createGain();
-      osc1.type = 'sine';
-      osc1.frequency.setValueAtTime(880, now); // A5
-      osc1.frequency.exponentialRampToValueAtTime(1046.5, now + 0.08); // C6
-      gain1.gain.setValueAtTime(0.9, now);
-      gain1.gain.exponentialRampToValueAtTime(0.001, now + 0.5);
-      osc1.connect(gain1);
-      gain1.connect(this.ctx.destination);
-      osc1.start(now);
-      osc1.stop(now + 0.55);
+      // Master Compressor for maximum loudness without distortion
+      let dest = this.ctx.destination;
+      try {
+        const comp = this.ctx.createDynamicsCompressor();
+        comp.threshold.setValueAtTime(-15, now);
+        comp.knee.setValueAtTime(30, now);
+        comp.ratio.setValueAtTime(12, now);
+        comp.attack.setValueAtTime(0.002, now);
+        comp.release.setValueAtTime(0.2, now);
+        comp.connect(this.ctx.destination);
+        dest = comp;
+      } catch (e) {}
 
-      // Note 2 (Second tone after 180ms)
-      const osc2 = this.ctx.createOscillator();
-      const gain2 = this.ctx.createGain();
-      osc2.type = 'sine';
-      osc2.frequency.setValueAtTime(1318.51, now + 0.18); // E6
-      gain2.gain.setValueAtTime(0, now);
-      gain2.gain.setValueAtTime(0.95, now + 0.18);
-      gain2.gain.exponentialRampToValueAtTime(0.001, now + 0.8);
-      osc2.connect(gain2);
-      gain2.connect(this.ctx.destination);
-      osc2.start(now + 0.18);
-      osc2.stop(now + 0.85);
+      // --- Part 1: Punchy Ascending Urgent Siren Chime ---
+      const sirenChirps = [
+        { f1: 880, f2: 1174.66, t: 0.00, dur: 0.12, type: 'triangle' }, // A5 -> D6
+        { f1: 1174.66, f2: 1567.98, t: 0.13, dur: 0.14, type: 'sine' },     // D6 -> G6
+        { f1: 1567.98, f2: 2093.00, t: 0.28, dur: 0.18, type: 'triangle' }, // G6 -> C7
+        { f1: 2093.00, f2: 2637.02, t: 0.47, dur: 0.25, type: 'sine' }      // C7 -> E7 (Peak)
+      ];
 
-      // Note 3 (Confirming chime)
-      const osc3 = this.ctx.createOscillator();
-      const gain3 = this.ctx.createGain();
-      osc3.type = 'triangle';
-      osc3.frequency.setValueAtTime(1760, now + 0.35); // A6
-      gain3.gain.setValueAtTime(0, now);
-      gain3.gain.setValueAtTime(0.9, now + 0.35);
-      gain3.gain.exponentialRampToValueAtTime(0.001, now + 1.1);
-      osc3.connect(gain3);
-      gain3.connect(this.ctx.destination);
-      osc3.start(now + 0.35);
-      osc3.stop(now + 1.15);
+      sirenChirps.forEach(c => {
+        const osc = this.ctx.createOscillator();
+        const gain = this.ctx.createGain();
+        osc.type = c.type;
+        osc.frequency.setValueAtTime(c.f1, now + c.t);
+        osc.frequency.exponentialRampToValueAtTime(c.f2, now + c.t + c.dur * 0.85);
+
+        gain.gain.setValueAtTime(0, now);
+        gain.gain.setValueAtTime(0.95, now + c.t);
+        gain.gain.exponentialRampToValueAtTime(0.001, now + c.t + c.dur);
+
+        osc.connect(gain);
+        gain.connect(dest);
+        osc.start(now + c.t);
+        osc.stop(now + c.t + c.dur + 0.05);
+      });
+
+      // --- Part 2: Rapid Dual-Tone Alarm Staccato (The iconic Delivery Partner Beep-Beep) ---
+      const beeps = [
+        { f: 1760.00, t: 0.76, dur: 0.09 }, // High
+        { f: 1318.51, t: 0.88, dur: 0.09 }, // Low
+        { f: 1760.00, t: 1.00, dur: 0.09 }, // High
+        { f: 1318.51, t: 1.12, dur: 0.12 }  // Low resolve
+      ];
+
+      beeps.forEach(b => {
+        const osc = this.ctx.createOscillator();
+        const subOsc = this.ctx.createOscillator();
+        const gain = this.ctx.createGain();
+
+        osc.type = 'sawtooth';
+        subOsc.type = 'sine';
+        osc.frequency.setValueAtTime(b.f, now + b.t);
+        subOsc.frequency.setValueAtTime(b.f / 2, now + b.t);
+
+        gain.gain.setValueAtTime(0, now);
+        gain.gain.setValueAtTime(0.85, now + b.t);
+        gain.gain.exponentialRampToValueAtTime(0.001, now + b.t + b.dur);
+
+        osc.connect(gain);
+        subOsc.connect(gain);
+        gain.connect(dest);
+
+        osc.start(now + b.t);
+        subOsc.start(now + b.t);
+        osc.stop(now + b.t + b.dur + 0.02);
+        subOsc.stop(now + b.t + b.dur + 0.02);
+      });
+
+      // Part 3: Haptic motor vibration pulse
+      if (navigator.vibrate) {
+        navigator.vibrate([200, 80, 200, 80, 400]);
+      }
     } catch (e) {
-      console.warn("Audio chime error:", e);
+      console.warn("Delivery siren error:", e);
     }
   }
 
-  // Continuous Swiggy/Zomato style ringing alarm for Staff until accepted
+  // Continuous Swiggy/Zomato/Blinkit style ringing siren alarm for Staff until accepted
   startOrderAlarmLoop() {
     this.stopOrderAlarmLoop();
     this.playNewOrderChime();
     this.alarmInterval = setInterval(() => {
       this.playNewOrderChime();
-    }, 3500);
+    }, 2200);
   }
 
   stopOrderAlarmLoop() {
