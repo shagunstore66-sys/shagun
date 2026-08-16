@@ -71,13 +71,12 @@ export class RealtimeCloudSync {
         this.app.lastKnownOrderIds.add(order.id);
         this.app.saveOrders();
 
-        // 🔔 Play LOUD Chime & Haptic Vibration on Staff / Admin Phones
-        if (this.app.audioAlertsEnabled && (this.app.currentView === 'staff' || this.app.currentView === 'admin' || this.app.currentView === 'split')) {
-          if (typeof sounds !== 'undefined' && sounds) {
-            sounds.playNewOrderChime();
-          }
-          if (navigator.vibrate) {
-            navigator.vibrate([500, 200, 500, 200, 800]);
+        // 🔔 Pop up Flashing Order Alert Modal & Ring Continuous Alarm on Staff / Admin Phones
+        if (this.app.currentView === 'staff' || this.app.currentView === 'admin' || this.app.currentView === 'split') {
+          if (typeof this.app.openIncomingOrderModal === 'function') {
+            this.app.openIncomingOrderModal(order);
+          } else if (typeof sounds !== 'undefined' && sounds) {
+            sounds.startOrderAlarmLoop();
           }
         }
 
