@@ -1,0 +1,41 @@
+{
+  "name": "SHAGUN STORE • Bettadapura",
+  "short_name": "Shagun Store",
+  "description": "Bettadapura Grocery QR Ordering, 1-Tap UPI Payment, Staff Terminal & Owner ERP",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait-primary",
+  "background_color": "#ffffff",
+  "theme_color": "#065f46",
+  "icons": [
+    {
+      "src": "favicon.ico",
+      "sizes": "64x64 32x32 24x24 16x16",
+      "type": "image/x-icon"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "🛍️ Customer Store",
+      "short_name": "Store",
+      "description": "Browse grocery catalog & order online",
+      "url": "./index.html",
+      "icons": [{ "src": "favicon.ico", "sizes": "64x64" }]
+    },
+    {
+      "name": "👨‍🍳 Staff Packing Terminal",
+      "short_name": "Staff App",
+      "description": "Live order packing queue & ticket management",
+      "url": "./staff.html",
+      "icons": [{ "src": "favicon.ico", "sizes": "64x64" }]
+    },
+    {
+      "name": "👑 Owner Admin ERP",
+      "short_name": "Admin",
+      "description": "Store financials, inventory & staff management",
+      "url": "./admin.html",
+      "icons": [{ "src": "favicon.ico", "sizes": "64x64" }]
+    }
+  ]
+}
