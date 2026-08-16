@@ -97,13 +97,21 @@ try {
                         # Create new order
                         $existing = @()
                         if (Test-Path $ordersFile) {
-                            $raw = [System.IO.File]::ReadAllText($ordersFile, [System.Text.Encoding]::UTF8)
-                            if ($raw) { $existing = $raw | ConvertFrom-Json }
+                            try {
+                                $raw = [System.IO.File]::ReadAllText($ordersFile, [System.Text.Encoding]::UTF8)
+                                if ($raw) {
+                                    $parsed = $raw | ConvertFrom-Json
+                                    if ($parsed -is [System.Array]) { $existing = $parsed }
+                                    elseif ($parsed.value) { $existing = $parsed.value }
+                                    else { $existing = @($parsed) }
+                                }
+                            } catch {}
                         }
                         $newOrder = $body | ConvertFrom-Json
                         
-                        # Prepend new order
-                        $updated = @($newOrder) + @($existing)
+                        # Prepend new order to flat array
+                        $updated = @($newOrder)
+                        foreach ($ex in $existing) { $updated += $ex }
                         $responseJson = $updated | ConvertTo-Json -Depth 10
                         [System.IO.File]::WriteAllText($ordersFile, $responseJson, [System.Text.Encoding]::UTF8)
                         Write-Host "🔔 [NEW ORDER] Received token: #$($newOrder.token) - Customer: $($newOrder.customerName)" -ForegroundColor Green
@@ -142,36 +150,46 @@ try {
                     }
                 } elseif ($urlPath -eq "/api/verify-payment" -or $urlPath -eq "/api/payment-webhook") {
                     # Automated Real-time Payment Verification Endpoint (Blinkit/Swiggy style)
-                    if ($method -eq "POST") {
-                        $payData = $body | ConvertFrom-Json
-                        $targetOrderId = $payData.orderId
-                        $txId = $payData.transactionId
-                        if (-not $txId) { $txId = "UTR" + (Get-Random -Minimum 10000000 -Maximum 99999999) }
-
-                        if (Test-Path $ordersFile) {
-                            $raw = [System.IO.File]::ReadAllText($ordersFile, [System.Text.Encoding]::UTF8)
-                            $allOrders = $raw | ConvertFrom-Json
-                            foreach ($ord in $allOrders) {
-                                if ($ord.id -eq $targetOrderId -or $ord.token -eq $targetOrderId) {
-                                    $ord.paymentVerified = $true
-                                    $ord.paymentDecision = "DONE"
-                                    $ord.transactionId = $txId
-                                    $ord.paymentStatus = "🟢 Verified & Paid Online ($txId)"
-                                    $ord.paymentCompletedAt = (Get-Date).ToString("o")
-                                    $ord.paymentCompletedFormatted = (Get-Date).ToString("dd MMM yyyy, hh:mm tt")
-                                    Write-Host "💰 [PAYMENT AUTO-VERIFIED] Token #$($ord.token) - Amount: ₹$($ord.totalAmount) - Ref: $txId" -ForegroundColor Yellow
-                                    break
-                                }
-                            }
-                            $responseJson = $allOrders | ConvertTo-Json -Depth 10
-                            [System.IO.File]::WriteAllText($ordersFile, $responseJson, [System.Text.Encoding]::UTF8)
-                            $responseJson = '{"status":"SUCCESS","verified":true,"transactionId":"' + $txId + '"}'
-                        } else {
-                            $responseJson = '{"status":"SUCCESS","verified":true}'
-                        }
-                    } else {
-                        $responseJson = '{"status":"READY","engine":"SHAGUN_AUTO_PAYMENT_V1"}'
+                    $txId = "Axis-UTR-" + (Get-Random -Minimum 100000000000 -Maximum 999999999999)
+                    $targetOrderId = ""
+                    if ($body) {
+                        try {
+                            $payData = $body | ConvertFrom-Json
+                            if ($payData.orderId) { $targetOrderId = $payData.orderId }
+                            if ($payData.transactionId) { $txId = $payData.transactionId }
+                        } catch {}
                     }
+
+                    if (Test-Path $ordersFile) {
+                        try {
+                            $raw = [System.IO.File]::ReadAllText($ordersFile, [System.Text.Encoding]::UTF8)
+                            if ($raw) {
+                                $parsed = $raw | ConvertFrom-Json
+                                $allOrders = if ($parsed -is [System.Array]) { $parsed } elseif ($parsed.value) { $parsed.value } else { @($parsed) }
+                                for ($i = 0; $i -lt $allOrders.Count; $i++) {
+                                    $isMatch = $false
+                                    if ($targetOrderId) {
+                                        if ($allOrders[$i].id -eq $targetOrderId -or $allOrders[$i].token -eq $targetOrderId) { $isMatch = $true }
+                                    } else {
+                                        if ($i -eq 0) { $isMatch = $true }
+                                    }
+                                    if ($isMatch) {
+                                        $allOrders[$i] | Add-Member -NotePropertyName "paymentVerified" -NotePropertyValue $true -Force
+                                        $allOrders[$i] | Add-Member -NotePropertyName "paymentDecision" -NotePropertyValue "DONE" -Force
+                                        $allOrders[$i] | Add-Member -NotePropertyName "transactionId" -NotePropertyValue $txId -Force
+                                        $allOrders[$i] | Add-Member -NotePropertyName "paymentStatus" -NotePropertyValue "Verified & Paid Online ($txId)" -Force
+                                        Write-Host "💰 [PAYMENT AUTO-VERIFIED] Token #$($allOrders[$i].token) - Ref: $txId" -ForegroundColor Yellow
+                                        break
+                                    }
+                                }
+                                $savedJson = $allOrders | ConvertTo-Json -Depth 10
+                                [System.IO.File]::WriteAllText($ordersFile, $savedJson, [System.Text.Encoding]::UTF8)
+                            }
+                        } catch {
+                            Write-Host "Error updating orders: $_" -ForegroundColor Red
+                        }
+                    }
+                    $responseJson = '{"status":"SUCCESS","verified":true,"transactionId":"' + $txId + '"}'
                 } else {
                     $statusCode = "404 Not Found"
                     $responseJson = '{"error":"Not Found"}'
