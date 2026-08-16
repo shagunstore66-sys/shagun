@@ -1,55 +1,42 @@
-# Shagun Daily Mart & Grocery (शगुन मार्ट) 🛍️
+# SHAGUN STORE (शगुन स्टोर / ಶಗುನ್ ಸ್ಟೋರ್) 🛍️🥦
 
-A complete **QR-Powered In-Store Grocery Ordering, Secret Owner Admin & Real-Time Mobile Staff Fulfillment System** built for high-speed grocery shopping in Indian Rupees (₹ - INR).
-
----
-
-## 🌟 Key Features
-
-1. **📱 Customer Self-Ordering via QR Code**:
-   - Customers scan the QR code standee at the shop entrance or counter.
-   - Browse daily essentials in Indian Rupees (`₹`): Sugar (चीनी), Basmati Rice (चावल), Atta, Mustard & Sunflower Cooking Oils, Dals, Spices, Dairy, and Household staples.
-   - Select custom pack sizes (e.g., 1kg, 5kg, 10kg, 25kg).
-   - **Mandatory 10-digit Indian Mobile Number + SMS OTP Verification** before order placement.
-   - Live Token tracker (`#TK-101`) with pickup counter status.
-
-2. **👨‍🍳 Mobile Staff Packing Terminal (iOS & Android)**:
-   - Dedicated mobile web app for store packers: `/?view=staff`.
-   - Real-time **"Ding-Dong!" sound alert** whenever a new order is placed.
-   - Interactive grocery checklist (`[✓] 5kg Sugar`, `[✓] 10kg Basmati Rice`, `[✓] 1L Mustard Oil`).
-   - One-tap **"🔔 Mark Ready & Alert Phone"** that triggers a fanfare chime on the customer's phone when their bag is ready.
-   - 80mm thermal receipt bag slip printing.
-
-3. **🔒 Secret Owner Admin Panel (`Ctrl + Shift + Z`)**:
-   - **100% Invisible from normal screens**: Only accessible via the keyboard shortcut **`Ctrl + Shift + Z`** (or `Cmd + Shift + Z` on Mac).
-   - Real-time sales revenue, average order value, and top-selling staple charts.
-   - Complete history of verified customer orders and phone numbers with CSV/Excel export.
-   - Product catalog, price editing, and stock availability toggles.
-   - Customer QR Standee Studio with high-resolution printable posters.
-   - Staff Mobile Onboarding QR generator.
-
-4. **⚡ Central REST API & Real-Time Sync**:
-   - Built-in multi-device HTTP server and REST API (`/api/orders`, `/api/products`, `/api/config`).
-   - Fast background live-polling (1.2s) across all Wi-Fi connected devices.
+A complete **Digital Home-Ordering, Fresh Vegetables & Groceries Catalog, Store Pickup Scheduler, and Dual Payment System (UPI + Cash on Table)** built for **SHAGUN STORE** (P.H. Road, Near Chamundi Textiles, Bettadapura, Karnataka - 571102).
 
 ---
 
-## 🚀 Getting Started
+## 🌟 Key Capabilities
 
-### 1. Run the Local Server (Windows PowerShell)
-```powershell
-powershell -ExecutionPolicy Bypass -File .\start-server.ps1
-```
+1. **🏡 Order From Home • Collect At Store Flow**:
+   - Customers open the web app from anywhere on phone or desktop.
+   - Select fresh farm vegetables (`🥦 ताजी सब्जियाँ / ತಾಜಾ ತರಕಾರಿಗಳು`), fresh fruits (`🍎`), and daily staples with multi-weight variants (`250g`, `500g`, `1kg`, `2kg`, `5kg`).
+   - Choose pickup time window:
+     - ⚡ **Express Pickup (15-20 mins)**
+     - 🕐 **In 30-45 mins**
+     - 🕑 **In 1-2 hours**
+     - 🌆 **Evening (5:00 PM - 8:30 PM)**
+   - Walk in, show Token `#SG-XXX`, and collect their packed grocery bag.
 
-### 2. Access URLs:
-- **👑 Store Owner / Laptop**: `http://localhost:3000/` *(Press `Ctrl + Shift + Z` to unlock Admin)*
-- **👨‍🍳 Staff Phone (iOS / Android)**: `http://<YOUR_WIFI_IP>:3000/?view=staff`
-- **🛒 Customer QR Scan**: `http://<YOUR_WIFI_IP>:3000/?view=customer`
+2. **💳 Dual Payment Options**:
+   - 📱 **UPI Instant Pay**: Auto-verified with Axis Bank UPI VPA `7795565216-1@okbizaxis` (PhonePe, GPay, Paytm, and any UPI QR).
+   - 💵 **Pay Cash on the Counter Table**: Zero-friction placement; pay cash at the store counter upon collecting the bag.
+
+3. **👨‍🍳 Staff Packing Terminal & 3-Way WhatsApp Dispatch**:
+   - Staff pack items in carry bags and mark orders `READY`.
+   - Real-time WhatsApp notifications to Owner (`+91 77955 65216`), Staff, and Customer with token, item list, pickup time, and payment method.
+
+4. **👑 Owner Master Admin Panel (`Ctrl + Shift + Z` / Master PIN `1234`)**:
+   - Live price controller for vegetables & grocery staples.
+   - Stock toggles, sales ledger CSV export, and customer CRM.
 
 ---
 
-## 🛠️ Tech Stack
-- **Frontend**: Vanilla JavaScript (ES6+ Modules), HTML5, Modern CSS3
-- **Audio Engine**: Web Audio API Procedural Synthesizer (No external audio files required)
-- **QR Engine**: Pure Vector Canvas & SVG QR Generator
-- **Backend & Storage**: Centralized REST API with persistent JSON datastore
+## 🌐 Live Deployments
+
+* **🛍️ Live Public Store:** [shagunstore66-sys.github.io/shagun/](https://shagunstore66-sys.github.io/shagun/)
+* **👨‍🍳 Staff Terminal:** [shagunstore66-sys.github.io/shagun/?view=staff](https://shagunstore66-sys.github.io/shagun/?view=staff)
+* **👑 Owner Admin:** [shagunstore66-sys.github.io/shagun/?view=admin](https://shagunstore66-sys.github.io/shagun/?view=admin)
+* **📦 GitHub Repository:** [github.com/shagunstore66-sys/shagun](https://github.com/shagunstore66-sys/shagun)
+
+---
+*Maintained for SHAGUN STORE, Bettadapura.*
+
