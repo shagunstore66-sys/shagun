@@ -1,92 +1,81 @@
-# Real-time multi-device Web Server and REST API for Apna Mart & Grocery
 $port = 3000
-$folder = $PSScriptRoot
-$dataFolder = Join-Path $folder "data"
-
-if (-not (Test-Path $dataFolder)) {
-    New-Item -ItemType Directory -Path $dataFolder -Force | Out-Null
-}
-
-$ordersFile = Join-Path $dataFolder "orders.json"
-$productsFile = Join-Path $dataFolder "products.json"
-$configFile = Join-Path $dataFolder "config.json"
-
-$ipAddresses = Get-NetIPAddress -AddressFamily IPv4 | Where-Object { $_.InterfaceAlias -notmatch 'Loopback|vEthernet' -and $_.IPAddress -notlike '169.254*' } | Select-Object -ExpandProperty IPAddress
-
-$listener = New-Object System.Net.Sockets.TcpListener ([System.Net.IPAddress]::Any, $port)
+$dir = $PSScriptRoot
+$listener = New-Object System.Net.Sockets.TcpListener([System.Net.IPAddress]::Any, $port)
 
 try {
     $listener.Start()
-    Write-Host "`n🚀 SHAGUN STORE (Bettadapura - 571102) Real-time Server is LIVE!" -ForegroundColor Green
-    Write-Host "👉 Laptop (Owner) Access: http://localhost:$port/" -ForegroundColor Cyan
-    foreach ($ip in $ipAddresses) {
-        Write-Host "📱 Staff Phone [iOS / Android]: http://$($ip):$port/?view=staff" -ForegroundColor Yellow
-        Write-Host "📲 Customer QR Scan URL:       http://$($ip):$port/?view=customer" -ForegroundColor Green
-    }
-    Write-Host "`nReady for real-time cross-device orders!`n" -ForegroundColor Gray
+    Write-Host "=========================================================================" -ForegroundColor Cyan
+    Write-Host "🚀 SHAGUN STORE (Bettadapura) - Central Production Daemon Running" -ForegroundColor Green
+    Write-Host "📍 Local Host: http://localhost:$port" -ForegroundColor Yellow
+    Write-Host "📱 Owner WhatsApp: +91 77955 65216" -ForegroundColor Cyan
+    Write-Host "💳 Axis Bank UPI VPA: 7795565216-1@okbizaxis" -ForegroundColor Yellow
+    Write-Host "=========================================================================" -ForegroundColor Cyan
 
     while ($true) {
+        $client = $listener.AcceptTcpClient()
         try {
-            $client = $listener.AcceptTcpClient()
             $stream = $client.GetStream()
-            $reader = New-Object System.IO.StreamReader($stream, [System.Text.Encoding]::UTF8)
-            $writer = New-Object System.IO.StreamWriter($stream)
-
-            $requestLine = $reader.ReadLine()
-            if (-not $requestLine) {
+            $buffer = New-Object byte[] 65536
+            $bytesRead = $stream.Read($buffer, 0, $buffer.Length)
+            if ($bytesRead -le 0) {
                 $client.Close()
                 continue
             }
 
-            $tokens = $requestLine.Split(' ')
-            if ($tokens.Length -lt 2) {
-                $client.Close()
-                continue
-            }
-
-            $method = $tokens[0].ToUpper()
-            $rawUrl = $tokens[1]
-            $urlPath = $rawUrl.Split('?')[0]
-
-            # Read headers to get Content-Length
-            $contentLength = 0
-            while ($true) {
-                $headerLine = $reader.ReadLine()
-                if ([string]::IsNullOrWhiteSpace($headerLine)) { break }
-                if ($headerLine.ToLower().StartsWith("content-length:")) {
-                    $contentLength = [int]($headerLine.Split(':')[1].Trim())
-                }
-            }
-
-            # Read body if any
-            $body = ""
-            if ($contentLength -gt 0) {
-                $charBuffer = New-Object char[] $contentLength
-                $readCount = 0
-                while ($readCount -lt $contentLength) {
-                    $read = $reader.Read($charBuffer, $readCount, ($contentLength - $readCount))
-                    if ($read -le 0) { break }
-                    $readCount += $read
-                }
-                $body = [string]::new($charBuffer, 0, $readCount)
-            }
+            $request = [System.Text.Encoding]::UTF8.GetString($buffer, 0, $bytesRead)
+            $firstLine = ($request -split "`r`n")[0]
+            $parts = $firstLine -split " "
+            $method = $parts[0]
+            $url = if ($parts.Length -gt 1) { $parts[1] } else { "/" }
+            $urlPath = ($url -split "\?")[0]
 
             # Handle CORS OPTIONS
             if ($method -eq "OPTIONS") {
-                $respHeaders = "HTTP/1.1 200 OK`r`nAccess-Control-Allow-Origin: *`r`nAccess-Control-Allow-Methods: GET, POST, PUT, DELETE, OPTIONS`r`nAccess-Control-Allow-Headers: Content-Type`r`nContent-Length: 0`r`nConnection: close`r`n`r`n"
-                $b = [System.Text.Encoding]::UTF8.GetBytes($respHeaders)
-                $stream.Write($b, 0, $b.Length)
+                $corsHeader = "HTTP/1.1 200 OK`r`nAccess-Control-Allow-Origin: *`r`nAccess-Control-Allow-Methods: GET, POST, PUT, DELETE, OPTIONS`r`nAccess-Control-Allow-Headers: Content-Type, Authorization`r`nContent-Length: 0`r`nConnection: close`r`n`r`n"
+                $corsBytes = [System.Text.Encoding]::UTF8.GetBytes($corsHeader)
+                $stream.Write($corsBytes, 0, $corsBytes.Length)
                 $stream.Flush()
                 $client.Close()
                 continue
             }
 
-            # ---------------- REST API ENDPOINTS ----------------
+            # API Endpoints
             if ($urlPath.StartsWith("/api/")) {
-                $responseJson = ""
+                $responseJson = "{}"
                 $statusCode = "200 OK"
 
-                if ($urlPath -eq "/api/orders") {
+                if ($urlPath -eq "/api/config") {
+                    $configFile = Join-Path $dir "data\config.json"
+                    if ($method -eq "GET") {
+                        if (Test-Path $configFile) {
+                            $responseJson = [System.IO.File]::ReadAllText($configFile, [System.Text.Encoding]::UTF8)
+                        } else {
+                            $responseJson = '{"name":"SHAGUN STORE","address":"P.H. Road, Bettadapura - 571102","phone":"+91 77955 65216","upiId":"7795565216-1@okbizaxis"}'
+                        }
+                    } elseif ($method -eq "PUT" -or $method -eq "POST") {
+                        $reqBody = ($request -split "`r`n`r`n", 2)[1]
+                        if ($reqBody) {
+                            [System.IO.File]::WriteAllText($configFile, $reqBody, [System.Text.Encoding]::UTF8)
+                        }
+                        $responseJson = '{"status":"OK","saved":true}'
+                    }
+                } elseif ($urlPath -eq "/api/products") {
+                    $prodsFile = Join-Path $dir "data\products.json"
+                    if ($method -eq "GET") {
+                        if (Test-Path $prodsFile) {
+                            $responseJson = [System.IO.File]::ReadAllText($prodsFile, [System.Text.Encoding]::UTF8)
+                        } else {
+                            $responseJson = "[]"
+                        }
+                    } elseif ($method -eq "PUT" -or $method -eq "POST") {
+                        $reqBody = ($request -split "`r`n`r`n", 2)[1]
+                        if ($reqBody) {
+                            [System.IO.File]::WriteAllText($prodsFile, $reqBody, [System.Text.Encoding]::UTF8)
+                        }
+                        $responseJson = '{"status":"OK","saved":true}'
+                    }
+                } elseif ($urlPath -eq "/api/orders") {
+                    $ordersFile = Join-Path $dir "data\orders.json"
                     if ($method -eq "GET") {
                         if (Test-Path $ordersFile) {
                             $responseJson = [System.IO.File]::ReadAllText($ordersFile, [System.Text.Encoding]::UTF8)
@@ -94,78 +83,47 @@ try {
                             $responseJson = "[]"
                         }
                     } elseif ($method -eq "POST") {
-                        # Create new order
-                        $existing = @()
-                        if (Test-Path $ordersFile) {
+                        $reqBody = ($request -split "`r`n`r`n", 2)[1]
+                        if ($reqBody) {
                             try {
-                                $raw = [System.IO.File]::ReadAllText($ordersFile, [System.Text.Encoding]::UTF8)
-                                if ($raw) {
-                                    $parsed = $raw | ConvertFrom-Json
-                                    if ($parsed -is [System.Array]) { $existing = $parsed }
-                                    elseif ($parsed.value) { $existing = $parsed.value }
-                                    else { $existing = @($parsed) }
+                                $newOrder = $reqBody | ConvertFrom-Json
+                                $existingOrders = @()
+                                if (Test-Path $ordersFile) {
+                                    $raw = [System.IO.File]::ReadAllText($ordersFile, [System.Text.Encoding]::UTF8)
+                                    $existingOrders = $raw | ConvertFrom-Json
                                 }
-                            } catch {}
+                                $allOrders = @($newOrder) + @($existingOrders)
+                                $savedJson = $allOrders | ConvertTo-Json -Depth 10
+                                [System.IO.File]::WriteAllText($ordersFile, $savedJson, [System.Text.Encoding]::UTF8)
+                                Write-Host "[NEW ORDER] Received token: $($newOrder.token) - Customer: $($newOrder.customerName)" -ForegroundColor Green
+                            } catch {
+                                Write-Host "Error parsing order: $_" -ForegroundColor Red
+                            }
                         }
-                        $newOrder = $body | ConvertFrom-Json
-                        
-                        # Prepend new order to flat array
-                        $updated = @($newOrder)
-                        foreach ($ex in $existing) { $updated += $ex }
-                        $responseJson = $updated | ConvertTo-Json -Depth 10
-                        [System.IO.File]::WriteAllText($ordersFile, $responseJson, [System.Text.Encoding]::UTF8)
-                        Write-Host "🔔 [NEW ORDER] Received token: #$($newOrder.token) - Customer: $($newOrder.customerName)" -ForegroundColor Green
+                        $responseJson = '{"status":"SUCCESS","created":true}'
                     } elseif ($method -eq "PUT") {
-                        # Update order list or status
-                        if ($body) {
-                            [System.IO.File]::WriteAllText($ordersFile, $body, [System.Text.Encoding]::UTF8)
-                            $responseJson = $body
+                        $reqBody = ($request -split "`r`n`r`n", 2)[1]
+                        if ($reqBody) {
+                            [System.IO.File]::WriteAllText($ordersFile, $reqBody, [System.Text.Encoding]::UTF8)
                         }
+                        $responseJson = '{"status":"OK","updated":true}'
                     }
-                } elseif ($urlPath -eq "/api/products") {
-                    if ($method -eq "GET") {
-                        if (Test-Path $productsFile) {
-                            $responseJson = [System.IO.File]::ReadAllText($productsFile, [System.Text.Encoding]::UTF8)
-                        } else {
-                            $responseJson = "[]"
-                        }
-                    } elseif ($method -eq "POST" -or $method -eq "PUT") {
-                        if ($body) {
-                            [System.IO.File]::WriteAllText($productsFile, $body, [System.Text.Encoding]::UTF8)
-                            $responseJson = $body
-                        }
-                    }
-                } elseif ($urlPath -eq "/api/config") {
-                    if ($method -eq "GET") {
-                        if (Test-Path $configFile) {
-                            $responseJson = [System.IO.File]::ReadAllText($configFile, [System.Text.Encoding]::UTF8)
-                        } else {
-                            $responseJson = "{}"
-                        }
-                    } elseif ($method -eq "POST" -or $method -eq "PUT") {
-                        if ($body) {
-                            [System.IO.File]::WriteAllText($configFile, $body, [System.Text.Encoding]::UTF8)
-                            $responseJson = $body
-                        }
-                    }
-                } elseif ($urlPath -eq "/api/verify-payment" -or $urlPath -eq "/api/payment-webhook") {
-                    # Automated Real-time Payment Verification Endpoint (Blinkit/Swiggy style)
+                } elseif ($urlPath -eq "/api/verify-payment") {
                     $txId = "Axis-UTR-" + (Get-Random -Minimum 100000000000 -Maximum 999999999999)
-                    $targetOrderId = ""
-                    if ($body) {
+                    $targetOrderId = $null
+                    $reqBody = ($request -split "`r`n`r`n", 2)[1]
+                    if ($reqBody) {
                         try {
-                            $payData = $body | ConvertFrom-Json
-                            if ($payData.orderId) { $targetOrderId = $payData.orderId }
-                            if ($payData.transactionId) { $txId = $payData.transactionId }
+                            $parsedBody = $reqBody | ConvertFrom-Json
+                            if ($parsedBody.orderId) { $targetOrderId = $parsedBody.orderId }
                         } catch {}
                     }
-
+                    $ordersFile = Join-Path $dir "data\orders.json"
                     if (Test-Path $ordersFile) {
                         try {
                             $raw = [System.IO.File]::ReadAllText($ordersFile, [System.Text.Encoding]::UTF8)
-                            if ($raw) {
-                                $parsed = $raw | ConvertFrom-Json
-                                $allOrders = if ($parsed -is [System.Array]) { $parsed } elseif ($parsed.value) { $parsed.value } else { @($parsed) }
+                            $allOrders = $raw | ConvertFrom-Json
+                            if ($allOrders -and $allOrders.Count -gt 0) {
                                 for ($i = 0; $i -lt $allOrders.Count; $i++) {
                                     $isMatch = $false
                                     if ($targetOrderId) {
@@ -178,23 +136,21 @@ try {
                                         $allOrders[$i] | Add-Member -NotePropertyName "paymentDecision" -NotePropertyValue "DONE" -Force
                                         $allOrders[$i] | Add-Member -NotePropertyName "transactionId" -NotePropertyValue $txId -Force
                                         $allOrders[$i] | Add-Member -NotePropertyName "paymentStatus" -NotePropertyValue "Verified & Paid Online ($txId)" -Force
-                                        Write-Host "💰 [PAYMENT AUTO-VERIFIED] Token #$($allOrders[$i].token) - Ref: $txId" -ForegroundColor Yellow
+                                        Write-Host "[PAYMENT AUTO-VERIFIED] Token #$($allOrders[$i].token) - Ref: $txId" -ForegroundColor Yellow
                                         break
                                     }
                                 }
                                 $savedJson = $allOrders | ConvertTo-Json -Depth 10
                                 [System.IO.File]::WriteAllText($ordersFile, $savedJson, [System.Text.Encoding]::UTF8)
                             }
-                        } catch {
-                            Write-Host "Error updating orders: $_" -ForegroundColor Red
-                        }
+                        } catch {}
                     }
                     $responseJson = '{"status":"SUCCESS","verified":true,"transactionId":"' + $txId + '"}'
                 } elseif ($urlPath -eq "/api/notify-3way") {
-                    Write-Host "📱 [3-WAY WHATSAPP DISPATCH TRIGGERED] Alerting Admin (7795565216), Staff & Customer" -ForegroundColor Green
+                    Write-Host "[3-WAY WHATSAPP DISPATCH] Alerting Admin (7795565216), Staff, and Customer" -ForegroundColor Green
                     $responseJson = '{"success":true,"admin":"7795565216","dispatched":true}'
                 } elseif ($urlPath -eq "/api/send-invoice-whatsapp") {
-                    Write-Host "🧾 [DIGITAL TAX INVOICE SENT VIA WHATSAPP] To Customer" -ForegroundColor Cyan
+                    Write-Host "[DIGITAL TAX INVOICE SENT VIA WHATSAPP] To Customer" -ForegroundColor Cyan
                     $responseJson = '{"success":true,"invoiceSent":true}'
                 } else {
                     $statusCode = "404 Not Found"
@@ -212,30 +168,27 @@ try {
                 continue
             }
 
-            # ---------------- STATIC FILES SERVING ----------------
+            # Static Files Serving
             $path = $urlPath
             if ($path -eq "/" -or $path -eq "") {
                 $path = "/index.html"
             }
+            $cleanRelative = $path.TrimStart("/").Replace("/", "\")
+            $filePath = Join-Path $dir $cleanRelative
 
-            $localFilePath = Join-Path $folder $path.TrimStart('/').Replace('/', [System.IO.Path]::DirectorySeparatorChar)
+            if (Test-Path $filePath -PathType Leaf) {
+                $ext = [System.IO.Path]::GetExtension($filePath).ToLower()
+                $contentType = "text/plain"
+                if ($ext -eq ".html") { $contentType = "text/html; charset=utf-8" }
+                elseif ($ext -eq ".css") { $contentType = "text/css; charset=utf-8" }
+                elseif ($ext -eq ".js") { $contentType = "application/javascript; charset=utf-8" }
+                elseif ($ext -eq ".json") { $contentType = "application/json; charset=utf-8" }
+                elseif ($ext -eq ".png") { $contentType = "image/png" }
+                elseif ($ext -eq ".jpg" -or $ext -eq ".jpeg") { $contentType = "image/jpeg" }
+                elseif ($ext -eq ".svg") { $contentType = "image/svg+xml" }
+                elseif ($ext -eq ".ico") { $contentType = "image/x-icon" }
 
-            if (Test-Path $localFilePath -PathType Leaf) {
-                $bytes = [System.IO.File]::ReadAllBytes($localFilePath)
-                $ext = [System.IO.Path]::GetExtension($localFilePath).ToLower()
-
-                $contentType = switch ($ext) {
-                    ".html" { "text/html; charset=utf-8" }
-                    ".css"  { "text/css; charset=utf-8" }
-                    ".js"   { "application/javascript; charset=utf-8" }
-                    ".json" { "application/json; charset=utf-8" }
-                    ".svg"  { "image/svg+xml" }
-                    ".png"  { "image/png" }
-                    ".jpg"  { "image/jpeg" }
-                    ".ico"  { "image/x-icon" }
-                    default { "application/octet-stream" }
-                }
-
+                $bytes = [System.IO.File]::ReadAllBytes($filePath)
                 $header = "HTTP/1.1 200 OK`r`nContent-Type: $contentType`r`nContent-Length: $($bytes.Length)`r`nAccess-Control-Allow-Origin: *`r`nCache-Control: no-cache, no-store, must-revalidate`r`nPragma: no-cache`r`nExpires: 0`r`nConnection: close`r`n`r`n"
                 $headerBytes = [System.Text.Encoding]::UTF8.GetBytes($header)
 
@@ -253,12 +206,11 @@ try {
             $stream.Flush()
             $client.Close()
         } catch {
-            # Catch individual client socket exceptions without dropping server
             if ($client) { try { $client.Close() } catch {} }
         }
     }
 } catch {
-    Write-Host "Server stopped: $_" -ForegroundColor Red
+    Write-Host "Server error: $_" -ForegroundColor Red
 } finally {
     $listener.Stop()
 }
