@@ -18,10 +18,16 @@
   <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet">
 
   <!-- Core Stylesheet -->
-  <link rel="stylesheet" href="styles.css?t=1786813000">
+  <link rel="stylesheet" href="styles.css?t=1786817000">
+  <!-- PWA Web App Manifest -->
+  <link rel="manifest" href="manifest.json">
+  <link rel="apple-touch-icon" href="favicon.ico">
   <script>
-    if ('caches' in window) {
-      caches.keys().then(keys => keys.forEach(k => caches.delete(k)));
+    // PWA Service Worker Registration
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('./sw.js').catch(() => {});
+      });
     }
   </script>
 </head>
@@ -30,12 +36,12 @@
   <div id="app"></div>
 
   <!-- QR Code Standalone Engine -->
-  <script src="qrGenerator.js?t=1786813000"></script>
+  <script src="qrGenerator.js?t=1786817000"></script>
 
   <!-- Sound Engine -->
-  <script src="sound.js?t=1786813000"></script>
+  <script src="sound.js?t=1786817000"></script>
 
   <!-- App Logic Module (Auto-routes to Admin view on admin.html) -->
-  <script type="module" src="app.js?t=1786813000"></script>
+  <script type="module" src="app.js?t=1786817000"></script>
 </body>
 </html>
