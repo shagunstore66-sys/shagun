@@ -2124,4 +2124,299 @@ main {
   line-height: 1.4;
 }
 
+/* ==========================================================================
+   MOBILE FIRST OPTIMIZATIONS (iOS & Android Smartphones)
+   Dedicated Mobile UX for Staff Packing Terminal & Owner Master Admin
+   ========================================================================== */
 
+/* Universal Mobile Inputs & Touch Standards */
+@media (max-width: 768px) {
+  /* Prevent iOS Safari 16px auto-zoom */
+  input, select, textarea {
+    font-size: 16px !important;
+  }
+  
+  button, .btn-upi-app, .cat-pill, .variant-btn, .btn-ticket-action {
+    touch-action: manipulation;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  body {
+    padding-bottom: max(24px, env(safe-area-inset-bottom));
+  }
+
+  /* ---------------- Staff Terminal Mobile UX ---------------- */
+  .staff-toolbar {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+    padding: 12px 14px;
+    background: #065f46;
+    color: #ffffff;
+    border-radius: 12px;
+    margin-bottom: 12px;
+  }
+
+  .staff-title-group h2 {
+    font-size: 1.15rem;
+    color: #ffffff;
+  }
+
+  .staff-title-group p {
+    font-size: 0.74rem;
+    color: #86efac;
+  }
+
+  .staff-mobile-tab-bar {
+    display: flex;
+    overflow-x: auto;
+    gap: 8px;
+    padding: 4px 2px 10px 2px;
+    margin-bottom: 12px;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+  }
+  .staff-mobile-tab-bar::-webkit-scrollbar {
+    display: none;
+  }
+
+  .staff-mobile-tab-pill {
+    flex: 0 0 auto;
+    padding: 10px 16px;
+    background: #ffffff;
+    border: 1.5px solid var(--border);
+    border-radius: var(--radius-full);
+    font-weight: 800;
+    font-size: 0.82rem;
+    color: #0f172a;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    box-shadow: var(--shadow-sm);
+    transition: all 0.2s ease;
+  }
+
+  .staff-mobile-tab-pill.active {
+    background: #065f46;
+    color: #ffffff;
+    border-color: #065f46;
+    box-shadow: 0 4px 12px rgba(6, 95, 70, 0.3);
+  }
+
+  .kanban-board {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  .kanban-col {
+    background: #ffffff;
+    border: 1.5px solid var(--border);
+    border-radius: 14px;
+    padding: 12px;
+    box-shadow: var(--shadow-sm);
+  }
+
+  .order-ticket {
+    padding: 14px;
+    border-radius: 12px;
+    margin-bottom: 12px;
+  }
+
+  .pack-checkbox {
+    width: 22px;
+    height: 22px;
+    accent-color: #065f46;
+    cursor: pointer;
+  }
+
+  .btn-ticket-action {
+    min-height: 44px;
+    font-size: 0.88rem;
+    font-weight: 800;
+  }
+
+  /* ---------------- Owner Admin Mobile UX ---------------- */
+  .admin-dashboard-container {
+    padding: 10px;
+  }
+
+  .admin-header-row {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+  }
+
+  .admin-mobile-nav-pills {
+    display: flex;
+    overflow-x: auto;
+    gap: 8px;
+    padding: 6px 2px 12px 2px;
+    margin-bottom: 14px;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+  }
+  .admin-mobile-nav-pills::-webkit-scrollbar {
+    display: none;
+  }
+
+  .admin-nav-pill {
+    flex: 0 0 auto;
+    padding: 9px 15px;
+    background: #ffffff;
+    border: 1.5px solid var(--border);
+    border-radius: var(--radius-full);
+    font-weight: 800;
+    font-size: 0.8rem;
+    color: #1e293b;
+    cursor: pointer;
+    white-space: nowrap;
+  }
+
+  .admin-nav-pill.active {
+    background: #1e3a8a;
+    color: #ffffff;
+    border-color: #1e3a8a;
+    box-shadow: 0 4px 12px rgba(30, 58, 138, 0.25);
+  }
+
+  .admin-stats-grid {
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+  }
+
+  .stat-card {
+    padding: 12px 14px;
+  }
+
+  .stat-card .stat-val {
+    font-size: 1.3rem;
+  }
+
+  /* Mobile Price & Stock Product Card Layout */
+  .admin-prod-card-mobile {
+    background: #ffffff;
+    border: 1.5px solid var(--border);
+    border-radius: 12px;
+    padding: 12px;
+    margin-bottom: 10px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .admin-prod-row-top {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .admin-prod-thumb {
+    width: 48px;
+    height: 48px;
+    border-radius: 8px;
+    object-fit: cover;
+    border: 1px solid var(--border);
+  }
+
+  .admin-prod-info {
+    flex: 1;
+    min-width: 0;
+  }
+
+  .admin-prod-name {
+    font-weight: 800;
+    font-size: 0.88rem;
+    color: #0f172a;
+    line-height: 1.2;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .admin-prod-meta {
+    font-size: 0.72rem;
+    color: #64748b;
+    margin-top: 2px;
+  }
+
+  .admin-prod-edit-row {
+    display: grid;
+    grid-template-columns: 1fr 1.2fr auto;
+    gap: 6px;
+    align-items: center;
+    background: #f8fafc;
+    padding: 8px;
+    border-radius: 8px;
+    border: 1px solid #e2e8f0;
+  }
+
+  .admin-price-inp-mobile {
+    width: 100%;
+    padding: 8px 6px;
+    border: 1.5px solid #cbd5e1;
+    border-radius: 6px;
+    font-weight: 800;
+    font-size: 0.95rem;
+    color: #0f172a;
+    background: #ffffff;
+    text-align: center;
+  }
+
+  .btn-stock-toggle-mobile {
+    padding: 8px 10px;
+    border-radius: 6px;
+    font-weight: 800;
+    font-size: 0.76rem;
+    cursor: pointer;
+    border: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+  }
+  .btn-stock-toggle-mobile.in-stock {
+    background: #dcfce7;
+    color: #166534;
+    border: 1px solid #86efac;
+  }
+  .btn-stock-toggle-mobile.out-stock {
+    background: #fee2e2;
+    color: #991b1b;
+    border: 1px solid #fca5a5;
+  }
+
+  .btn-save-price-mobile {
+    padding: 8px 12px;
+    background: #0f172a;
+    color: #ffffff;
+    border: none;
+    border-radius: 6px;
+    font-weight: 800;
+    font-size: 0.78rem;
+    cursor: pointer;
+  }
+
+  /* Mobile Staff Roster Card */
+  .admin-staff-card-mobile {
+    background: #f8fafc;
+    border: 1.5px solid var(--border);
+    border-radius: 12px;
+    padding: 12px;
+    margin-bottom: 10px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  /* Mobile Orders Ledger Card */
+  .admin-order-card-mobile {
+    background: #ffffff;
+    border: 1.5px solid var(--border);
+    border-radius: 12px;
+    padding: 12px;
+    margin-bottom: 10px;
+    box-shadow: var(--shadow-sm);
+  }
+}
