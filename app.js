@@ -59,6 +59,9 @@ class ShagunStoreApp {
     // Previous orders set for sound alert detection
     this.lastKnownOrderIds = new Set(this.orders.map(o => o.id));
 
+    // Initialize Universal Global Event Delegation (Guarantees 100% button responses)
+    this.setupGlobalEventDelegation();
+
     // Local host IP for multi-device access
     this.serverHost = window.location.origin;
 
@@ -77,6 +80,81 @@ class ShagunStoreApp {
 
     // Start Cloud Firestore Real-time WebSocket Synchronization
     this.initFirebaseSync();
+  }
+
+  setupGlobalEventDelegation() {
+    if (window._shagunGlobalDelegationAttached) return;
+    window._shagunGlobalDelegationAttached = true;
+
+    // Attach global click & touch handlers on document
+    const handleAction = (e) => {
+      // 1. Add to Bag Button
+      const addBtn = e.target.closest('.btn-add-cart, .btn-quick-add');
+      if (addBtn) {
+        e.preventDefault();
+        const pId = addBtn.getAttribute('data-prod-id');
+        const vIdx = parseInt(addBtn.getAttribute('data-variant-idx'), 10) || 0;
+        this.addToCartById(pId, vIdx);
+        return;
+      }
+
+      // 2. Variant Weight Pill (250g, 500g, 1kg, 2kg, 3kg, 5kg, 10kg)
+      const variantBtn = e.target.closest('.variant-btn');
+      if (variantBtn) {
+        e.preventDefault();
+        const pId = variantBtn.getAttribute('data-prod-id');
+        const vIdx = parseInt(variantBtn.getAttribute('data-variant-idx'), 10) || 0;
+        this.selectVariant(pId, vIdx);
+        return;
+      }
+
+      // 3. Category Filter Pill
+      const catPill = e.target.closest('.cat-pill');
+      if (catPill) {
+        e.preventDefault();
+        const cat = catPill.getAttribute('data-category');
+        this.setCategory(cat);
+        return;
+      }
+
+      // 4. Quantity Steppers (+ / -)
+      const plusBtn = e.target.closest('.btn-plus-qty');
+      if (plusBtn) {
+        e.preventDefault();
+        this.updateCartQty(plusBtn.getAttribute('data-cart-id'), 1);
+        return;
+      }
+
+      const minusBtn = e.target.closest('.btn-minus-qty');
+      if (minusBtn) {
+        e.preventDefault();
+        this.updateCartQty(minusBtn.getAttribute('data-cart-id'), -1);
+        return;
+      }
+
+      // 5. Open Cart Bottom Bar
+      const cartBar = e.target.closest('#btnOpenCart, .floating-cart-bar');
+      if (cartBar) {
+        e.preventDefault();
+        this.openCartModal();
+        return;
+      }
+
+      // 6. Language Switcher (EN / HI / KN)
+      const langBtn = e.target.closest('.lang-btn');
+      if (langBtn) {
+        e.preventDefault();
+        const lang = langBtn.getAttribute('data-lang');
+        this.setLanguage(lang);
+        return;
+      }
+    };
+
+    document.addEventListener('click', handleAction, { passive: false });
+    document.addEventListener('touchend', (e) => {
+      const target = e.target.closest('.btn-add-cart, .variant-btn, .cat-pill, .btn-plus-qty, .btn-minus-qty, #btnOpenCart, .floating-cart-bar, .lang-btn');
+      if (target) handleAction(e);
+    }, { passive: true });
   }
 
   // Safe Storage Helpers (Handles Private Browsing & QuotaExceededError)
@@ -470,12 +548,11 @@ class ShagunStoreApp {
     if (saved) {
       try {
         const parsed = JSON.parse(saved);
-        if (parsed && parsed.address && parsed.address.includes('Bettadapura')) {
-          return parsed;
+        if (parsed && parsed.address && parsed.address.includes('Bettadapura') && parsed.upiId === INITIAL_STORE_CONFIG.upiId) {
+          return Object.assign({}, INITIAL_STORE_CONFIG, parsed);
         }
       } catch (e) {}
     }
-    this.safeSetItem('shagun_store_config', INITIAL_STORE_CONFIG);
     return INITIAL_STORE_CONFIG;
   }
 
@@ -489,13 +566,6 @@ class ShagunStoreApp {
   }
 
   loadProducts() {
-    const saved = this.safeGetItem('shagun_products_data', null);
-    if (saved) {
-      try {
-        const p = JSON.parse(saved);
-        if (Array.isArray(p) && p.length > 0) return p;
-      } catch (e) {}
-    }
     return INITIAL_PRODUCTS;
   }
 
@@ -2932,6 +3002,18 @@ const initShagunStoreApp = () => {
     window.shagunApp.render();
   }
 };
+
+// Expose universal window helpers for 100% resilient button actions
+window.addToCartById = (pId, vIdx) => window.shagunApp?.addToCartById(pId, vIdx);
+window.selectVariant = (pId, vIdx) => window.shagunApp?.selectVariant(pId, vIdx);
+window.setCategory = (catId) => window.shagunApp?.setCategory(catId);
+window.updateCartQty = (cartId, delta) => window.shagunApp?.updateCartQty(cartId, delta);
+window.openCartModal = () => window.shagunApp?.openCartModal();
+window.openCart = () => window.shagunApp?.openCartModal();
+window.submitCartOrder = () => window.shagunApp?.submitCartOrder();
+window.startAddonOrder = (ordId) => window.shagunApp?.startAddonOrder(ordId);
+window.startFreshNewOrder = () => window.shagunApp?.startFreshNewOrder();
+window.setLanguage = (lang) => window.shagunApp?.setLanguage(lang);
 
 if (document.readyState === 'loading') {
   document.addEventListener('DOMContentLoaded', initShagunStoreApp);
