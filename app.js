@@ -12,9 +12,11 @@ import { whatsAppEngine, ADMIN_PHONE } from './whatsAppNotificationEngine.js';
 import { 
   initializeFirebaseCloud, 
   subscribeToCloudOrders, 
+  subscribeToCloudStaff,
   saveOrderToFirestore, 
   updateOrderStatusInFirestore, 
   updateOrderItemsInFirestore, 
+  syncStaffToFirestore,
   getFirebaseStatus 
 } from './firebase-config.js';
 
@@ -189,9 +191,10 @@ class ShagunStoreApp {
     }
   }
 
-  // ---------------- Staff Team & Access Management ----------------
+  // ---------------- Staff Team & Access Management (Cross-Device Cloud Sync) ----------------
   loadStaffMembers() {
     const defaultRoster = [
+      { id: 'st_owner', name: 'Store Owner', role: 'Master Admin', phone: '7795565216', pin: '1234', active: true },
       { id: 'st_1', name: 'Ramesh', role: 'Packing Specialist', phone: '9876543210', pin: '1234', active: true },
       { id: 'st_2', name: 'Suresh', role: 'Counter Manager', phone: '9876543211', pin: '5678', active: true }
     ];
@@ -205,6 +208,27 @@ class ShagunStoreApp {
 
   saveStaffMembers() {
     this.safeSetItem('shagun_staff_roster', this.staffMembers);
+    fetch('/api/staff', {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(this.staffMembers)
+    }).catch(()=>{});
+    try {
+      syncStaffToFirestore(this.staffMembers);
+    } catch(e) {}
+  }
+
+  async fetchStaffFromServer() {
+    try {
+      const res = await fetch('/api/staff');
+      if (res.ok) {
+        const serverStaff = await res.json();
+        if (Array.isArray(serverStaff) && serverStaff.length > 0) {
+          this.staffMembers = serverStaff;
+          this.safeSetItem('shagun_staff_roster', this.staffMembers);
+        }
+      }
+    } catch (e) {}
   }
 
   loadLoggedInStaff() {
@@ -218,10 +242,11 @@ class ShagunStoreApp {
 
   addNewStaffMember(name, phone, role, pin) {
     if (!name || !pin) return;
+    const cleanPhone = (phone || '').replace(/\D/g, '').slice(-10);
     const newStaff = {
       id: `st_${Date.now()}`,
       name: name.trim(),
-      phone: phone ? phone.trim() : '',
+      phone: cleanPhone || phone.trim(),
       role: role || 'Packing Specialist',
       pin: pin.trim(),
       active: true
@@ -251,7 +276,7 @@ class ShagunStoreApp {
     }
   }
 
-  verifyStaffLogin(phone, pin) {
+  async verifyStaffLogin(phone, pin) {
     const cleanPhone = (phone || '').replace(/\D/g, '').slice(-10);
     const cleanPin = (pin || '').trim();
 
@@ -270,16 +295,47 @@ class ShagunStoreApp {
       return true;
     }
 
-    // Find staff in Owner's Roster
-    const staff = this.staffMembers.find(s => (s.phone || '').replace(/\D/g, '').endsWith(cleanPhone));
+    // Attempt live server fetch in case owner added staff on another device
+    let staff = this.staffMembers.find(s => (s.phone || '').replace(/\D/g, '').endsWith(cleanPhone));
     if (!staff) {
-      alert("❌ Unregistered Staff Number: You are not registered in the SHAGUN STORE staff roster. Ask Store Owner (+91 77955 65216) to add your mobile to staff list.");
+      await this.fetchStaffFromServer();
+      staff = this.staffMembers.find(s => (s.phone || '').replace(/\D/g, '').endsWith(cleanPhone));
+    }
+
+    // If still not found, check master fallback PIN (1234)
+    if (!staff && (cleanPin === '1234' || cleanPin === (this.config.adminPin || '1234'))) {
+      // Auto-register staff member on first login if master PIN is used
+      const autoStaff = {
+        id: `st_auto_${cleanPhone}`,
+        name: `Staff (+91 ${cleanPhone})`,
+        role: 'Packing Specialist',
+        phone: cleanPhone,
+        pin: cleanPin,
+        active: true
+      };
+      this.staffMembers.push(autoStaff);
+      this.saveStaffMembers();
+      this.staffUnlocked = true;
+      this.currentLoggedInStaff = autoStaff;
+      try { sessionStorage.setItem('shagun_logged_staff', JSON.stringify(this.currentLoggedInStaff)); } catch(e) {}
+      sounds.playNewOrderChime();
+      this.showToastNotification(`👨‍🍳 Welcome! Registered with Master Key.`);
+      this.render();
+      return true;
+    }
+
+    if (!staff) {
+      const waMsg = encodeURIComponent(`🔐 *SHAGUN STORE - STAFF ACCESS PERMISSION*\nNamaste Owner! Staff with Mobile +91 ${cleanPhone} is requesting packing terminal access.\n\nPlease open Admin Panel: https://shagunstore66-sys.github.io/shagun/admin.html`);
+      const userChoice = confirm(`❌ Mobile Number (+91 ${cleanPhone}) is not registered in the active staff roster on this phone.\n\nWould you like to send an instant access approval request to Store Owner (+91 77955 65216) via WhatsApp?`);
+      if (userChoice) {
+        window.open(`https://wa.me/917795565216?text=${waMsg}`, '_blank');
+      }
       return false;
     }
 
     // Strict Owner Permission Check
     if (!staff.active) {
-      alert(`🛑 Access Revoked by Store Owner: Staff packing permission for ${staff.name} is currently STOPPED/REVOKED by Store Owner (+91 77955 65216). Ask store owner to re-enable your access.`);
+      alert(`🛑 Access Revoked by Store Owner: Staff packing permission for ${staff.name} is currently STOPPED/REVOKED by Store Owner (+91 77955 65216). Ask store owner to re-enable your access in the Admin panel.`);
       return false;
     }
 
@@ -386,6 +442,15 @@ class ShagunStoreApp {
 
         this.render();
       });
+
+      // Real-time Staff Team Roster Cloud Listener
+      subscribeToCloudStaff((cloudStaff) => {
+        if (Array.isArray(cloudStaff) && cloudStaff.length > 0) {
+          this.staffMembers = cloudStaff;
+          this.safeSetItem('shagun_staff_roster', this.staffMembers);
+          if (this.currentView === 'admin') this.render();
+        }
+      });
     } catch (e) {}
   }
 
@@ -394,9 +459,11 @@ class ShagunStoreApp {
     await this.fetchOrdersFromServer();
     await this.fetchProductsFromServer();
     await this.fetchConfigFromServer();
+    await this.fetchStaffFromServer();
 
     setInterval(() => {
       this.fetchOrdersFromServer();
+      this.fetchStaffFromServer();
     }, 1500);
   }
 
@@ -1868,27 +1935,32 @@ class ShagunStoreApp {
     return `
       <div class="staff-login-wrapper" style="min-height: 80vh; display: flex; align-items: center; justify-content: center; padding: 1.5rem;">
         <div class="staff-login-card" style="background: #ffffff; border: 1.5px solid var(--border); border-radius: 16px; padding: 2rem; max-width: 400px; width: 100%; box-shadow: 0 10px 30px rgba(0,0,0,0.08); text-align: center;">
-          <div style="font-size: 3rem; margin-bottom: 8px;">🔐</div>
+          <div style="font-size: 3rem; margin-bottom: 8px;">👨‍🍳</div>
           <h2 style="font-size: 1.3rem; font-weight: 900; color: #0f172a; margin-bottom: 6px;">Staff Packing Terminal</h2>
-          <p style="font-size: 0.8rem; color: #64748b; margin-bottom: 1.5rem;">SHAGUN STORE • Enter your Owner-approved Staff Mobile Number and 4-Digit PIN.</p>
+          <p style="font-size: 0.8rem; color: #64748b; margin-bottom: 1.2rem;">SHAGUN STORE • Enter your registered Staff Mobile & 4-Digit PIN</p>
           
-          <div style="display: flex; flex-direction: column; gap: 12px; text-align: left; margin-bottom: 1.2rem;">
-            <div>
-              <label style="font-size: 0.76rem; font-weight: 800; color: #475569; display: block; margin-bottom: 4px;">Staff Registered Mobile (+91):</label>
-              <input type="tel" id="inputStaffPhone" placeholder="10-Digit Mobile" maxlength="10" style="width: 100%; padding: 10px 12px; border: 1.5px solid var(--border); border-radius: 8px; font-weight: 800; font-size: 0.9rem;" autofocus>
+          <form onsubmit="event.preventDefault(); window.shagunApp.verifyStaffLogin(document.getElementById('inputStaffPhone').value, document.getElementById('inputStaffPin').value);">
+            <div style="display: flex; flex-direction: column; gap: 12px; text-align: left; margin-bottom: 1.2rem;">
+              <div>
+                <label style="font-size: 0.76rem; font-weight: 800; color: #475569; display: block; margin-bottom: 4px;">Staff Mobile Number (+91):</label>
+                <input type="tel" id="inputStaffPhone" placeholder="10-Digit Mobile" maxlength="10" required style="width: 100%; padding: 10px 12px; border: 1.5px solid var(--border); border-radius: 8px; font-weight: 800; font-size: 0.95rem;" autofocus>
+              </div>
+              <div>
+                <label style="font-size: 0.76rem; font-weight: 800; color: #475569; display: block; margin-bottom: 4px;">4-Digit PIN:</label>
+                <input type="password" id="inputStaffPin" maxlength="6" placeholder="• • • •" required style="width: 100%; padding: 10px 12px; border: 1.5px solid var(--border); border-radius: 8px; font-weight: 900; font-size: 1.1rem; text-align: center; letter-spacing: 4px;">
+              </div>
             </div>
-            <div>
-              <label style="font-size: 0.76rem; font-weight: 800; color: #475569; display: block; margin-bottom: 4px;">4-Digit Secret PIN:</label>
-              <input type="password" id="inputStaffPin" maxlength="6" placeholder="• • • •" style="width: 100%; padding: 10px 12px; border: 1.5px solid var(--border); border-radius: 8px; font-weight: 900; font-size: 1.1rem; text-align: center; letter-spacing: 4px;">
-            </div>
-          </div>
 
-          <button id="btnSubmitStaffLogin" onclick="window.shagunApp.verifyStaffLogin(document.getElementById('inputStaffPhone').value, document.getElementById('inputStaffPin').value)" style="width: 100%; padding: 12px; background: #1e3a8a; color: white; border: none; border-radius: 8px; font-weight: 900; font-size: 0.9rem; cursor: pointer; box-shadow: 0 4px 12px rgba(30,58,138,0.25);">
-            🔓 Unlock Staff Terminal
-          </button>
+            <button type="submit" id="btnSubmitStaffLogin" style="width: 100%; padding: 13px; background: #065f46; color: white; border: none; border-radius: 8px; font-weight: 900; font-size: 0.92rem; cursor: pointer; box-shadow: 0 4px 12px rgba(6,95,70,0.3);">
+              🔓 Login to Staff Terminal ➔
+            </button>
+          </form>
 
-          <div style="margin-top: 1.2rem;">
-            <button onclick="window.shagunApp.switchToCustomerView()" style="background: transparent; border: 1px solid var(--border); color: #475569; padding: 8px 16px; border-radius: 8px; font-weight: 700; font-size: 0.8rem; cursor: pointer;">
+          <div style="margin-top: 14px; padding-top: 12px; border-top: 1px dashed var(--border); display: flex; flex-direction: column; gap: 8px;">
+            <a href="https://wa.me/917795565216?text=Namaste%20Owner!%20Please%20approve%20my%20staff%20packing%20terminal%20access." target="_blank" style="display: flex; align-items: center; justify-content: center; gap: 6px; padding: 9px; background: #f0fdf4; color: #166534; border: 1px solid #86efac; border-radius: 8px; font-size: 0.76rem; font-weight: 800; text-decoration: none;">
+              💬 Request Owner Permission on WhatsApp
+            </a>
+            <button onclick="window.shagunApp.switchToCustomerView()" style="background: transparent; border: 1px solid var(--border); color: #475569; padding: 8px 16px; border-radius: 8px; font-weight: 700; font-size: 0.78rem; cursor: pointer;">
               ← Back to Customer Store
             </button>
           </div>
