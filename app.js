@@ -8,6 +8,7 @@
 
 import { INITIAL_STORE_CONFIG, CATEGORIES, INITIAL_PRODUCTS, I18N } from './mockData.js';
 import { sounds } from './sound.js';
+import { whatsAppEngine, ADMIN_PHONE } from './whatsAppNotificationEngine.js';
 import { 
   initializeFirebaseCloud, 
   subscribeToCloudOrders, 
@@ -1438,8 +1439,13 @@ class ShagunStoreApp {
     this.currentCustomerOrderId = newOrder.id;
     this.safeSetItem('shagun_customer_active_order', newOrder.id);
 
+    // 🚀 Dispatch 3-Way WhatsApp Alerts (Owner: 7795565216 + Staff + Customer)
+    try {
+      whatsAppEngine.dispatch3WayOrderAlerts(newOrder, this.staffMembers.filter(s => s.active));
+    } catch(e) {}
+
     this.broadcast('NEW_ORDER', newOrder);
-    sounds.playTapSound();
+    this.playSafeTapSound();
 
     this.render();
     return newOrder;
@@ -2165,6 +2171,11 @@ class ShagunStoreApp {
           </div>
         </div>
 
+        <!-- Real-Time WhatsApp Invoice & Live Updates Banner -->
+        <a href="${whatsAppEngine.getWhatsAppDeepLink(this.config.phone || '7795565216', whatsAppEngine.formatCustomerConfirmationMessage(order))}" target="_blank" style="display: flex; align-items: center; justify-content: center; gap: 8px; width: 100%; padding: 13px; background: #25D366; color: #ffffff; border-radius: var(--radius-full); font-weight: 800; font-size: 0.88rem; text-decoration: none; box-shadow: 0 4px 12px rgba(37,211,102,0.35); margin-top: 10px;">
+          💬 Receive Invoice & Live Updates on WhatsApp ➔
+        </a>
+
         <!-- Tracker Action Buttons -->
         <div style="display: flex; flex-direction: column; gap: 8px; margin-top: 12px;">
           ${order.status === 'NEW' ? `
@@ -2338,6 +2349,13 @@ class ShagunStoreApp {
           <button class="btn-ticket-action btn-print-slip" data-order-id="${order.id}" style="background:#f1f5f9; color:#0f172a; flex:0 0 36px;" title="Print 80mm Bag Slip">
             🖨️
           </button>
+        </div>
+
+        <!-- 3-Way WhatsApp Fast Actions -->
+        <div style="margin-top: 8px; display: flex; flex-direction: column; gap: 4px;">
+          <a href="${whatsAppEngine.getWhatsAppDeepLink(order.phone, whatsAppEngine.formatCustomerInvoiceMessage(order))}" target="_blank" style="display: flex; align-items: center; justify-content: center; gap: 6px; width: 100%; padding: 7px 10px; background: #25D366; color: #ffffff; border-radius: 6px; font-weight: 800; font-size: 0.74rem; text-decoration: none; box-shadow: 0 2px 6px rgba(37,211,102,0.2);">
+            🧾 Send Digital Tax Invoice to Customer (+91 ${order.phone})
+          </a>
         </div>
 
         <!-- Manual Staff / Cashier Toolbar -->
@@ -2514,6 +2532,9 @@ class ShagunStoreApp {
                       </td>
                       <td style="padding: 9px 8px; text-align: center;">
                         <div style="display: flex; gap: 4px; justify-content: center; flex-wrap: wrap;">
+                          <a href="${whatsAppEngine.getWhatsAppDeepLink(o.phone, whatsAppEngine.formatCustomerInvoiceMessage(o))}" target="_blank" title="Send WhatsApp Tax Invoice to Customer" style="padding: 3px 6px; background: #25D366; color: white; border-radius: 4px; font-weight: 800; font-size: 0.68rem; text-decoration: none; display: inline-flex; align-items: center; gap: 2px;">
+                            💬 Invoice
+                          </a>
                           ${!o.paymentVerified && o.status !== 'CANCELLED' ? `
                             <button onclick="window.shagunApp.markOrderPaidCash('${o.id}')" title="Mark as Cash Paid" style="padding: 3px 6px; background: #dcfce7; color: #166534; border: 1px solid #86efac; border-radius: 4px; font-weight: 800; font-size: 0.68rem; cursor: pointer;">
                               💵 Paid
@@ -2547,7 +2568,7 @@ class ShagunStoreApp {
           <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px; flex-wrap: wrap; gap: 8px;">
             <div>
               <h3 style="font-size: 1.05rem; font-weight: 900; color: #0f172a; margin: 0;">👥 Store Staff Team & Access Control (${this.staffMembers.length})</h3>
-              <p style="font-size: 0.76rem; color: #64748b; margin: 2px 0 0 0;">Add staff members, assign 4-digit PINs, and revoke/stop staff access anytime</p>
+              <p style="font-size: 0.76rem; color: #64748b; margin: 2px 0 0 0;">Add staff members, assign 4-digit PINs, and approve/stop staff permissions via WhatsApp (${ADMIN_PHONE})</p>
             </div>
           </div>
 
@@ -2590,7 +2611,7 @@ class ShagunStoreApp {
                   <th style="padding: 8px;">Phone</th>
                   <th style="padding: 8px;">Secret PIN</th>
                   <th style="padding: 8px;">Access Status</th>
-                  <th style="padding: 8px;">Action</th>
+                  <th style="padding: 8px;">Action & Permission</th>
                 </tr>
               </thead>
               <tbody>
@@ -2605,7 +2626,10 @@ class ShagunStoreApp {
                         ${s.active ? '🟢 Active Access' : '🔴 Access Blocked'}
                       </span>
                     </td>
-                    <td style="padding: 8px; display: flex; gap: 6px;">
+                    <td style="padding: 8px; display: flex; gap: 6px; flex-wrap: wrap;">
+                      <a href="${whatsAppEngine.getWhatsAppDeepLink(ADMIN_PHONE, whatsAppEngine.formatStaffApprovalRequestMessage(s))}" target="_blank" title="Send WhatsApp Access Verification to Owner" style="padding: 4px 8px; background: #25D366; color: white; border-radius: 4px; font-size: 0.72rem; font-weight: 800; text-decoration: none; display: inline-flex; align-items: center; gap: 3px;">
+                        💬 WhatsApp Permission
+                      </a>
                       <button class="btn-toggle-staff-access" data-staff-id="${s.id}" onclick="window.shagunApp.toggleStaffAccess('${s.id}')" style="padding: 4px 8px; background: ${s.active ? '#fee2e2' : '#dcfce7'}; color: ${s.active ? '#991b1b' : '#166534'}; border: 1px solid ${s.active ? '#fca5a5' : '#86efac'}; border-radius: 4px; font-size: 0.72rem; font-weight: 800; cursor: pointer;">
                         ${s.active ? '🛑 Stop Access' : '🟢 Enable Access'}
                       </button>
