@@ -2264,6 +2264,7 @@ main {
     cursor: pointer;
   }
 
+  .desktop-only-kanban-wrapper,
   .desktop-only-kanban {
     display: none !important;
   }
@@ -2273,10 +2274,13 @@ main {
   .mobile-only-staff-view {
     display: none !important;
   }
+  .desktop-only-kanban-wrapper {
+    display: block !important;
+  }
   .desktop-only-kanban {
     display: grid !important;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 16px;
+    grid-template-columns: repeat(4, 1fr) !important;
+    gap: 16px !important;
   }
 }
 
