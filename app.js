@@ -560,15 +560,25 @@ class ShagunStoreApp {
   }
 
   parseUrlParams() {
+    const pathname = window.location.pathname.toLowerCase();
     const urlParams = new URLSearchParams(window.location.search);
-    const viewParam = urlParams.get('view');
+    const viewParam = urlParams.get('view') || urlParams.get('portal');
     const locParam = urlParams.get('loc');
     const langParam = urlParams.get('lang');
 
-    if (viewParam && ['customer', 'staff', 'split', 'admin'].includes(viewParam)) {
+    // Dedicated Independent Portals Detection
+    if (pathname.includes('staff.html') || viewParam === 'staff') {
+      this.currentView = 'staff';
+    } else if (pathname.includes('admin.html') || viewParam === 'admin') {
+      this.currentView = 'admin';
+      this.adminUnlocked = true;
+    } else if (viewParam && ['customer', 'staff', 'split', 'admin'].includes(viewParam)) {
       this.currentView = viewParam;
       if (viewParam === 'admin') this.adminUnlocked = true;
+    } else {
+      this.currentView = 'customer';
     }
+
     if (locParam) {
       this.activeLocation = decodeURIComponent(locParam);
     }
@@ -1149,6 +1159,11 @@ class ShagunStoreApp {
     // Announce via Paytm/PhonePe Soundbox Voice Synthesizer
     sounds.playPaymentSuccessSoundbox(order.totalAmount, this.currentLang);
 
+    // 🚀 Dispatch Real-time Payment Success Notification via SMS & WhatsApp to Customer
+    try {
+      whatsAppEngine.dispatchPaymentSuccessAlerts(order, reference);
+    } catch (e) {}
+
     // Save to LocalStorage, Firestore & REST API
     this.saveOrders();
     this.broadcast('ORDER_UPDATED', order);
@@ -1566,6 +1581,11 @@ class ShagunStoreApp {
 
     const historyItem = { status: newStatus, time: timeStr, text: statusText };
     order.history.push(historyItem);
+
+    // 🚀 Dispatch Live Status Upgradation Alert via SMS & WhatsApp to Customer
+    try {
+      whatsAppEngine.dispatchStatusUpgradationAlerts(order, newStatus);
+    } catch (e) {}
 
     this.saveOrders();
     this.broadcast('ORDER_UPDATED', order);
