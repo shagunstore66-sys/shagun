@@ -89,12 +89,14 @@ class ShagunStoreApp {
     if (window._shagunGlobalDelegationAttached) return;
     window._shagunGlobalDelegationAttached = true;
 
-    // Attach global click & touch handlers on document
+    // Attach single global click handler with duplicate event guard
     const handleAction = (e) => {
+      if (e.__shagunHandled) return;
+
       // 1. Add to Bag Button
       const addBtn = e.target.closest('.btn-add-cart, .btn-quick-add');
       if (addBtn) {
-        e.preventDefault();
+        e.__shagunHandled = true;
         const pId = addBtn.getAttribute('data-prod-id');
         const vIdx = parseInt(addBtn.getAttribute('data-variant-idx'), 10) || 0;
         this.addToCartById(pId, vIdx);
@@ -104,7 +106,7 @@ class ShagunStoreApp {
       // 2. Variant Weight Pill (250g, 500g, 1kg, 2kg, 3kg, 5kg, 10kg)
       const variantBtn = e.target.closest('.variant-btn');
       if (variantBtn) {
-        e.preventDefault();
+        e.__shagunHandled = true;
         const pId = variantBtn.getAttribute('data-prod-id');
         const vIdx = parseInt(variantBtn.getAttribute('data-variant-idx'), 10) || 0;
         this.selectVariant(pId, vIdx);
@@ -114,7 +116,7 @@ class ShagunStoreApp {
       // 3. Category Filter Pill
       const catPill = e.target.closest('.cat-pill');
       if (catPill) {
-        e.preventDefault();
+        e.__shagunHandled = true;
         const cat = catPill.getAttribute('data-category');
         this.setCategory(cat);
         return;
@@ -123,14 +125,14 @@ class ShagunStoreApp {
       // 4. Quantity Steppers (+ / -)
       const plusBtn = e.target.closest('.btn-plus-qty');
       if (plusBtn) {
-        e.preventDefault();
+        e.__shagunHandled = true;
         this.updateCartQty(plusBtn.getAttribute('data-cart-id'), 1);
         return;
       }
 
       const minusBtn = e.target.closest('.btn-minus-qty');
       if (minusBtn) {
-        e.preventDefault();
+        e.__shagunHandled = true;
         this.updateCartQty(minusBtn.getAttribute('data-cart-id'), -1);
         return;
       }
@@ -138,7 +140,7 @@ class ShagunStoreApp {
       // 5. Open Cart Bottom Bar
       const cartBar = e.target.closest('#btnOpenCart, .floating-cart-bar');
       if (cartBar) {
-        e.preventDefault();
+        e.__shagunHandled = true;
         this.openCartModal();
         return;
       }
@@ -146,18 +148,14 @@ class ShagunStoreApp {
       // 6. Language Switcher (EN / HI / KN)
       const langBtn = e.target.closest('.lang-btn');
       if (langBtn) {
-        e.preventDefault();
+        e.__shagunHandled = true;
         const lang = langBtn.getAttribute('data-lang');
         this.setLanguage(lang);
         return;
       }
     };
 
-    document.addEventListener('click', handleAction, { passive: false });
-    document.addEventListener('touchend', (e) => {
-      const target = e.target.closest('.btn-add-cart, .variant-btn, .cat-pill, .btn-plus-qty, .btn-minus-qty, #btnOpenCart, .floating-cart-bar, .lang-btn');
-      if (target) handleAction(e);
-    }, { passive: true });
+    document.addEventListener('click', handleAction, { passive: true });
   }
 
   // Safe Storage Helpers (Handles Private Browsing & QuotaExceededError)
@@ -653,10 +651,19 @@ class ShagunStoreApp {
 
   // ---------------- Cart Actions with Strict Boundaries ----------------
   addToCart(product, variantIdx = 0) {
-    this.playSafeTapSound();
+    const now = Date.now();
     const vIdx = Math.max(0, parseInt(variantIdx, 10) || 0);
     const variant = (product.variants && product.variants[vIdx]) ? product.variants[vIdx] : { name: product.unit || '1 kg', price: product.price };
     const cartItemId = `${product.id}_${variant.name}`;
+
+    // Strict Debounce Guard: Prevents duplicate/triplicate rapid event dispatches within 250ms
+    if (this._lastAddToCartTime && (now - this._lastAddToCartTime < 250) && this._lastAddToCartItemId === cartItemId) {
+      return;
+    }
+    this._lastAddToCartTime = now;
+    this._lastAddToCartItemId = cartItemId;
+
+    this.playSafeTapSound();
 
     const existing = this.cart.find(item => item.cartItemId === cartItemId);
     if (existing) {
@@ -673,11 +680,19 @@ class ShagunStoreApp {
       });
     }
     this.saveCart();
-    this.showToastNotification(`🛍️ Added ${product.name} (${variant.name}) to Bag!`);
+    this.showToastNotification(`🛍️ Added 1x ${product.name} (${variant.name}) to Bag!`);
     this.render();
   }
 
   updateCartQty(cartItemId, delta) {
+    const now = Date.now();
+    const key = `${cartItemId}_${delta}`;
+    if (this._lastQtyUpdateTime && (now - this._lastQtyUpdateTime < 200) && this._lastQtyUpdateKey === key) {
+      return;
+    }
+    this._lastQtyUpdateTime = now;
+    this._lastQtyUpdateKey = key;
+
     this.playSafeTapSound();
     const d = parseInt(delta, 10);
     if (isNaN(d)) return;
