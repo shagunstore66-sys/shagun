@@ -2290,7 +2290,7 @@ class ShagunStoreApp {
     const selectedVariantIdx = this.selectedVariants[product.id] || 0;
     const variants = product.variants && product.variants.length > 0 
       ? product.variants 
-      : [{ name: product.unit || '1 kg', price: product.price }];
+      : [{ name: product.unit || '1 kg', price: product.price, mrp: product.mrp || product.price }];
     
     const safeIdx = Math.min(selectedVariantIdx, variants.length - 1);
     const currentVariant = variants[safeIdx] || variants[0];
@@ -2298,18 +2298,20 @@ class ShagunStoreApp {
     const cartItem = this.cart.find(i => i.cartItemId === cartItemId);
     const inCartQty = cartItem ? cartItem.qty : 0;
     const isProduce = product.category === 'vegetables' || product.category === 'fruits';
+    const mrp = currentVariant.mrp || product.mrp || currentVariant.price;
+    const price = currentVariant.price || product.price;
 
     return `
       <div class="product-card" data-product-id="${product.id}">
         <div class="prod-img-wrap">
-          <img src="${product.image}" alt="${product.name}" class="prod-img" loading="lazy" onerror="this.src='https://images.unsplash.com/photo-1542838132-92c53300491e?w=500&auto=format&fit=crop&q=80'">
+          <img src="${product.image}" alt="${product.name}" class="prod-img" loading="lazy" onerror="this.onerror=null; this.src='https://images.openfoodfacts.org/images/products/890/600/728/0105/front_en.5.400.jpg';">
           ${product.badge ? `<span class="prod-badge ${isProduce ? 'farm-fresh' : 'daily-essential'}">${product.badge}</span>` : ''}
         </div>
 
         <div class="prod-details">
           <h4 class="prod-title">${product.name}</h4>
 
-          <!-- Granular Multi-Variant Selector (250g, 500g, 1kg, 2kg, 3kg, 5kg, 10kg & 500ml, 1L, 5L) -->
+          <!-- Granular Multi-Variant Selector -->
           <div class="variant-pills-row">
             ${variants.map((v, idx) => `
               <button class="variant-btn ${idx === safeIdx ? 'active' : ''}" data-prod-id="${product.id}" data-variant-idx="${idx}" onclick="window.shagunApp.selectVariant('${product.id}', ${idx})">
@@ -2319,7 +2321,10 @@ class ShagunStoreApp {
           </div>
 
           <div class="prod-bottom-row">
-            <span class="prod-price">${this.config.currency}${currentVariant.price}</span>
+            <div class="prod-price-box" style="display: flex; align-items: baseline; gap: 6px;">
+              <span class="prod-price">${this.config.currency}${price}</span>
+              ${mrp > price ? `<span style="font-size: 0.76rem; color: #94a3b8; text-decoration: line-through; font-weight: 700;">₹${mrp}</span>` : ''}
+            </div>
             
             ${inCartQty > 0 ? `
               <div class="qty-control">
