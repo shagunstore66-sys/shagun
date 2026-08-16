@@ -3384,9 +3384,13 @@ class ShagunStoreApp {
 
 // Mount immediately on DOM Ready or deferred module execution
 const initShagunStoreApp = () => {
-  if (!window.shagunApp) {
-    window.shagunApp = new ShagunStoreApp();
+  try {
+    if (!window.shagunApp) {
+      window.shagunApp = new ShagunStoreApp();
+    }
     window.shagunApp.render();
+  } catch(err) {
+    console.error("SHAGUN STORE init error:", err);
   }
 };
 
