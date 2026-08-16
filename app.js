@@ -2521,41 +2521,59 @@ class ShagunStoreApp {
     modal.id = 'incomingOrderModal';
     modal.style.cssText = `
       position: fixed; inset: 0; z-index: 999999;
-      background: rgba(15, 23, 42, 0.85);
+      background: rgba(15, 23, 42, 0.88);
       backdrop-filter: blur(8px);
       display: flex; align-items: center; justify-content: center;
       padding: 1.25rem;
     `;
 
     modal.innerHTML = `
-      <div style="background: #ffffff; border-radius: 20px; padding: 1.5rem; max-width: 420px; width: 100%; text-align: center; box-shadow: 0 20px 50px rgba(0,0,0,0.5); border: 3px solid #10b981;">
-        <div style="font-size: 3.5rem; margin-bottom: 4px;">🚨</div>
-        <h2 style="font-size: 1.35rem; font-weight: 900; color: #0f172a; margin-bottom: 4px;">NEW ORDER RECEIVED!</h2>
-        <div style="font-size: 2.2rem; font-weight: 900; color: #065f46; font-family: var(--font-display); margin: 6px 0;">
+      <div style="background: #ffffff; border-radius: 24px; padding: 1.6rem; max-width: 420px; width: 100%; text-align: center; box-shadow: 0 25px 60px rgba(0,0,0,0.6); border: 3.5px solid #10b981; animation: popIn 0.25s ease;">
+        <div style="font-size: 3.5rem; margin-bottom: 2px;">🚨</div>
+        <h2 style="font-size: 1.35rem; font-weight: 900; color: #0f172a; margin-bottom: 2px; text-transform: uppercase; letter-spacing: 0.03em;">New Order Received!</h2>
+        <div style="font-size: 2.3rem; font-weight: 900; color: #065f46; font-family: var(--font-display); margin: 6px 0;">
           #${order.token}
         </div>
-        <div style="font-size: 0.88rem; font-weight: 800; color: #334155; margin-bottom: 6px;">
+        <div style="font-size: 0.9rem; font-weight: 800; color: #334155; margin-bottom: 8px;">
           👤 ${order.customerName} (${order.phone})
         </div>
-        <div style="background: #f0fdf4; border: 1.5px solid #86efac; border-radius: 10px; padding: 10px; margin: 12px 0;">
-          <div style="font-size: 0.95rem; font-weight: 900; color: #166534;">
+        <div style="background: #f0fdf4; border: 1.5px solid #86efac; border-radius: 12px; padding: 12px; margin: 12px 0;">
+          <div style="font-size: 1.1rem; font-weight: 900; color: #166534;">
             💰 Total: ${this.config.currency}${order.totalAmount}
           </div>
-          <div style="font-size: 0.78rem; font-weight: 700; color: #15803d; margin-top: 2px;">
+          <div style="font-size: 0.82rem; font-weight: 800; color: #15803d; margin-top: 3px;">
             ${order.paymentVerified ? '🟢 PAID ONLINE (Axis Bank)' : (order.paymentMethod === 'counter' ? '💵 COLLECT CASH AT PICKUP' : '⏳ PENDING')}
           </div>
         </div>
-        <div style="display: flex; flex-direction: column; gap: 8px;">
-          <button onclick="sounds.stopOrderAlarmLoop(); document.getElementById('incomingOrderModal')?.remove(); window.shagunApp.updateOrderStatus('${order.id}', 'PACKING');" style="width: 100%; padding: 14px; background: #065f46; color: #ffffff; border: none; border-radius: 12px; font-weight: 900; font-size: 1rem; cursor: pointer; box-shadow: 0 4px 14px rgba(6,95,70,0.4);">
+        <div style="display: flex; flex-direction: column; gap: 10px; margin-top: 14px;">
+          <button onclick="window.shagunApp.acceptIncomingOrder('${order.id}')" style="width: 100%; padding: 15px; background: #065f46; color: #ffffff; border: none; border-radius: 14px; font-weight: 900; font-size: 1.05rem; cursor: pointer; box-shadow: 0 6px 18px rgba(6,95,70,0.45);">
             📦 ACCEPT & START PACKING ➔
           </button>
-          <button onclick="sounds.stopOrderAlarmLoop(); document.getElementById('incomingOrderModal')?.remove();" style="width: 100%; padding: 10px; background: transparent; border: 1.5px solid #cbd5e1; color: #475569; border-radius: 12px; font-weight: 800; font-size: 0.82rem; cursor: pointer;">
-            Dismiss Alert
+          <button onclick="window.shagunApp.dismissIncomingOrderModal()" style="width: 100%; padding: 10px; background: transparent; border: 1.5px solid #cbd5e1; color: #475569; border-radius: 12px; font-weight: 800; font-size: 0.84rem; cursor: pointer;">
+            Dismiss Siren
           </button>
         </div>
       </div>
     `;
     document.body.appendChild(modal);
+  }
+
+  acceptIncomingOrder(orderId) {
+    if (typeof sounds !== 'undefined' && sounds) sounds.stopOrderAlarmLoop();
+    if (window.sounds) window.sounds.stopOrderAlarmLoop();
+    const modal = document.getElementById('incomingOrderModal');
+    if (modal) modal.remove();
+    this.updateOrderStatus(orderId, 'PACKING');
+    this.staffActiveMobileTab = 'PACKING';
+    this.showToastNotification(`📦 Started packing Order ticket.`);
+    this.render();
+  }
+
+  dismissIncomingOrderModal() {
+    if (typeof sounds !== 'undefined' && sounds) sounds.stopOrderAlarmLoop();
+    if (window.sounds) window.sounds.stopOrderAlarmLoop();
+    const modal = document.getElementById('incomingOrderModal');
+    if (modal) modal.remove();
   }
 
   // ==========================================================================
