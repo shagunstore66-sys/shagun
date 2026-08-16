@@ -9,6 +9,7 @@
 import { INITIAL_STORE_CONFIG, CATEGORIES, INITIAL_PRODUCTS, I18N } from './mockData.js';
 import { sounds } from './sound.js';
 import { whatsAppEngine, ADMIN_PHONE } from './whatsAppNotificationEngine.js';
+import { RealtimeCloudSync } from './realtimeCloudSync.js';
 import { 
   initializeFirebaseCloud, 
   subscribeToCloudOrders, 
@@ -85,6 +86,10 @@ class ShagunStoreApp {
 
     // Start Cloud Firestore Real-time WebSocket Synchronization
     this.initFirebaseSync();
+
+    // Start 0-Latency Real-Time Cross-Device Cloud Sync Broker
+    this.cloudSync = new RealtimeCloudSync(this);
+    this.cloudSync.startListening();
   }
 
   setupGlobalEventDelegation() {
@@ -1266,6 +1271,10 @@ class ShagunStoreApp {
     // Save to LocalStorage, Firestore & REST API
     this.saveOrders();
     this.broadcast('ORDER_UPDATED', order);
+    if (this.cloudSync) {
+      this.cloudSync.broadcastPaymentVerified(order.id, reference);
+      this.cloudSync.broadcastOrderUpdate(order);
+    }
     updateOrderStatusInFirestore(orderId, order.status, order.history[order.history.length - 1]);
 
     try {
@@ -1641,6 +1650,9 @@ class ShagunStoreApp {
     } catch(e) {}
 
     this.broadcast('NEW_ORDER', newOrder);
+    if (this.cloudSync) {
+      this.cloudSync.broadcastNewOrder(newOrder);
+    }
     this.playSafeTapSound();
 
     this.render();
@@ -1688,6 +1700,9 @@ class ShagunStoreApp {
 
     this.saveOrders();
     this.broadcast('ORDER_UPDATED', order);
+    if (this.cloudSync) {
+      this.cloudSync.broadcastOrderUpdate(order);
+    }
     updateOrderStatusInFirestore(orderId, newStatus, historyItem);
 
     if (newStatus === 'READY') {
