@@ -72,6 +72,19 @@ try {
                         if ($reqBody) {
                             [System.IO.File]::WriteAllText($prodsFile, $reqBody, [System.Text.Encoding]::UTF8)
                         }
+                } elseif ($urlPath -eq "/api/staff") {
+                    $staffFile = Join-Path $dir "data\staff.json"
+                    if ($method -eq "GET") {
+                        if (Test-Path $staffFile) {
+                            $responseJson = [System.IO.File]::ReadAllText($staffFile, [System.Text.Encoding]::UTF8)
+                        } else {
+                            $responseJson = '[{"id":"st_owner","name":"Store Owner","role":"Master Admin","phone":"7795565216","pin":"1234","active":true}]'
+                        }
+                    } elseif ($method -eq "PUT" -or $method -eq "POST") {
+                        $reqBody = ($request -split "`r`n`r`n", 2)[1]
+                        if ($reqBody) {
+                            [System.IO.File]::WriteAllText($staffFile, $reqBody, [System.Text.Encoding]::UTF8)
+                        }
                         $responseJson = '{"status":"OK","saved":true}'
                     }
                 } elseif ($urlPath -eq "/api/orders") {
