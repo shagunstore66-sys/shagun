@@ -2,6 +2,7 @@
  * SHAGUN STORE (शगुन स्टोर) - Firebase Full-Stack Cloud Integration
  * Powered by Firebase v10 Modular SDK (Cloud Firestore & Firebase Hosting)
  * - 0ms Real-Time WebSocket Synchronization (onSnapshot) for Staff Phone & Customer Tracking
+ * - Cross-Device Staff Roster Synchronization across all Owner & Staff Smartphones
  * - Offline Persistence & Resilient Fallback
  */
 
@@ -75,6 +76,34 @@ export async function subscribeToCloudOrders(onUpdate) {
       onUpdate(orders);
     }, (err) => {
       console.warn("Firestore onSnapshot listener error:", err);
+    });
+  } catch (e) {
+    return null;
+  }
+}
+
+/**
+ * Real-time listener for Staff Roster Collection (Cross-Phone Sync)
+ */
+export async function subscribeToCloudStaff(onUpdate) {
+  if (!db) {
+    await initializeFirebaseCloud();
+  }
+  if (!db) return null;
+
+  try {
+    const { doc, onSnapshot } = await import("https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js");
+    const staffDocRef = doc(db, "system_roster", "staff_members");
+
+    return onSnapshot(staffDocRef, (docSnap) => {
+      if (docSnap.exists()) {
+        const data = docSnap.data();
+        if (data && Array.isArray(data.staff)) {
+          onUpdate(data.staff);
+        }
+      }
+    }, (err) => {
+      console.warn("Firestore staff sync error:", err);
     });
   } catch (e) {
     return null;
@@ -160,9 +189,22 @@ export async function syncProductsToFirestore(products) {
   }
 }
 
-export function getFirebaseStatus() {
-  return {
-    connected: isFirebaseConnected,
-    projectId: localStorage.getItem('shagun_firebase_config') ? JSON.parse(localStorage.getItem('shagun_firebase_config')).projectId : DEFAULT_FIREBASE_CONFIG.projectId
-  };
+/**
+ * Sync Staff Roster to Cloud Firestore (Broadcasts to all staff smartphones instantly)
+ */
+export async function syncStaffToFirestore(staffList) {
+  if (!db) await initializeFirebaseCloud();
+  if (!db) return false;
+
+  try {
+    const { doc, setDoc } = await import("https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js");
+    const staffDocRef = doc(db, "system_roster", "staff_members");
+    await setDoc(staffDocRef, {
+      staff: staffList,
+      updatedAt: new Date().toISOString()
+    }, { merge: true });
+    return true;
+  } catch (e) {
+    return false;
+  }
 }
